@@ -5,9 +5,14 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  text: {
+  pageTitle: {
     fontSize: Theme.fontSizes.xxl,
     fontWeight: "bold",
+    textAlign: "center",
+  },
+  userInfoText: {
+    fontSize: Theme.fontSizes.lg,
+    marginTop: 16,
     textAlign: "center",
   },
 });

@@ -2,6 +2,7 @@
   "expo": {
     "name": "pack-sync",
     "slug": "pack-sync",
+    "scheme": "packsync",
     "version": "1.0.0",
     "sdkVersion": "54.0.0",
     "orientation": "portrait",
@@ -27,6 +28,11 @@
     },
     "web": {
       "favicon": "src/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "caaafd67-9eae-4f5a-b592-4c35547b3616"
+      }
     }
   }
 }
