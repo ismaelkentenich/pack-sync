@@ -9,13 +9,16 @@ import { PackageStatus, DeliveryStatus } from "src/services/database/packages/en
 
 type PackageState = {
   packages: Package[];
+  currentSessionPackages: Package[];
   loadPackages: () => void;
   scanPackage: (code: string) => void;
   changeStatus: (id: number, status: PackageStatus, clientName?: string) => void;
+  resetSession: () => void;
 };
 
 export const usePackageStore = create<PackageState>((set, get) => ({
   packages: [],
+  currentSessionPackages: [],
 
   loadPackages: () => {
     const pkgs = getAllPackages();
@@ -32,7 +35,11 @@ export const usePackageStore = create<PackageState>((set, get) => ({
         scanned_at: new Date().toISOString(),
       };
       insertPackage(newPkg);
-      set({ packages: [newPkg, ...get().packages] });
+
+      set((state) => ({
+        packages: [newPkg, ...state.packages],
+        currentSessionPackages: [newPkg, ...state.currentSessionPackages],
+      }));
     }
   },
 
@@ -40,4 +47,6 @@ export const usePackageStore = create<PackageState>((set, get) => ({
     updatePackageStatus(id, status, clientName);
     set({ packages: getAllPackages() });
   },
+
+  resetSession: () => set({ currentSessionPackages: [] }),
 }));

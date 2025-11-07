@@ -9,12 +9,12 @@ import { Text, View } from "react-native";
 import { RootStackParamList } from "src/app/navigation/types";
 import { useAuthStore } from "src/store/auth/useAuthStore";
 import { styles } from "./styles";
-
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+import { useAppNavigation } from "@hooks/useAppNavigation";
+import { Routes } from "@app/navigation/routes";
 
 export default function HomeScreen() {
   const { user } = useAuthStore();
-  const navigation = useNavigation<HomeScreenNavigationProp>();
+  const navigation = useAppNavigation(Routes.Home);
 
   return (
     <ScreenContainer>

@@ -1,18 +1,15 @@
-import { RootStackParamList } from "@app/navigation/types";
 import Button from "@components/Button";
 import Input from "@components/Input";
 import ScreenContainer from "@components/ScreenContainer";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAppNavigation } from "@hooks/useAppNavigation";
 import React, { useState } from "react";
 import { Alert, Text, View } from "react-native";
 import { useAuthStore } from "src/store/auth/useAuthStore";
 import { styles } from "./styles";
-
-type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, "Login">;
+import { Routes } from "@app/navigation/routes";
 
 export default function LoginScreen() {
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const navigation = useAppNavigation(Routes.Login);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const login = useAuthStore((state) => state.login);
@@ -24,8 +21,8 @@ export default function LoginScreen() {
     }
 
     try {
-      await login(email); 
-      navigation.navigate("Home")
+      await login(email);
+      navigation.navigate("Home");
     } catch (error) {
       console.error(error);
       Alert.alert("Erro", "Não foi possível fazer login.");
