@@ -3,6 +3,7 @@
     "name": "pack-sync",
     "slug": "pack-sync",
     "version": "1.0.0",
+    "sdkVersion": "54.0.0",
     "orientation": "portrait",
     "icon": "src/assets/icon.png",
     "userInterfaceStyle": "light",
