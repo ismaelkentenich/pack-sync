@@ -1,33 +1,39 @@
-import Theme from "@theme/theme";
 import { StyleSheet } from "react-native";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   container: {
     width: "100%",
-    gap: 8,
+    marginBottom: 16,
   },
   label: {
-    fontSize: Theme.fontSizes.md,
-    fontWeight: "500",
-    color: Theme.colors.neutral[900],
+    fontSize: 14,
+    color: Theme.colors.neutral[700],
+    marginBottom: 6,
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: Theme.colors.neutral[300],
+    borderRadius: Theme.borderRadius.sm,
+    backgroundColor: Theme.colors.neutral[50],
+    paddingHorizontal: 12,
   },
   input: {
-    width: "100%",
-    height: 56,
-    borderWidth: 1,
-    borderColor: Theme.colors.neutral[200],
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    fontSize: Theme.fontSizes.md,
-    color: Theme.colors.neutral[900],
-    backgroundColor: Theme.colors.neutral[100],
+    flex: 1,
+    height: 48,
+    color: Theme.colors.neutral[800],
   },
   inputError: {
     borderColor: Theme.colors.attention[500],
   },
+  iconButton: {
+    paddingHorizontal: 4,
+  },
   errorText: {
     color: Theme.colors.attention[500],
-    fontSize: Theme.fontSizes.sm,
+    fontSize: 12,
     marginTop: 4,
   },
 });

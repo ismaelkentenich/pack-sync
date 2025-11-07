@@ -7,17 +7,9 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 24,
   },
-  userInfoText: {
-    fontSize: Theme.fontSizes.lg,
+  pageTitle: {
+    fontSize: Theme.fontSizes.xxl,
+    fontWeight: "bold",
     textAlign: "center",
-    paddingTop: 16,
-  },
-  card: {
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-  },
-  cardText: {
-    color: Theme.colors.neutral[700],
   },
 });

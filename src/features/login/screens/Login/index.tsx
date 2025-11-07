@@ -37,7 +37,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer scrollable>
       <View style={styles.container}>
         <Text style={styles.text}>Login</Text>
         <Input
@@ -51,6 +51,7 @@ export default function LoginScreen() {
           placeholder="Digite sua senha"
           value={password}
           onChangeText={setPassword}
+          secure
         />
 
         <Button title="Login" onPress={handleLogin} />
