@@ -1,4 +1,4 @@
-import { getFirstSync, runSync } from "../index";
+import { getFirstSync, runSync } from "./index";
 
 export type User = {
   id?: number;

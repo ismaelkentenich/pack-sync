@@ -1,4 +1,4 @@
-import { authDb } from "../index";
+import { authDb } from "./index";
 
 export async function setupAuthDatabase() {
   await authDb.execAsync(`
