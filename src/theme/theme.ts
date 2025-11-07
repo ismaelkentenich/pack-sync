@@ -42,16 +42,27 @@ export const Neutral = {
   950: "#000000",
 };
 
+export const Attention = {
+  100: "#f7b8bd",
+  200: "#f38e96",
+  300: "#ee646f",
+  400: "#ea3a48",
+  500: "#d51f2d",
+  600: "#a91924",
+  700: "#7d121a",
+  800: "#510c11",
+  900: "#250508",
+};
+
 export const FontSizes = {
   xs: 8,
-  x: 12,
+  sm: 12,
   md: 14,
   lg: 16,
   xl: 18,
   xxl: 24,
   xxxl: 36,
 };
-
 
 export const BorderRadius = {
   sm: 4,
@@ -64,6 +75,7 @@ const Theme = {
     primary: Primary,
     secondary: Secondary,
     neutral: Neutral,
+    attention: Attention,
   },
   fontSizes: FontSizes,
   spacing: FontSizes,
