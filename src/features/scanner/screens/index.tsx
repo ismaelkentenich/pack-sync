@@ -8,8 +8,10 @@ import Button from "@components/Button";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { Routes } from "@app/navigation/routes";
 import Card from "@components/Card";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ScanScreen() {
+  const insets = useSafeAreaInsets();
   const navigation = useAppNavigation(Routes.Scan);
   const [permission, requestPermission] = useCameraPermissions();
   const { currentSessionPackages, scanPackage, loadPackages } = usePackageStore();
@@ -47,10 +49,8 @@ export default function ScanScreen() {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer headerTitle="Scanner">
       <View style={styles.container}>
-        <Text style={styles.pageTitle}>Scan</Text>
-
         <View style={styles.cameraWrapper}>
           <CameraView
             style={styles.camera}
@@ -83,12 +83,14 @@ export default function ScanScreen() {
               </Card>
             )}
           />
-          <Button
-            title="Ver todos os pacotes"
-            onPress={() => {
-              navigation.navigate("PackagesList");
-            }}
-          />
+          <View style={{ paddingBottom: insets.bottom }}>
+            <Button
+              title="Ver todos os pacotes"
+              onPress={() => {
+                navigation.navigate("PackagesList");
+              }}
+            />
+          </View>
         </View>
       </View>
     </ScreenContainer>

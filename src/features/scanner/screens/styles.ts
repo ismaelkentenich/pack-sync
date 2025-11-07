@@ -6,19 +6,14 @@ export const styles = StyleSheet.create({
     flex: 1,
     gap: 16,
   },
-  pageTitle: {
-    fontSize: Theme.fontSizes.xxl,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingHorizontal: 16,
-  },
+
   camera: {
     flex: 1,
   },
   cameraWrapper: {
     width: "100%",
     overflow: "hidden",
-    height: "50%",
+    height: "45%",
   },
   infoWrapper: {
     flex: 1,

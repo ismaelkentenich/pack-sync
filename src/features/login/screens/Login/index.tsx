@@ -30,7 +30,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <ScreenContainer scrollable>
+    <ScreenContainer scrollable withHeader={false}>
       <View style={styles.container}>
         <Text style={styles.text}>Login</Text>
         <Input

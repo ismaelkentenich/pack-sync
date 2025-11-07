@@ -1,54 +1,65 @@
 import React from "react";
-import {
-  View,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
-  StatusBarStyle,
-  ViewStyle,
-} from "react-native";
+import { KeyboardAvoidingView, ScrollView, Platform, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
+import Header from "@components/Header";
 
 type ScreenContainerProps = {
   children: React.ReactNode;
-  backgroundColor?: string;
-  barStyle?: StatusBarStyle;
+  withHeader?: boolean;
+  headerTitle?: string;
+  showBackButton?: boolean;
   scrollable?: boolean;
-  style?: ViewStyle;
-  contentContainerStyle?: ViewStyle;
+  showVerticalScroll?: boolean;
+  withKeyboardAvoiding?: boolean;
+  withStatusBar?: boolean;
+  backgroundColorVariant?: "neutral50" | "neutral100";
+  style?: any;
+  contentContainerStyle?: any;
+  statusBarColor?: string;
 };
 
 export default function ScreenContainer({
   children,
-  backgroundColor = Theme.colors.neutral[50],
-  barStyle = "dark-content",
+  withHeader = true,
+  headerTitle,
+  showBackButton = true,
   scrollable = false,
+  showVerticalScroll = false,
+  withKeyboardAvoiding = false,
+  backgroundColorVariant = "neutral50",
   style,
   contentContainerStyle,
+  statusBarColor = Theme.colors.primary[600],
 }: ScreenContainerProps) {
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor }, style]}>
-      <StatusBar barStyle={barStyle} backgroundColor={backgroundColor} />
+  const backgroundColor =
+    backgroundColorVariant === "neutral100" ? Theme.colors.neutral[100] : Theme.colors.neutral[50];
 
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        {scrollable ? (
-          <ScrollView
-            contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {children}
-          </ScrollView>
-        ) : (
-          <View style={styles.container}>{children}</View>
-        )}
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+  return (
+    <View style={{ flex: 1 }}>
+      <StatusBar backgroundColor={statusBarColor} barStyle="dark-content" translucent={false} />
+
+      <SafeAreaView style={[styles.container, { backgroundColor: statusBarColor }, style]}>
+        <KeyboardAvoidingView
+          style={{ flex: 1, backgroundColor }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          enabled={withKeyboardAvoiding}
+        >
+          {withHeader && <Header title={headerTitle} showBack={showBackButton} />}
+          {scrollable ? (
+            <ScrollView
+              contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
+              showsVerticalScrollIndicator={showVerticalScroll}
+              keyboardShouldPersistTaps="handled"
+            >
+              {children}
+            </ScrollView>
+          ) : (
+            children
+          )}
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }

@@ -13,7 +13,7 @@ export default function PackagesListScreen() {
   }, []);
 
   return (
-    <ScreenContainer>
+    <ScreenContainer headerTitle="Lista de Pacotes">
       <View style={styles.container}>
         {packages.length === 0 ? (
           <Text style={styles.emptyScreenText}>Nenhum pacote encontrado</Text>
