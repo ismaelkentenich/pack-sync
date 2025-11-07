@@ -1,31 +1,35 @@
 import { create } from "zustand";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-} | null;
+import { User, getUserByEmail, insertUser } from "src/services/database/auth/users";
 
 type AuthState = {
-  user: User;
+  user: User | null;
   isAuthenticated: boolean;
-  login: (user: Exclude<User, null>) => void;
+  login: (email: string) => Promise<void>;
   logout: () => void;
+  restoreSession: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
 
-  login: (user) =>
-    set({
-      user,
-      isAuthenticated: true,
-    }),
+  login: async (email) => {
+    let user = getUserByEmail(email);
 
-  logout: () =>
-    set({
-      user: null,
-      isAuthenticated: false,
-    }),
+    if (!user) {
+      insertUser({ email });
+      user = getUserByEmail(email);
+    }
+
+    set({ user, isAuthenticated: true });
+  },
+
+  logout: () => {
+    set({ user: null, isAuthenticated: false });
+  },
+
+  restoreSession: async () => {
+    const user = getUserByEmail("teste@email.com");
+    if (user) set({ user, isAuthenticated: true });
+  },
 }));

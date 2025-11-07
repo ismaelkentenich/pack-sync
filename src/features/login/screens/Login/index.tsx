@@ -13,26 +13,22 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, "
 
 export default function LoginScreen() {
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  const login = useAuthStore((state) => state.login);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const login = useAuthStore((state) => state.login);
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert("Erro", "Preencha e-mail e senha");
+  const handleLogin = async () => {
+    if (!email) {
+      Alert.alert("Erro", "Digite seu e-mail.");
       return;
     }
 
-    if (email === "teste@email.com" && password === "123456") {
-      login({
-        id: "1",
-        name: "Ismael Mesquita",
-        email,
-      });
-
-      navigation.navigate("Home");
-    } else {
-      Alert.alert("Erro", "Credenciais inválidas");
+    try {
+      await login(email); 
+      navigation.navigate("Home")
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erro", "Não foi possível fazer login.");
     }
   };
 
