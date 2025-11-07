@@ -12,7 +12,7 @@ type ScreenContainerProps = {
 
 export default function ScreenContainer({
   children,
-  backgroundColor = Theme.colors.neutral[100],
+  backgroundColor = Theme.colors.neutral[50],
   barStyle = "dark-content",
   style,
 }: ScreenContainerProps) {

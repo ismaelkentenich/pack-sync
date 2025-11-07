@@ -2,15 +2,13 @@ import { StyleSheet } from "react-native";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 16,
+  button: {
+    width: "100%",
+    alignItems: "center",
     justifyContent: "center",
-    gap: 24,
+    borderWidth: 1,
   },
   text: {
-    fontSize: Theme.fontSizes.xxl,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: "600",
   },
 });

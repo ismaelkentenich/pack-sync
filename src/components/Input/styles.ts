@@ -4,8 +4,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     width: "100%",
-    paddingVertical: 16,
-    gap: 4,
+    gap: 8,
   },
   label: {
     fontSize: Theme.fontSizes.md,
