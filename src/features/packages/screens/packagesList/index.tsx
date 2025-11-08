@@ -6,8 +6,10 @@ import { styles } from "./styles";
 import { usePackageStore } from "@store/packages/usePackageStore";
 import Input from "@components/Input";
 import Theme from "@theme/theme";
+import { useAppNavigation } from "@hooks/useAppNavigation";
 
 export default function PackagesListScreen() {
+  const navigation = useAppNavigation("PackagesList");
   const { packages, loadPackages } = usePackageStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshing, setRefreshing] = useState(false);
@@ -64,7 +66,10 @@ export default function PackagesListScreen() {
               />
             }
             renderItem={({ item }) => (
-              <Card style={styles.card}>
+              <Card
+                style={styles.card}
+                onPress={() => navigation.navigate("PackageDetails", { pkg: item })}
+              >
                 <View style={{ flexDirection: "column" }}>
                   <Text style={styles.cardText}>Código: {item.code}</Text>
                   <Text style={styles.cardText}>Status: {item.status}</Text>
