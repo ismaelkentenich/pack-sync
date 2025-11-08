@@ -7,6 +7,7 @@ import { usePackageStore } from "@store/packages/usePackageStore";
 import Input from "@components/Input";
 import Theme from "@theme/theme";
 import { useAppNavigation } from "@hooks/useAppNavigation";
+import PackageCard from "@components/PackageCard";
 
 export default function PackagesListScreen() {
   const navigation = useAppNavigation("PackagesList");
@@ -66,18 +67,10 @@ export default function PackagesListScreen() {
               />
             }
             renderItem={({ item }) => (
-              <Card
-                style={styles.card}
+              <PackageCard
+                item={item}
                 onPress={() => navigation.navigate("PackageDetails", { pkg: item })}
-              >
-                <View style={{ flexDirection: "column" }}>
-                  <Text style={styles.cardText}>Código: {item.code}</Text>
-                  <Text style={styles.cardText}>Status: {item.status}</Text>
-                  <Text style={styles.cardText}>
-                    Escaneado em: {new Date(item.scanned_at).toLocaleString()}
-                  </Text>
-                </View>
-              </Card>
+              />
             )}
           />
         )}

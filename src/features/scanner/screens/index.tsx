@@ -10,6 +10,7 @@ import { Routes } from "@app/navigation/routes";
 import Card from "@components/Card";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Theme from "@theme/theme";
+import PackageCard from "@components/PackageCard";
 
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
@@ -78,16 +79,7 @@ export default function ScanScreen() {
                 <Text style={styles.infoText}>Pacotes bipados nesta sessão:</Text>
               </View>
             }
-            renderItem={({ item }) => (
-              <Card style={styles.scannedItemContainer}>
-                <Text style={styles.scannedItemText}>Código: {item.code}</Text>
-                <Text style={styles.scannedItemText}>Status: {item.status}</Text>
-                <Text style={styles.scannedItemText}>Delivery: {item.deliveryStatus}</Text>
-                <Text style={styles.scannedItemText}>
-                  Bipado em: {new Date(item.scanned_at).toLocaleString()}
-                </Text>
-              </Card>
-            )}
+            renderItem={({ item }) => <PackageCard item={item} />}
           />
           <View style={{ paddingBottom: insets.bottom }}>
             <Button
