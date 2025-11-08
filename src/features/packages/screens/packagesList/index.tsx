@@ -1,6 +1,6 @@
 import Card from "@components/Card";
 import ScreenContainer from "@components/ScreenContainer";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { styles } from "./styles";
 import { usePackageStore } from "@store/packages/usePackageStore";
@@ -8,12 +8,17 @@ import Input from "@components/Input";
 import Theme from "@theme/theme";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import PackageCard from "@components/PackageCard";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Package } from "@services/database/packages/packages";
+import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 
 export default function PackagesListScreen() {
   const navigation = useAppNavigation("PackagesList");
+  const updateStatusModalRef = useRef<BottomSheetModal>(null);
   const { packages, loadPackages } = usePackageStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
 
   const normalize = (text: string) =>
     text
@@ -35,6 +40,11 @@ export default function PackagesListScreen() {
   useEffect(() => {
     loadPackages();
   }, []);
+
+  const handleOpenUpdateModal = (pkg: Package) => {
+    setSelectedPackage(pkg);
+    updateStatusModalRef.current?.present();
+  };
 
   return (
     <ScreenContainer headerTitle="Lista de Pacotes">
@@ -70,11 +80,23 @@ export default function PackagesListScreen() {
               <PackageCard
                 item={item}
                 onPress={() => navigation.navigate("PackageDetails", { pkg: item })}
+                onPressUpdate={() => handleOpenUpdateModal(item)}
+                showButtons={true}
               />
             )}
           />
         )}
       </View>
+
+      {selectedPackage && (
+        <UpdateStatusModal
+          ref={updateStatusModalRef}
+          handleCloseModal={() => updateStatusModalRef.current?.close()}
+          packageId={selectedPackage.id!}
+          packageCode={selectedPackage.code}
+          currentStatus={selectedPackage.status}
+        />
+      )}
     </ScreenContainer>
   );
 }

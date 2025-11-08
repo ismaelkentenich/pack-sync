@@ -23,12 +23,13 @@ export default forwardRef(function UpdateStatusModal(
   ref: Ref<BottomSheetModal>,
 ) {
   const insets = useSafeAreaInsets();
-  const { changeStatus } = usePackageStore();
+  const { changeStatus, loadPackages } = usePackageStore();
 
   const [selectedStatus, setSelectedStatus] = useState<PackageStatus>(currentStatus);
 
   const handleUpdate = () => {
     changeStatus(packageId, selectedStatus);
+    loadPackages();
     handleCloseModal();
   };
 
