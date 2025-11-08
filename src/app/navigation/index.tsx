@@ -1,21 +1,29 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import LoginScreen from "../../features/login/screens/Login";
-import HomeScreen from "../../features/home/screens";
-import { RootStackParamList } from "./types";
-import ScanScreen from "@features/scanner/screens";
-import PackagesListScreen from "@features/packages/screens/packagesList";
-import PackageDetailsScreen from "@features/packages/screens/packageDetails";
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import React from "react";
+import { AuthStack } from "./AuthStack";
+import { AppStack } from "./AppStack";
+import { useAuthStore } from "@store/auth/useAuthStore";
+import { usePersistedAuth } from "@hooks/usePersistedAuth";
+import { View, ActivityIndicator } from "react-native";
+import Theme from "@theme/theme";
 
 export function NavigationStack() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Scan" component={ScanScreen} />
-      <Stack.Screen name="PackagesList" component={PackagesListScreen} />
-      <Stack.Screen name="PackageDetails" component={PackageDetailsScreen} />
-    </Stack.Navigator>
-  );
+  const { isAuthenticated } = useAuthStore();
+  const { isRestoring } = usePersistedAuth();
+
+  if (isRestoring) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: Theme.colors.neutral[50],
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color={Theme.colors.primary[600]} />
+      </View>
+    );
+  }
+
+  return isAuthenticated ? <AppStack /> : <AuthStack />;
 }
