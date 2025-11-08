@@ -19,11 +19,21 @@ export const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 16,
   },
-  infoText: {
+  infoHeader: {
+    paddingHorizontal: 16,
     paddingVertical: 8,
-    fontWeight: "bold",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  infoText: {
+    fontWeight: "600",
     fontSize: Theme.fontSizes.lg,
     color: Theme.colors.neutral[900],
+  },
+  infoTouchableText: {
+    fontWeight: "400",
+    fontSize: Theme.fontSizes.md,
+    color: Theme.colors.primary[600],
   },
   scannedItemContainer: {
     flex: 1,

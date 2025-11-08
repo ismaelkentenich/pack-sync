@@ -7,17 +7,23 @@ import { usePackageStore } from "@store/packages/usePackageStore";
 import Theme from "@theme/theme";
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from "expo-camera";
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
 
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation(Routes.Scan);
+  const updateAllModalRef = useRef<BottomSheetModal>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const { currentSessionPackages, scanPackage, loadPackages } = usePackageStore();
 
   const scannedCodesRef = useRef<Set<string>>(new Set());
+
+  const openUpdateAllModal = () => updateAllModalRef.current?.present();
+  const closeUpdateAllModal = () => updateAllModalRef.current?.close();
 
   useEffect(() => {
     loadPackages();
@@ -70,16 +76,18 @@ export default function ScanScreen() {
           />
         </View>
 
+        <View style={styles.infoHeader}>
+          <Text style={styles.infoText}>Pacotes bipados</Text>
+          <TouchableOpacity onPress={openUpdateAllModal}>
+            <Text style={styles.infoTouchableText}>Atualizar todos</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.infoWrapper}>
           <FlatList
             data={currentSessionPackages}
             keyExtractor={(item) => item.code}
             contentContainerStyle={styles.flatlistContainer}
-            ListHeaderComponent={
-              <View>
-                <Text style={styles.infoText}>Pacotes bipados nesta sessão:</Text>
-              </View>
-            }
             renderItem={({ item }) => <PackageCard item={item} pressable={false} />}
           />
           <View style={styles.buttonContainer}>
@@ -92,6 +100,11 @@ export default function ScanScreen() {
           </View>
         </View>
       </View>
+      <UpdateAllPackagesModal
+        ref={updateAllModalRef}
+        handleCloseModal={closeUpdateAllModal}
+        onSuccessNavigate={() => navigation.navigate("PackagesList")}
+      />
     </ScreenContainer>
   );
 }

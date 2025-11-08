@@ -33,18 +33,19 @@ export const usePackageStore = create<PackageState>((set, get) => ({
   scanPackage: (code) => {
     const { user } = useAuthStore.getState();
     if (!user?.id) return;
-    const clientCode = user?.id;
+    const clientCode = user.id;
 
     const existing = getAllPackages(clientCode).find((p) => p.code === code);
     if (!existing) {
-      const newPkg: Package = {
+      const pkgToInsert: Package = {
         code,
         status: PackageStatus.COLETADO,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode,
         scanned_at: new Date().toISOString(),
       };
-      insertPackage(newPkg);
+
+      const newPkg = insertPackage(pkgToInsert);
 
       set((state) => ({
         packages: [newPkg, ...state.packages],

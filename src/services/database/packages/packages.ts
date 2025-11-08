@@ -21,6 +21,8 @@ export function insertPackage(pkg: Package) {
     VALUES ('${safeCode}', '${pkg.status}', '${pkg.deliveryStatus}', ${pkg.clientCode ?? "NULL"}, '${pkg.scanned_at}')
   `);
   }
+  const inserted = getFirstSync<Package>(`SELECT * FROM packages WHERE code='${safeCode}'`);
+  return inserted!;
 }
 
 export function updatePackageStatus(id: number, status: PackageStatus, clientCode?: number) {
