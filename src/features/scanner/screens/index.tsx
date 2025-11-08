@@ -1,16 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
-import { View, Text, FlatList, ActivityIndicator } from "react-native";
-import { useCameraPermissions, CameraView, BarcodeScanningResult } from "expo-camera";
-import ScreenContainer from "@components/ScreenContainer";
-import { styles } from "./styles";
-import { usePackageStore } from "@store/packages/usePackageStore";
-import Button from "@components/Button";
-import { useAppNavigation } from "@hooks/useAppNavigation";
 import { Routes } from "@app/navigation/routes";
-import Card from "@components/Card";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Theme from "@theme/theme";
+import Button from "@components/Button";
 import PackageCard from "@components/PackageCard";
+import ScreenContainer from "@components/ScreenContainer";
+import { useAppNavigation } from "@hooks/useAppNavigation";
+import { usePackageStore } from "@store/packages/usePackageStore";
+import Theme from "@theme/theme";
+import { BarcodeScanningResult, CameraView, useCameraPermissions } from "expo-camera";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { styles } from "./styles";
 
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
@@ -42,7 +41,9 @@ export default function ScanScreen() {
           <Text style={styles.noPermissionTitle}>
             Para escanear os pacotes, ative a permissão da câmera.
           </Text>
-          <Button title="Conceder permissão" onPress={requestPermission} />
+          <View style={styles.buttonContainer}>
+            <Button title="Conceder permissão" onPress={requestPermission} />
+          </View>
         </View>
       </ScreenContainer>
     );
@@ -57,7 +58,7 @@ export default function ScanScreen() {
 
   return (
     <ScreenContainer headerTitle="Scanner">
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <View style={styles.cameraWrapper}>
           <CameraView
             style={styles.camera}
@@ -79,9 +80,9 @@ export default function ScanScreen() {
                 <Text style={styles.infoText}>Pacotes bipados nesta sessão:</Text>
               </View>
             }
-            renderItem={({ item }) => <PackageCard item={item} />}
+            renderItem={({ item }) => <PackageCard item={item} pressable={false} />}
           />
-          <View style={{ paddingBottom: insets.bottom }}>
+          <View style={styles.buttonContainer}>
             <Button
               title="Ver todos os pacotes"
               onPress={() => {

@@ -61,4 +61,8 @@ export const styles = StyleSheet.create({
     gap: 24,
     paddingHorizontal: 16,
   },
+  buttonContainer: {
+    width: "100%",
+    height: 48,
+  },
 });

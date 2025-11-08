@@ -1,13 +1,13 @@
+import { Routes } from "@app/navigation/routes";
 import Card from "@components/Card";
 import ScreenContainer from "@components/ScreenContainer";
+import { useAppNavigation } from "@hooks/useAppNavigation";
+import { useAuthStore } from "@store/auth/useAuthStore";
 import Theme from "@theme/theme";
 import { ScanQrCode, Scroll } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
-import { useAuthStore } from "src/store/auth/useAuthStore";
 import { styles } from "./styles";
-import { useAppNavigation } from "@hooks/useAppNavigation";
-import { Routes } from "@app/navigation/routes";
 
 export default function HomeScreen() {
   const { user } = useAuthStore();

@@ -7,6 +7,7 @@ import {
 } from "@services/database/packages/packages";
 import { PackageStatus, DeliveryStatus } from "@services/database/packages/enums";
 import { useAuthStore } from "@store/auth/useAuthStore";
+import { sendToWebhook } from "@services/webhook/sendToWebhook";
 
 type PackageState = {
   packages: Package[];
@@ -15,6 +16,7 @@ type PackageState = {
   scanPackage: (code: string) => void;
   changeStatus: (id: number, status: PackageStatus, clientName?: string) => void;
   resetSession: () => void;
+  sendPackage: (pkg: Package) => Promise<void>;
 };
 
 export const usePackageStore = create<PackageState>((set, get) => ({
@@ -60,4 +62,14 @@ export const usePackageStore = create<PackageState>((set, get) => ({
   },
 
   resetSession: () => set({ currentSessionPackages: [] }),
+
+  async sendPackage(pkg) {
+    const result = await sendToWebhook(pkg);
+    if (result.success) {
+      const { user } = useAuthStore.getState();
+      if (user?.id) {
+        set({ packages: getAllPackages(user.id) });
+      }
+    }
+  },
 }));

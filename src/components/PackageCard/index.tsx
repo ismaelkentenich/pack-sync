@@ -10,11 +10,18 @@ type PackageCards = {
   onPress?: () => void;
   showButtons?: boolean;
   onPressUpdate?: () => void;
+  pressable?: boolean;
 };
 
-export default function PackageCard({ item, onPress, showButtons, onPressUpdate }: PackageCards) {
+export default function PackageCard({
+  item,
+  onPress,
+  showButtons,
+  onPressUpdate,
+  pressable = true,
+}: PackageCards) {
   return (
-    <Card style={styles.card} onPress={!showButtons ? onPress : undefined}>
+    <Card style={styles.card} onPress={!showButtons ? onPress : undefined} touchable={pressable}>
       <View style={styles.infoContainer}>
         <Text style={styles.codeText}>Código: {item.code}</Text>
         <Text style={styles.text}>Status do pacote: {item.status}</Text>

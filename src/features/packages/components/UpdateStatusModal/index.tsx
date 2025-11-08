@@ -1,36 +1,47 @@
-import React, { forwardRef, Ref, useState } from "react";
-import { View, Text } from "react-native";
+import Button from "@components/Button";
+import Card from "@components/Card";
 import { ModalCloseIcon, ModalWrapper } from "@components/ModalWrapper";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { styles } from "./styles";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { PackageStatus } from "@services/database/packages/enums";
-import { usePackageStore } from "@store/packages/usePackageStore";
 import { Picker } from "@react-native-picker/picker";
-import Button from "@components/Button";
+import { PackageStatus } from "@services/database/packages/enums";
+import { Package } from "@services/database/packages/packages";
+import { usePackageStore } from "@store/packages/usePackageStore";
 import Theme from "@theme/theme";
-import Card from "@components/Card";
+import React, { forwardRef, Ref, useState } from "react";
+import { Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { styles } from "./styles";
 
 interface UpdateStatusModalProps {
   handleCloseModal: () => void;
-  packageId: number;
-  currentStatus: PackageStatus;
-  packageCode: string;
+  packageData: Package;
 }
 
 export default forwardRef(function UpdateStatusModal(
-  { handleCloseModal, packageId, currentStatus, packageCode }: UpdateStatusModalProps,
+  { handleCloseModal, packageData }: UpdateStatusModalProps,
   ref: Ref<BottomSheetModal>,
 ) {
   const insets = useSafeAreaInsets();
-  const { changeStatus, loadPackages } = usePackageStore();
+  const { changeStatus, loadPackages, sendPackage } = usePackageStore();
 
-  const [selectedStatus, setSelectedStatus] = useState<PackageStatus>(currentStatus);
+  const [selectedStatus, setSelectedStatus] = useState<PackageStatus>(packageData.status);
 
   const handleUpdate = () => {
-    changeStatus(packageId, selectedStatus);
+    changeStatus(packageData.id!, selectedStatus);
     loadPackages();
     handleCloseModal();
+  };
+
+  const handleSendWebhook = async () => {
+    try {
+      changeStatus(packageData.id!, selectedStatus);
+      await sendPackage({
+        ...packageData,
+        status: selectedStatus,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -41,7 +52,7 @@ export default forwardRef(function UpdateStatusModal(
 
         <Text style={styles.text}>Selecione o novo status do pacote:</Text>
         <Card touchable={false}>
-          <Text style={styles.text}>Pacote: {packageCode}</Text>
+          <Text style={styles.text}>Pacote: {packageData.code}</Text>
         </Card>
 
         <View style={styles.pickerWrapper}>
@@ -59,6 +70,7 @@ export default forwardRef(function UpdateStatusModal(
           </Picker>
         </View>
         <Button title="Atualizar" onPress={handleUpdate} />
+        <Button title="Enviar para Webhook" onPress={handleSendWebhook} variant="outline" />
       </View>
     </ModalWrapper>
   );

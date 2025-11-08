@@ -46,9 +46,7 @@ export default function PackageDetailsScreen() {
       <UpdateStatusModal
         ref={updateStatusModalRef}
         handleCloseModal={() => updateStatusModalRef.current?.close()}
-        packageId={packageData.id!}
-        packageCode={pkg.code}
-        currentStatus={packageData.status}
+        packageData={packageData}
       />
     </ScreenContainer>
   );
