@@ -7,9 +7,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 24,
   },
+  emptyScreenContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
   emptyScreenText: {
     textAlign: "center",
     color: Theme.colors.neutral[700],
+    fontSize: Theme.fontSizes.md,
   },
   card: {
     flex: 1,
