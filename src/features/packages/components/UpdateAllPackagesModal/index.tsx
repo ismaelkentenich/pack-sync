@@ -63,7 +63,7 @@ export default forwardRef(function UpdateAllPackagesModal(
   };
 
   return (
-    <ModalWrapper ref={ref} snapPoints={["60%"]} style={styles.wrapper}>
+    <ModalWrapper ref={ref} snapPoints={["60%"]} style={styles.wrapper} hasInputInsideModal>
       <ModalCloseIcon onPress={handleCloseModal} />
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <Text style={styles.title}>Alterar status de todos os pacotes</Text>
@@ -81,10 +81,14 @@ export default forwardRef(function UpdateAllPackagesModal(
               dropdownIconColor={Theme.colors.neutral[300]}
               itemStyle={styles.pickerItem}
               mode="dropdown"
-
             >
               {Object.values(PackageStatus).map((status) => (
-                <Picker.Item key={status} label={status} value={status} style={styles.pickerLabel} />
+                <Picker.Item
+                  key={status}
+                  label={status}
+                  value={status}
+                  style={styles.pickerLabel}
+                />
               ))}
             </Picker>
           </View>

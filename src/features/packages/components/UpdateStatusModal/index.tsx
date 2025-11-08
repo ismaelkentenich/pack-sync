@@ -59,7 +59,7 @@ export default forwardRef(function UpdateStatusModal(
   };
 
   return (
-    <ModalWrapper ref={ref} style={styles.wrapper}>
+    <ModalWrapper ref={ref} style={styles.wrapper} hasInputInsideModal>
       <ModalCloseIcon onPress={handleCloseModal} />
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <Text style={styles.title}>Alteração de status </Text>
@@ -94,7 +94,7 @@ export default forwardRef(function UpdateStatusModal(
             />
           </View>
         )}
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, { paddingBottom: insets.bottom }]}>
           <Button title="Atualizar" onPress={handleUpdate} />
           <Button title="Enviar para Webhook" onPress={handleSendWebhook} variant="outline" />
         </View>

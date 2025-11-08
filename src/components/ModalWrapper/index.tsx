@@ -4,9 +4,11 @@ import {
   BottomSheetView,
   useBottomSheetModal,
 } from "@gorhom/bottom-sheet";
-import { forwardRef, ReactNode, Ref } from "react";
+import { forwardRef, ReactNode, Ref, useEffect } from "react";
 import {
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   TouchableOpacity,
   TouchableOpacityProps,
   TouchableWithoutFeedback,
@@ -17,6 +19,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { styles } from "./styles";
 import { X } from "lucide-react-native";
 import Theme from "@theme/theme";
+import { useIsKeyboardOpened } from "@hooks/useIsKeyboardOpened";
 
 interface ModalWrapperProps {
   children: ReactNode;
@@ -25,6 +28,7 @@ interface ModalWrapperProps {
   style?: ViewProps["style"];
   snapPoints?: (string | number)[];
   isModalFixed?: boolean;
+  hasInputInsideModal?: boolean;
 }
 
 interface CloseIconProps extends TouchableOpacityProps {
@@ -40,10 +44,23 @@ export const ModalWrapper = forwardRef(
       snapPoints,
       style,
       isModalFixed = false,
+      hasInputInsideModal,
     }: ModalWrapperProps,
     ref: Ref<BottomSheetModal>,
   ) => {
+    const isKeyboardOpened = useIsKeyboardOpened();
     const insets = useSafeAreaInsets();
+
+    useEffect(() => {
+      if (!ref || typeof ref === "function") return;
+      const instance = ref.current;
+      if (!instance) return;
+      if (isKeyboardOpened && hasInputInsideModal) {
+        instance.expand();
+      } else if (!isKeyboardOpened) {
+        instance.snapToIndex(0);
+      }
+    }, [hasInputInsideModal, isKeyboardOpened, ref]);
 
     return (
       <BottomSheetModal
@@ -51,7 +68,7 @@ export const ModalWrapper = forwardRef(
         handleIndicatorStyle={{ display: "none" }}
         enablePanDownToClose={!isBlocked}
         onDismiss={onDismiss}
-        snapPoints={snapPoints || ["55%", "75%"]}
+        snapPoints={snapPoints || ["60%", "75%", "95%"]}
         keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
         android_keyboardInputMode="adjustResize"
@@ -70,9 +87,17 @@ export const ModalWrapper = forwardRef(
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={[styles.safeAreaContainer]} edges={["bottom"]}>
-            <BottomSheetView style={[styles.container, style, { paddingBottom: insets.bottom }]}>
-              {children}
-            </BottomSheetView>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ flex: 1 }}
+              keyboardVerticalOffset={insets.bottom + 24}
+            >
+              <BottomSheetView
+                style={[styles.container, style, { paddingBottom: insets.bottom + 24 }]}
+              >
+                {children}
+              </BottomSheetView>
+            </KeyboardAvoidingView>
           </SafeAreaView>
         </TouchableWithoutFeedback>
       </BottomSheetModal>
