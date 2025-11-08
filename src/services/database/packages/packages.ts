@@ -14,10 +14,13 @@ export type Package = {
 export function insertPackage(pkg: Package) {
   const safeCode = pkg.code.replace(/'/g, "''");
 
-  runSync(`
+  const existing = getFirstSync<Package>(`SELECT * FROM packages WHERE code='${safeCode}'`);
+  if (!existing) {
+    runSync(`
     INSERT INTO packages (code, status, deliveryStatus, clientCode, scanned_at)
     VALUES ('${safeCode}', '${pkg.status}', '${pkg.deliveryStatus}', ${pkg.clientCode ?? "NULL"}, '${pkg.scanned_at}')
   `);
+  }
 }
 
 export function updatePackageStatus(id: number, status: PackageStatus, clientCode?: number) {
