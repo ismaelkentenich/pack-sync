@@ -6,26 +6,24 @@ export type Package = {
   code: string;
   status: PackageStatus;
   deliveryStatus: DeliveryStatus;
-  clientName?: string;
+  clientCode?: number;
   scanned_at: string;
   sent_at?: string;
 };
 
 export function insertPackage(pkg: Package) {
   const safeCode = pkg.code.replace(/'/g, "''");
-  const safeClient = pkg.clientName?.replace(/'/g, "''") ?? null;
 
   runSync(`
-    INSERT INTO packages (code, status, deliveryStatus, clientName, scanned_at)
-    VALUES ('${safeCode}', '${pkg.status}', '${pkg.deliveryStatus}', ${safeClient ? `'${safeClient}'` : "NULL"}, '${pkg.scanned_at}')
+    INSERT INTO packages (code, status, deliveryStatus, clientCode, scanned_at)
+    VALUES ('${safeCode}', '${pkg.status}', '${pkg.deliveryStatus}', ${pkg.clientCode ?? "NULL"}, '${pkg.scanned_at}')
   `);
 }
 
-export function updatePackageStatus(id: number, status: PackageStatus, clientName?: string) {
-  const safeClient = clientName?.replace(/'/g, "''") ?? null;
+export function updatePackageStatus(id: number, status: PackageStatus, clientCode?: number) {
   runSync(`
     UPDATE packages 
-    SET status='${status}', clientName=${safeClient ? `'${safeClient}'` : "NULL"} 
+    SET status='${status}', clientCode=${clientCode ?? "NULL"}
     WHERE id=${id}
   `);
 }
@@ -39,6 +37,8 @@ export function markPackageSent(id: number) {
   `);
 }
 
-export function getAllPackages(): Package[] {
-  return getAllSync<Package>("SELECT * FROM packages ORDER BY scanned_at DESC");
+export function getAllPackages(clientCode: number): Package[] {
+  return getAllSync<Package>(
+    `SELECT * FROM packages WHERE clientCode = ${clientCode} ORDER BY scanned_at DESC`,
+  );
 }

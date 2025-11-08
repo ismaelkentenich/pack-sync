@@ -4,8 +4,9 @@ import {
   insertPackage,
   updatePackageStatus,
   getAllPackages,
-} from "src/services/database/packages/packages";
-import { PackageStatus, DeliveryStatus } from "src/services/database/packages/enums";
+} from "@services/database/packages/packages";
+import { PackageStatus, DeliveryStatus } from "@services/database/packages/enums";
+import { useAuthStore } from "@store/auth/useAuthStore";
 
 type PackageState = {
   packages: Package[];
@@ -21,17 +22,24 @@ export const usePackageStore = create<PackageState>((set, get) => ({
   currentSessionPackages: [],
 
   loadPackages: () => {
-    const pkgs = getAllPackages();
+    const { user } = useAuthStore.getState();
+    if (!user?.id) return;
+    const pkgs = getAllPackages(user?.id);
     set({ packages: pkgs });
   },
 
   scanPackage: (code) => {
-    const existing = getAllPackages().find((p) => p.code === code);
+    const { user } = useAuthStore.getState();
+    if (!user?.id) return;
+    const clientCode = user?.id;
+
+    const existing = getAllPackages(clientCode).find((p) => p.code === code);
     if (!existing) {
       const newPkg: Package = {
         code,
         status: PackageStatus.COLETADO,
         deliveryStatus: DeliveryStatus.PENDING,
+        clientCode,
         scanned_at: new Date().toISOString(),
       };
       insertPackage(newPkg);
@@ -43,9 +51,12 @@ export const usePackageStore = create<PackageState>((set, get) => ({
     }
   },
 
-  changeStatus: (id, status, clientName) => {
-    updatePackageStatus(id, status, clientName);
-    set({ packages: getAllPackages() });
+  changeStatus: (id, status) => {
+    const { user } = useAuthStore.getState();
+    if (!user?.id) return;
+    const clientCode = user?.id;
+    updatePackageStatus(id, status, clientCode);
+    set({ packages: getAllPackages(clientCode) });
   },
 
   resetSession: () => set({ currentSessionPackages: [] }),

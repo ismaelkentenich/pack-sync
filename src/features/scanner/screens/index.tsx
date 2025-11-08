@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { useCameraPermissions, CameraView, BarcodeScanningResult } from "expo-camera";
 import ScreenContainer from "@components/ScreenContainer";
 import { styles } from "./styles";
@@ -9,6 +9,7 @@ import { useAppNavigation } from "@hooks/useAppNavigation";
 import { Routes } from "@app/navigation/routes";
 import Card from "@components/Card";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Theme from "@theme/theme";
 
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
@@ -25,7 +26,10 @@ export default function ScanScreen() {
   if (!permission) {
     return (
       <ScreenContainer>
-        <Text>Solicitando permissão de câmera...</Text>
+        <View style={styles.noPermissionContainer}>
+          <Text style={styles.noPermissionTitle}>Solicitando permissão de câmera...</Text>
+          <ActivityIndicator size="large" color={Theme.colors.primary[600]} />
+        </View>
       </ScreenContainer>
     );
   }
@@ -33,10 +37,12 @@ export default function ScanScreen() {
   if (!permission.granted) {
     return (
       <ScreenContainer>
-        <Text>Permissão de câmera negada.</Text>
-        <Text style={{ color: "blue", marginTop: 10 }} onPress={requestPermission}>
-          Conceder permissão
-        </Text>
+        <View style={styles.noPermissionContainer}>
+          <Text style={styles.noPermissionTitle}>
+            Para escanear os pacotes, ative a permissão da câmera.
+          </Text>
+          <Button title="Conceder permissão" onPress={requestPermission} />
+        </View>
       </ScreenContainer>
     );
   }

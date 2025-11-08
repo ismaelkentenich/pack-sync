@@ -6,5 +6,11 @@ export async function setupAuthDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS session (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      user_id INTEGER,
+      FOREIGN KEY (user_id) REFERENCES users (id)
+    );
   `);
 }

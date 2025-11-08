@@ -7,7 +7,7 @@ export const setupPackagesDatabase = () => {
       code TEXT UNIQUE NOT NULL,
       status TEXT NOT NULL DEFAULT 'Coletado',
       deliveryStatus TEXT NOT NULL DEFAULT 'pending',
-      clientName TEXT,
+      clientCode INTEGER,
       scanned_at TEXT NOT NULL,
       sent_at TEXT
     );

@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { User, getUserByEmail, insertUser } from "src/services/database/auth/users";
+import { User, getUserByEmail, getUserById, insertUser } from "@services/database/auth/users";
+import { clearSession, getSessionUserId, saveSession } from "@services/database/auth/session";
 
 type AuthState = {
   user: User | null;
@@ -14,22 +15,47 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
 
   login: async (email) => {
-    let user = getUserByEmail(email);
+    try {
+      let user = getUserByEmail(email);
+      if (!user) {
+        insertUser({ email });
+        user = getUserByEmail(email);
+      }
 
-    if (!user) {
-      insertUser({ email });
-      user = getUserByEmail(email);
+      if (!user?.id) throw new Error("User creation or retrieval failed");
+
+      saveSession(user.id);
+      set({ user, isAuthenticated: true });
+    } catch (error) {
+      console.error("[AUTH ERROR] login:", error);
     }
-
-    set({ user, isAuthenticated: true });
   },
 
   logout: () => {
-    set({ user: null, isAuthenticated: false });
+    try {
+      clearSession();
+      set({ user: null, isAuthenticated: false });
+    } catch (error) {
+      console.error("[AUTH ERROR] logout:", error);
+    }
   },
 
   restoreSession: async () => {
-    const user = getUserByEmail("teste@email.com");
-    if (user) set({ user, isAuthenticated: true });
+    try {
+      const userId = getSessionUserId();
+      if (!userId) {
+        console.log("[AUTH] No session found, skipping restore");
+        return;
+      }
+
+      const user = getUserById(userId);
+      if (user) {
+        set({ user, isAuthenticated: true });
+      } else {
+        console.warn("[AUTH] Session invalid — user not found");
+      }
+    } catch (error) {
+      console.error("[AUTH ERROR] restoreSession:", error);
+    }
   },
 }));

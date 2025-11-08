@@ -26,9 +26,10 @@ export default function PackagesListScreen() {
               <Card style={styles.card}>
                 <View style={{ flexDirection: "column" }}>
                   <Text style={styles.cardText}>Código: {item.code}</Text>
-                  <Text>Status: {item.status}</Text>
-                  <Text>Cliente: {item.clientName ?? "—"}</Text>
-                  <Text>Escaneado em: {new Date(item.scanned_at).toLocaleString()}</Text>
+                  <Text style={styles.cardText}>Status: {item.status}</Text>
+                  <Text style={styles.cardText}>
+                    Escaneado em: {new Date(item.scanned_at).toLocaleString()}
+                  </Text>
                 </View>
               </Card>
             )}

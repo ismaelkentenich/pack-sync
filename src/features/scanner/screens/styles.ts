@@ -1,12 +1,11 @@
 import { StyleSheet } from "react-native";
-import Theme from "../../../theme/theme";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 16,
   },
-
   camera: {
     flex: 1,
   },
@@ -41,5 +40,25 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     width: "100%",
     alignSelf: "center",
+  },
+  noPermissionContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 24,
+    paddingHorizontal: 16,
+  },
+  noPermissionTitle: {
+    fontSize: Theme.fontSizes.lg,
+    fontWeight: "500",
+    color: Theme.colors.neutral[900],
+    textAlign: "center",
+  },
+  loadingPermissionContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 24,
+    paddingHorizontal: 16,
   },
 });
