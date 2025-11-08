@@ -7,10 +7,12 @@ export const styles = StyleSheet.create({
     backgroundColor: Theme.colors.primary[600],
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
+    justifyContent: "center",
+    paddingHorizontal: 8,
   },
   backButton: {
+    position: "absolute",
+    left: 12,
     padding: 8,
   },
   placeholder: {
@@ -18,7 +20,12 @@ export const styles = StyleSheet.create({
   },
   title: {
     color: Theme.colors.neutral[50],
-    fontSize: Theme.fontSizes.xl,
+    fontSize: Theme.fontSizes.lg,
     fontWeight: "600",
+  },
+  logoutButton: {
+    position: "absolute",
+    right: 12,
+    padding: 8,
   },
 });

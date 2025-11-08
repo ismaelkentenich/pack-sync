@@ -7,12 +7,14 @@ import { Alert, Text, View } from "react-native";
 import { useAuthStore } from "src/store/auth/useAuthStore";
 import { styles } from "./styles";
 import { Routes } from "@app/navigation/routes";
+import { useIsKeyboardOpened } from "@hooks/useIsKeyboardOpened";
 
 export default function LoginScreen() {
   const navigation = useAppNavigation(Routes.Login);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const login = useAuthStore((state) => state.login);
+  const { isKeyboardOpened, keyboardHeight } = useIsKeyboardOpened();
 
   const handleLogin = async () => {
     if (!email) {
@@ -47,7 +49,11 @@ export default function LoginScreen() {
           secure
         />
 
-        <Button title="Login" onPress={handleLogin} />
+        <View
+          style={[styles.buttonContainer, isKeyboardOpened && { paddingBottom: keyboardHeight }]}
+        >
+          <Button title="Login" onPress={handleLogin} />
+        </View>
       </View>
     </ScreenContainer>
   );

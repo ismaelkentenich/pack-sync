@@ -13,4 +13,7 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  buttonContainer: {
+    width: "100%",
+  },
 });

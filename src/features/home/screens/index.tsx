@@ -14,7 +14,7 @@ export default function HomeScreen() {
   const navigation = useAppNavigation(Routes.Home);
 
   return (
-    <ScreenContainer withHeader headerTitle="Início" showBackButton={false}>
+    <ScreenContainer withHeader headerTitle="Início" showBackButton={false} showLogout={true}>
       <View style={styles.container}>
         <Text style={styles.userInfoText}>Olá {user?.email}</Text>
         <Card style={styles.card} onPress={() => navigation.navigate("Scan")}>

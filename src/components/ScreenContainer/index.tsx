@@ -18,6 +18,7 @@ type ScreenContainerProps = {
   style?: any;
   contentContainerStyle?: any;
   statusBarColor?: string;
+  showLogout?: boolean;
 };
 
 export default function ScreenContainer({
@@ -32,6 +33,7 @@ export default function ScreenContainer({
   style,
   contentContainerStyle,
   statusBarColor = Theme.colors.primary[600],
+  showLogout,
 }: ScreenContainerProps) {
   const backgroundColor =
     backgroundColorVariant === "neutral100" ? Theme.colors.neutral[100] : Theme.colors.neutral[50];
@@ -46,7 +48,7 @@ export default function ScreenContainer({
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           enabled={withKeyboardAvoiding}
         >
-          {withHeader && <Header title={headerTitle} showBack={showBackButton} />}
+          {withHeader && <Header title={headerTitle} showBack={showBackButton} showLogout={showLogout} />}
           {scrollable ? (
             <ScrollView
               contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
