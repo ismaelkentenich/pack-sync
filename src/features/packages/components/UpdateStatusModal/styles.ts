@@ -25,7 +25,6 @@ export const styles = StyleSheet.create({
     borderColor: Theme.colors.neutral[300],
     borderRadius: 4,
     overflow: "hidden",
-    marginVertical: 16,
   },
   pickerContainer: {
     color: Theme.colors.neutral[800],
@@ -40,5 +39,9 @@ export const styles = StyleSheet.create({
   pickerLabel: {
     fontSize: Theme.fontSizes.md,
     color: Theme.colors.neutral[800],
+  },
+  buttonContainer: {
+    gap: 16,
+    paddingVertical: 16,
   },
 });

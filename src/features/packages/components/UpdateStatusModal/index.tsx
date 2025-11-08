@@ -1,5 +1,6 @@
 import Button from "@components/Button";
 import Card from "@components/Card";
+import Input from "@components/Input";
 import { ModalCloseIcon, ModalWrapper } from "@components/ModalWrapper";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Picker } from "@react-native-picker/picker";
@@ -8,7 +9,7 @@ import { Package } from "@services/database/packages/packages";
 import { usePackageStore } from "@store/packages/usePackageStore";
 import Theme from "@theme/theme";
 import React, { forwardRef, Ref, useState } from "react";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
 
@@ -25,16 +26,28 @@ export default forwardRef(function UpdateStatusModal(
   const { changeStatus, loadPackages, sendPackage } = usePackageStore();
 
   const [selectedStatus, setSelectedStatus] = useState<PackageStatus>(packageData.status);
+  const [receiverName, setReceiverName] = useState("");
 
   const handleUpdate = () => {
+    if (selectedStatus === PackageStatus.ENTREGUE && !receiverName.trim()) {
+      Alert.alert("Campo obrigatório", "Informe o nome do recebedor.");
+      return;
+    }
+
     changeStatus(packageData.id!, selectedStatus);
     loadPackages();
     handleCloseModal();
   };
 
   const handleSendWebhook = async () => {
+    if (selectedStatus === PackageStatus.ENTREGUE && !receiverName.trim()) {
+      Alert.alert("Campo obrigatório", "Informe o nome do recebedor.");
+      return;
+    }
+
     try {
       changeStatus(packageData.id!, selectedStatus);
+      loadPackages();
       await sendPackage({
         ...packageData,
         status: selectedStatus,
@@ -42,10 +55,11 @@ export default forwardRef(function UpdateStatusModal(
     } catch (error) {
       console.error(error);
     }
+    handleCloseModal();
   };
 
   return (
-    <ModalWrapper ref={ref} snapPoints={["50%"]} style={styles.wrapper}>
+    <ModalWrapper ref={ref} style={styles.wrapper}>
       <ModalCloseIcon onPress={handleCloseModal} />
       <View style={[styles.container, { paddingBottom: insets.bottom }]}>
         <Text style={styles.title}>Alteração de status </Text>
@@ -69,8 +83,21 @@ export default forwardRef(function UpdateStatusModal(
             ))}
           </Picker>
         </View>
-        <Button title="Atualizar" onPress={handleUpdate} />
-        <Button title="Enviar para Webhook" onPress={handleSendWebhook} variant="outline" />
+
+        {selectedStatus === PackageStatus.ENTREGUE && (
+          <View>
+            <Text style={styles.text}>Nome do recebedor:</Text>
+            <Input
+              placeholder="Ex: João da Silva"
+              value={receiverName}
+              onChangeText={setReceiverName}
+            />
+          </View>
+        )}
+        <View style={styles.buttonContainer}>
+          <Button title="Atualizar" onPress={handleUpdate} />
+          <Button title="Enviar para Webhook" onPress={handleSendWebhook} variant="outline" />
+        </View>
       </View>
     </ModalWrapper>
   );
