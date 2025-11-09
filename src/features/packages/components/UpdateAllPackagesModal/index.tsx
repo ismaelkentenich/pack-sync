@@ -10,6 +10,7 @@ import React, { forwardRef, Ref, useState } from "react";
 import { Alert, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
+import { useShowAlert } from "@hooks/useShowAlert";
 
 interface UpdateAllPackagesModalProps {
   handleCloseModal: () => void;
@@ -21,6 +22,7 @@ export default forwardRef(function UpdateAllPackagesModal(
   ref: Ref<BottomSheetModal>,
 ) {
   const insets = useSafeAreaInsets();
+  const showAlert = useShowAlert((state) => state.show);
   const { currentSessionPackages, changeStatus, sendPackage, resetSession, loadPackages } =
     usePackageStore();
 
@@ -29,12 +31,12 @@ export default forwardRef(function UpdateAllPackagesModal(
 
   const handleApplyToAll = async () => {
     if (currentSessionPackages.length === 0) {
-      Alert.alert("Aviso", "Nenhum pacote bipado nesta sessão.");
+      showAlert("Nenhum pacote bipado nesta sessão.", "error");
       return;
     }
 
     if (selectedStatus === PackageStatus.ENTREGUE && !receiverName.trim()) {
-      Alert.alert("Campo obrigatório", "Informe o nome do recebedor.");
+      showAlert("Informe o nome do recebedor.", "error");
       return;
     }
 
@@ -57,15 +59,11 @@ export default forwardRef(function UpdateAllPackagesModal(
       resetSession();
       loadPackages();
       handleCloseModal();
-      Alert.alert("Sucesso", "Status atualizado e pacotes enviados ao webhook!", [
-        {
-          text: "OK",
-          onPress: onSuccessNavigate,
-        },
-      ]);
+      showAlert("Status atualizado e pacotes enviados ao webhook!", "success");
+      onSuccessNavigate?.();
     } catch (error) {
       console.error(error);
-      Alert.alert("Erro", "Falha ao atualizar os pacotes.");
+      showAlert("Falha ao atualizar os pacotes.", "error");
     }
   };
 

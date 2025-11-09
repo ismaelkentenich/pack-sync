@@ -7,17 +7,30 @@ import { Alert, Text, View } from "react-native";
 import { useAuthStore } from "src/store/auth/useAuthStore";
 import { styles } from "./styles";
 import { Routes } from "@app/navigation/routes";
-import { useIsKeyboardOpened } from "@hooks/useIsKeyboardOpened";
+import { isEmailValid, isPasswordValid } from "@utils/validators";
+import { useShowAlert } from "@hooks/useShowAlert";
 
 export default function LoginScreen() {
   const navigation = useAppNavigation(Routes.Login);
+  const login = useAuthStore((state) => state.login);
+  const showAlert = useShowAlert((state) => state.show);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const login = useAuthStore((state) => state.login);
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Erro", "Preencha todos os campos.");
+      showAlert("Preencha todos os campos.", "error");
+      return;
+    }
+
+    if (!isEmailValid(email)) {
+      showAlert("Digite um e-mail válido.", "error");
+      return;
+    }
+
+    if (!isPasswordValid(password)) {
+      showAlert("A senha deve ter pelo menos 6 caracteres.", "error");
       return;
     }
 
@@ -26,7 +39,7 @@ export default function LoginScreen() {
       navigation.navigate("Home");
     } catch (error: any) {
       console.error(error);
-      Alert.alert("Erro ao entrar", error.message || "Verifique suas credenciais.");
+      showAlert(error.message || "Verifique suas credenciais.", "error");
     }
   };
 

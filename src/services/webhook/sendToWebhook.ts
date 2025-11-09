@@ -1,7 +1,6 @@
 import { markPackageSent } from "@services/database/packages/packages";
 import { Package } from "@services/database/packages/packages";
-
-const WEBHOOK_URL = "https://webhook.site/61fbbf64-22f0-49f0-9ecf-a9a71137d3a6";
+import { WEBSOCKET_URL } from "@env";
 
 export async function sendToWebhook(pkg: Package, receiverName?: string) {
   try {
@@ -15,7 +14,7 @@ export async function sendToWebhook(pkg: Package, receiverName?: string) {
 
     console.log("Enviando payload para webhook:", payload);
 
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch(WEBSOCKET_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

@@ -7,31 +7,44 @@ import { useAuthStore } from "@store/auth/useAuthStore";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { Routes } from "@app/navigation/routes";
 import { styles } from "./styles";
+import { isEmailValid, isPasswordValid } from "@utils/validators";
+import { useShowAlert } from "@hooks/useShowAlert";
 
 export default function SignupScreen() {
   const navigation = useAppNavigation(Routes.SignUp);
   const signup = useAuthStore((state) => state.signup);
+  const showAlert = useShowAlert((state) => state.show);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
-      Alert.alert("Erro", "Preencha todos os campos.");
+      showAlert("Preencha todos os campos.", "error");
+      return;
+    }
+
+    if (!isEmailValid(email)) {
+      showAlert("Digite um e-mail válido.", "error");
+      return;
+    }
+
+    if (!isPasswordValid(password)) {
+      showAlert("A senha deve ter pelo menos 6 caracteres.", "error");
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Erro", "As senhas não coincidem.");
+      showAlert("As senhas não coincidem.", "error");
       return;
     }
 
     try {
       await signup(email, password);
-      Alert.alert("Sucesso", "Conta criada com sucesso!");
+      showAlert("Conta criada com sucesso!", "success");
     } catch (error: any) {
       console.error(error);
-      Alert.alert("Erro ao cadastrar", error.message || "Tente novamente.");
+      showAlert(error.message || "Tente novamente.", "error");
     }
   };
 

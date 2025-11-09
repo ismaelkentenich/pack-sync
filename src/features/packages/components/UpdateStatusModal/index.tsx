@@ -12,6 +12,7 @@ import React, { forwardRef, Ref, useState } from "react";
 import { Alert, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
+import { useShowAlert } from "@hooks/useShowAlert";
 
 interface UpdateStatusModalProps {
   handleCloseModal: () => void;
@@ -24,13 +25,14 @@ export default forwardRef(function UpdateStatusModal(
 ) {
   const insets = useSafeAreaInsets();
   const { changeStatus, loadPackages, sendPackage } = usePackageStore();
+  const showAlert = useShowAlert((state) => state.show);
 
   const [selectedStatus, setSelectedStatus] = useState<PackageStatus>(packageData.status);
   const [receiverName, setReceiverName] = useState("");
 
   const handleUpdate = () => {
     if (selectedStatus === PackageStatus.ENTREGUE && !receiverName.trim()) {
-      Alert.alert("Campo obrigatório", "Informe o nome do recebedor.");
+      showAlert("Informe o nome do recebedor.", "error");
       return;
     }
 
@@ -45,7 +47,7 @@ export default forwardRef(function UpdateStatusModal(
 
   const handleSendWebhook = async () => {
     if (selectedStatus === PackageStatus.ENTREGUE && !receiverName.trim()) {
-      Alert.alert("Campo obrigatório", "Informe o nome do recebedor.");
+      showAlert("Informe o nome do recebedor.", "error");
       return;
     }
 

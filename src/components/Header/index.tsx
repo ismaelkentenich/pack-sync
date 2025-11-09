@@ -18,10 +18,6 @@ export default function Header({ title, showBack = true, showLogout = false }: H
 
   function handleLogout() {
     logout();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" as never }],
-    });
   }
 
   return (

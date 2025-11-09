@@ -22,11 +22,41 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
 
   login: async (email, password) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      set({ user, isAuthenticated: true });
+    } catch (error: any) {
+      let message = "Credenciais inválidas.";
+      if (error.code === "auth/invalid-credential") {
+        message = "E-mail ou senha incorretos.";
+      } else if (error.code === "auth/user-not-found") {
+        message = "Usuário não encontrado.";
+      } else if (error.code === "auth/invalid-email") {
+        message = "E-mail inválido.";
+      } else if (error.code === "auth/user-disabled") {
+        message = "Conta desativada.";
+      }
+      throw new Error(message);
+    }
   },
 
   signup: async (email, password) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      set({ user, isAuthenticated: true });
+    } catch (error: any) {
+      let message = "Não foi possível criar a conta.";
+      if (error.code === "auth/email-already-exists") {
+        message = "Este e-mail já está em uso.";
+      } else if (error.code === "auth/invalid-email") {
+        message = "E-mail inválido.";
+      } else if (error.code === "auth/operation-not-allowed") {
+        message = "Cadastro desativado no momento.";
+      } else if (error.code === "auth/weak-password") {
+        message = "Senha muito fraca. Use pelo menos 6 caracteres.";
+      }
+      throw new Error(message);
+    }
   },
 
   logout: async () => {
