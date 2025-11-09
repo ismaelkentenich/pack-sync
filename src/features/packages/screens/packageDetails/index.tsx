@@ -24,7 +24,7 @@ export default function PackageDetailsScreen() {
   const packageData = currentPackage || pkg;
 
   return (
-    <ScreenContainer headerTitle="Detalhes do Pacote">
+    <ScreenContainer headerTitle="Detalhes do Pacote" withGradientBackground>
       <View style={styles.container}>
         <Card style={styles.cardContainer} touchable={false}>
           <View style={styles.detailHeader}>

@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import Theme from "../../../theme/theme";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   container: {
@@ -10,7 +10,20 @@ export const styles = StyleSheet.create({
   userInfoText: {
     fontSize: Theme.fontSizes.lg,
     textAlign: "center",
-    paddingTop: 16,
+    color: Theme.colors.neutral[50],
+    fontWeight: "600",
+  },
+  headerContainer: {
+    paddingVertical: 24,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    gap: 4,
+  },
+  headerText: {
+    fontSize: Theme.fontSizes.xxxl,
+    textAlign: "center",
+    color: Theme.colors.neutral[50],
+    fontWeight: "700",
   },
   card: {
     justifyContent: "center",

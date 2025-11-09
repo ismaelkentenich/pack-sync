@@ -13,6 +13,7 @@ import { styles } from "./styles";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
 import { useFocusEffect } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
@@ -72,7 +73,7 @@ export default function ScanScreen() {
 
   return (
     <ScreenContainer headerTitle="Scanner">
-      <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      <View style={[styles.container]}>
         <View style={styles.cameraWrapper}>
           <CameraView
             style={styles.camera}
@@ -96,10 +97,13 @@ export default function ScanScreen() {
           <FlatList
             data={currentSessionPackages}
             keyExtractor={(item) => item.code}
-            contentContainerStyle={styles.flatlistContainer}
+            contentContainerStyle={[
+              styles.flatlistContainer,
+              { paddingBottom: insets.bottom + 64 },
+            ]}
             renderItem={({ item }) => <PackageCard item={item} pressable={false} />}
           />
-          <View style={styles.buttonContainer}>
+          <View style={[styles.buttonContainer, { marginBottom: insets.bottom }]}>
             <Button
               title="Ver todos os pacotes"
               onPress={() => {
@@ -108,6 +112,10 @@ export default function ScanScreen() {
             />
           </View>
         </View>
+        <LinearGradient
+          colors={["transparent", Theme.colors.primary[200]]}
+          style={[styles.background]}
+        />
       </View>
       <UpdateAllPackagesModal
         ref={updateAllModalRef}

@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 16,
+    width: "100%",
   },
   camera: {
     flex: 1,
@@ -72,7 +73,21 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   buttonContainer: {
-    width: "100%",
     height: 48,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 10,
+    alignSelf: "center",
+    paddingHorizontal: 16,
+  },
+  background: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "20%",
+    // zIndex: -1,
   },
 });

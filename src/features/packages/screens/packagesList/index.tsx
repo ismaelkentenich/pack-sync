@@ -47,7 +47,7 @@ export default function PackagesListScreen() {
   };
 
   return (
-    <ScreenContainer headerTitle="Lista de Pacotes">
+    <ScreenContainer headerTitle="Lista de Pacotes" withGradientBackground>
       <View style={styles.container}>
         {packages.length === 0 ? (
           <View style={styles.emptyScreenContainer}>

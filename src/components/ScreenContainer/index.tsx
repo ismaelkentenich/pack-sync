@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
 import Header from "@components/Header";
+import { LinearGradient } from "expo-linear-gradient";
 
 type ScreenContainerProps = {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ type ScreenContainerProps = {
   contentContainerStyle?: any;
   statusBarColor?: string;
   showLogout?: boolean;
+  withGradientBackground?: boolean;
 };
 
 export default function ScreenContainer({
@@ -34,6 +36,7 @@ export default function ScreenContainer({
   contentContainerStyle,
   statusBarColor = Theme.colors.primary[600],
   showLogout,
+  withGradientBackground = false,
 }: ScreenContainerProps) {
   const backgroundColor =
     backgroundColorVariant === "neutral100" ? Theme.colors.neutral[100] : Theme.colors.neutral[50];
@@ -44,11 +47,13 @@ export default function ScreenContainer({
 
       <SafeAreaView style={[styles.container, { backgroundColor }, style]}>
         <KeyboardAvoidingView
-          style={{ flex: 1, backgroundColor }}
+          style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           enabled={withKeyboardAvoiding}
         >
-          {withHeader && <Header title={headerTitle} showBack={showBackButton} showLogout={showLogout} />}
+          {withHeader && (
+            <Header title={headerTitle} showBack={showBackButton} showLogout={showLogout} />
+          )}
           {scrollable ? (
             <ScrollView
               contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
@@ -59,6 +64,12 @@ export default function ScreenContainer({
             </ScrollView>
           ) : (
             children
+          )}
+          {withGradientBackground && (
+            <LinearGradient
+              colors={[Theme.colors.primary[600], "transparent"]}
+              style={[styles.background, { top: withHeader ? 56 : 0 }]}
+            />
           )}
         </KeyboardAvoidingView>
       </SafeAreaView>
