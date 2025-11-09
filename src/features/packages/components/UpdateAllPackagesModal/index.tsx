@@ -40,7 +40,11 @@ export default forwardRef(function UpdateAllPackagesModal(
 
     try {
       for (const pkg of currentSessionPackages) {
-        changeStatus(pkg.id!, selectedStatus);
+        changeStatus(
+          pkg.id!,
+          selectedStatus,
+          selectedStatus === PackageStatus.ENTREGUE ? receiverName : undefined,
+        );
         await sendPackage(
           {
             ...pkg,

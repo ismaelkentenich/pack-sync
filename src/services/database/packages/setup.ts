@@ -9,7 +9,8 @@ export const setupPackagesDatabase = () => {
       deliveryStatus TEXT NOT NULL DEFAULT 'pending',
       clientCode INTEGER,
       scanned_at TEXT NOT NULL,
-      sent_at TEXT
+      sent_at TEXT,
+      receiverName TEXT
     );
   `);
 };

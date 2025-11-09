@@ -34,7 +34,11 @@ export default forwardRef(function UpdateStatusModal(
       return;
     }
 
-    changeStatus(packageData.id!, selectedStatus);
+    changeStatus(
+      packageData.id!,
+      selectedStatus,
+      selectedStatus === PackageStatus.ENTREGUE ? receiverName : undefined,
+    );
     loadPackages();
     handleCloseModal();
   };
@@ -46,7 +50,11 @@ export default forwardRef(function UpdateStatusModal(
     }
 
     try {
-      changeStatus(packageData.id!, selectedStatus);
+      changeStatus(
+        packageData.id!,
+        selectedStatus,
+        selectedStatus === PackageStatus.ENTREGUE ? receiverName : undefined,
+      );
       loadPackages();
       await sendPackage(
         {

@@ -9,6 +9,7 @@ export type Package = {
   clientCode?: string;
   scanned_at: string;
   sent_at?: string;
+  receiverName?: string;
 };
 
 export function insertPackage(pkg: Package) {
@@ -25,10 +26,15 @@ export function insertPackage(pkg: Package) {
   return inserted!;
 }
 
-export function updatePackageStatus(id: number, status: PackageStatus, clientCode?: string) {
+export function updatePackageStatus(
+  id: number,
+  status: PackageStatus,
+  clientCode?: string,
+  receiverName?: string,
+) {
   runSync(`
     UPDATE packages 
-    SET status='${status}', clientCode='${clientCode ?? "NULL"}'
+    SET status='${status}', clientCode='${clientCode}', receiverName='${receiverName ?? ""}'
     WHERE id=${id}
   `);
 }

@@ -69,11 +69,12 @@ export const usePackageStore = create<PackageState>((set, get) => ({
     }
   },
 
-  changeStatus: (id, status) => {
+  changeStatus: (id, status, receiverName?: string) => {
     const { user } = useAuthStore.getState();
     if (!user?.uid) return;
     const clientCode = user.uid;
-    updatePackageStatus(id, status, clientCode);
+
+    updatePackageStatus(id, status, clientCode, receiverName);
     get().loadPackages();
   },
 
