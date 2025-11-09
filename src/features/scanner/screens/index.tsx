@@ -20,7 +20,13 @@ export default function ScanScreen() {
   const navigation = useAppNavigation(Routes.Scan);
   const updateAllModalRef = useRef<BottomSheetModal>(null);
   const [permission, requestPermission] = useCameraPermissions();
-  const { currentSessionPackages, scanPackage, loadPackages, resetSession } = usePackageStore();
+  const {
+    currentSessionPackages,
+    scanPackage,
+    loadPackages,
+    resetSession,
+    sendAllCurrentSessionPackages,
+  } = usePackageStore();
 
   const scannedCodesRef = useRef<Set<string>>(new Set());
 
@@ -55,7 +61,7 @@ export default function ScanScreen() {
           <Text style={styles.noPermissionTitle}>
             Para escanear os pacotes, ative a permissão da câmera.
           </Text>
-          <View style={styles.buttonContainer}>
+          <View style={styles.noPermissionButton}>
             <Button title="Conceder permissão" onPress={requestPermission} />
           </View>
         </View>
@@ -91,10 +97,17 @@ export default function ScanScreen() {
         ) : (
           <>
             <View style={styles.infoHeader}>
-              <Text style={styles.infoText}>Pacotes bipados</Text>
-              <TouchableOpacity onPress={openUpdateAllModal}>
+              <TouchableOpacity onPress={openUpdateAllModal} style={styles.infoHeaderItem}>
                 <Text style={styles.infoTouchableText}>Atualizar todos</Text>
               </TouchableOpacity>
+              <View style={styles.infoHeaderItem}>
+                <Button
+                  title="Enviar para webhook"
+                  onPress={() => {
+                    sendAllCurrentSessionPackages();
+                  }}
+                />
+              </View>
             </View>
             <View style={styles.infoWrapper}>
               <FlatList

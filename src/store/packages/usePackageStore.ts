@@ -33,6 +33,7 @@ type PackageState = {
   filteredPackages: () => Package[];
   feedback: Feedback;
   setFeedback: (feedback: Feedback) => void;
+  sendAllCurrentSessionPackages: () => Promise<void>;
 };
 
 export const usePackageStore = create<PackageState>((set, get) => ({
@@ -80,14 +81,28 @@ export const usePackageStore = create<PackageState>((set, get) => ({
         pendingCount: state.pendingCount + 1,
       }));
 
-      const result = await sendToWebhook(newPkg);
-      if (!result.success) throw new Error(`Falha ao enviar pacote ${code} para o webhook`);
-
       get().loadPackages();
-      set({ feedback: { loading: false, success: `Pacote ${code} enviado com sucesso!` } });
+      set({ feedback: { loading: false, success: `Pacote ${code} escaneado com sucesso!` } });
     } catch (err: any) {
       console.warn(err.message);
       set({ feedback: { loading: false, error: err.message } });
+    }
+  },
+
+  sendAllCurrentSessionPackages: async () => {
+    const { currentSessionPackages } = get();
+    if (currentSessionPackages.length === 0) return;
+
+    set({ feedback: { loading: true } });
+    try {
+      for (const pkg of currentSessionPackages) {
+        await get().sendPackage(pkg);
+      }
+      set({ feedback: { loading: false, success: "Todos os pacotes enviados com sucesso!" } });
+      get().resetSession();
+    } catch (err: any) {
+      console.warn(err.message);
+      set({ feedback: { loading: false, error: "Falha ao enviar alguns pacotes." } });
     }
   },
 

@@ -4,7 +4,7 @@ import Theme from "@theme/theme";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 16,
+    gap: 8,
     width: "100%",
   },
   camera: {
@@ -13,18 +13,27 @@ export const styles = StyleSheet.create({
   cameraWrapper: {
     width: "100%",
     overflow: "hidden",
-    height: "45%",
+    height: "40%",
   },
   infoWrapper: {
     flex: 1,
     width: "100%",
     paddingHorizontal: 16,
   },
+  headerContainer: {
+    flexDirection: "column",
+    gap: 8,
+  },
   infoHeader: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingBottom: 8,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  infoHeaderItem: {
+    flex: 1,
   },
   infoText: {
     fontWeight: "600",
@@ -64,6 +73,9 @@ export const styles = StyleSheet.create({
     fontWeight: "500",
     color: Theme.colors.neutral[900],
     textAlign: "center",
+  },
+  noPermissionButton: {
+    width: "100%",
   },
   loadingPermissionContainer: {
     flex: 1,
