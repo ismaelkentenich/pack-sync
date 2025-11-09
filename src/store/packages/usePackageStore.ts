@@ -30,27 +30,35 @@ export const usePackageStore = create<PackageState>((set, get) => ({
     set({ packages: pkgs });
   },
 
-  scanPackage: (code) => {
+  scanPackage: async (code) => {
     const { user } = useAuthStore.getState();
     if (!user?.id) return;
     const clientCode = user.id;
 
     const existing = getAllPackages(clientCode).find((p) => p.code === code);
-    if (!existing) {
-      const pkgToInsert: Package = {
-        code,
-        status: PackageStatus.COLETADO,
-        deliveryStatus: DeliveryStatus.PENDING,
-        clientCode,
-        scanned_at: new Date().toISOString(),
-      };
+    if (existing) return;
 
-      const newPkg = insertPackage(pkgToInsert);
+    const pkgToInsert: Package = {
+      code,
+      status: PackageStatus.COLETADO,
+      deliveryStatus: DeliveryStatus.PENDING,
+      clientCode,
+      scanned_at: new Date().toISOString(),
+    };
 
-      set((state) => ({
-        packages: [newPkg, ...state.packages],
-        currentSessionPackages: [newPkg, ...state.currentSessionPackages],
-      }));
+    const newPkg = insertPackage(pkgToInsert);
+    set((state) => ({
+      packages: [newPkg, ...state.packages],
+      currentSessionPackages: [newPkg, ...state.currentSessionPackages],
+    }));
+
+    try {
+      const result = await sendToWebhook(newPkg);
+      if (!result.success) {
+        console.warn(`Falha ao enviar pacote ${code} para o webhook`);
+      }
+    } catch (err) {
+      console.error("Erro ao enviar webhook durante escaneamento:", err);
     }
   },
 
