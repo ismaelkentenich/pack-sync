@@ -3,11 +3,11 @@ import { Package } from "@services/database/packages/packages";
 
 const WEBHOOK_URL = "https://webhook.site/61fbbf64-22f0-49f0-9ecf-a9a71137d3a6";
 
-export async function sendToWebhook(pkg: Package) {
+export async function sendToWebhook(pkg: Package, receiverName?: string) {
   try {
     const payload = {
       code: pkg.code,
-      clientName: pkg.status === "Entregue" ? `Cliente ${pkg.clientCode}` : undefined,
+      clientName: pkg.status === "Entregue" ? receiverName || undefined : undefined,
       status: pkg.status,
       deliveryStatus: pkg.deliveryStatus,
       scanned_at: pkg.scanned_at,

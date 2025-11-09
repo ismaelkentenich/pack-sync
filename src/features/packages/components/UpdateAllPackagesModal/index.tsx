@@ -41,10 +41,13 @@ export default forwardRef(function UpdateAllPackagesModal(
     try {
       for (const pkg of currentSessionPackages) {
         changeStatus(pkg.id!, selectedStatus);
-        await sendPackage({
-          ...pkg,
-          status: selectedStatus,
-        });
+        await sendPackage(
+          {
+            ...pkg,
+            status: selectedStatus,
+          },
+          receiverName,
+        );
       }
 
       resetSession();

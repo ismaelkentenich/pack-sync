@@ -48,16 +48,18 @@ export default forwardRef(function UpdateStatusModal(
     try {
       changeStatus(packageData.id!, selectedStatus);
       loadPackages();
-      await sendPackage({
-        ...packageData,
-        status: selectedStatus,
-      });
+      await sendPackage(
+        {
+          ...packageData,
+          status: selectedStatus,
+        },
+        receiverName,
+      );
     } catch (error) {
       console.error(error);
     }
     handleCloseModal();
   };
-
   return (
     <ModalWrapper ref={ref} style={styles.wrapper} hasInputInsideModal>
       <ModalCloseIcon onPress={handleCloseModal} />

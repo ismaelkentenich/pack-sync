@@ -16,7 +16,7 @@ type PackageState = {
   scanPackage: (code: string) => void;
   changeStatus: (id: number, status: PackageStatus, clientName?: string) => void;
   resetSession: () => void;
-  sendPackage: (pkg: Package) => Promise<void>;
+  sendPackage: (pkg: Package, receiverName?: string) => Promise<void>;
 };
 
 export const usePackageStore = create<PackageState>((set, get) => ({
@@ -64,8 +64,8 @@ export const usePackageStore = create<PackageState>((set, get) => ({
 
   resetSession: () => set({ currentSessionPackages: [] }),
 
-  async sendPackage(pkg) {
-    const result = await sendToWebhook(pkg);
+  sendPackage: async (pkg, receiverName?: string) => {
+    const result = await sendToWebhook(pkg, receiverName);
     if (result.success) {
       const { user } = useAuthStore.getState();
       if (user?.id) {
