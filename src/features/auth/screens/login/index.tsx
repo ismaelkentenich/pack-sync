@@ -1,14 +1,14 @@
+import { Routes } from "@app/navigation/routes";
 import Button from "@components/Button";
 import Input from "@components/Input";
 import ScreenContainer from "@components/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
+import { useShowAlert } from "@hooks/useShowAlert";
+import { isEmailValid, isPasswordValid } from "@utils/validators";
 import React, { useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useAuthStore } from "src/store/auth/useAuthStore";
 import { styles } from "./styles";
-import { Routes } from "@app/navigation/routes";
-import { isEmailValid, isPasswordValid } from "@utils/validators";
-import { useShowAlert } from "@hooks/useShowAlert";
 
 export default function LoginScreen() {
   const navigation = useAppNavigation(Routes.Login);
@@ -37,9 +37,10 @@ export default function LoginScreen() {
     try {
       await login(email, password);
       navigation.navigate("Home");
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      showAlert(error.message || "Verifique suas credenciais.", "error");
+      const message = error instanceof Error ? error.message : "Verifique suas credenciais.";
+      showAlert(message, "error");
     }
   };
 

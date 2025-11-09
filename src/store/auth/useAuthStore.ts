@@ -1,12 +1,13 @@
-import { create } from "zustand";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  User as FirebaseUser,
-} from "firebase/auth";
 import { auth } from "@services/firebase/config";
+import { getErrorMessage, isFirebaseAuthError } from "@utils/typeGuards";
+import {
+  createUserWithEmailAndPassword,
+  User as FirebaseUser,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { create } from "zustand";
 
 type AuthState = {
   user: FirebaseUser | null;
@@ -25,17 +26,30 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       set({ user, isAuthenticated: true });
-    } catch (error: any) {
+    } catch (error) {
       let message = "Credenciais inválidas.";
-      if (error.code === "auth/invalid-credential") {
-        message = "E-mail ou senha incorretos.";
-      } else if (error.code === "auth/user-not-found") {
-        message = "Usuário não encontrado.";
-      } else if (error.code === "auth/invalid-email") {
-        message = "E-mail inválido.";
-      } else if (error.code === "auth/user-disabled") {
-        message = "Conta desativada.";
+
+      if (isFirebaseAuthError(error)) {
+        switch (error.code) {
+          case "auth/invalid-credential":
+            message = "E-mail ou senha incorretos.";
+            break;
+          case "auth/user-not-found":
+            message = "Usuário não encontrado.";
+            break;
+          case "auth/invalid-email":
+            message = "E-mail inválido.";
+            break;
+          case "auth/user-disabled":
+            message = "Conta desativada.";
+            break;
+          default:
+            message = getErrorMessage(error, "Credenciais inválidas.");
+        }
+      } else {
+        message = getErrorMessage(error, "Credenciais inválidas.");
       }
+
       throw new Error(message);
     }
   },
@@ -44,17 +58,31 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       set({ user, isAuthenticated: true });
-    } catch (error: any) {
+    } catch (error) {
       let message = "Não foi possível criar a conta.";
-      if (error.code === "auth/email-already-exists") {
-        message = "Este e-mail já está em uso.";
-      } else if (error.code === "auth/invalid-email") {
-        message = "E-mail inválido.";
-      } else if (error.code === "auth/operation-not-allowed") {
-        message = "Cadastro desativado no momento.";
-      } else if (error.code === "auth/weak-password") {
-        message = "Senha muito fraca. Use pelo menos 6 caracteres.";
+
+      if (isFirebaseAuthError(error)) {
+        switch (error.code) {
+          case "auth/email-already-exists":
+          case "auth/email-already-in-use":
+            message = "Este e-mail já está em uso.";
+            break;
+          case "auth/invalid-email":
+            message = "E-mail inválido.";
+            break;
+          case "auth/operation-not-allowed":
+            message = "Cadastro desativado no momento.";
+            break;
+          case "auth/weak-password":
+            message = "Senha muito fraca. Use pelo menos 6 caracteres.";
+            break;
+          default:
+            message = getErrorMessage(error, "Não foi possível criar a conta.");
+        }
+      } else {
+        message = getErrorMessage(error, "Não foi possível criar a conta.");
       }
+
       throw new Error(message);
     }
   },

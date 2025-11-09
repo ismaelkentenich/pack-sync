@@ -1,10 +1,18 @@
-import React from "react";
-import { KeyboardAvoidingView, ScrollView, Platform, StatusBar, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Theme from "@theme/theme";
-import { styles } from "./styles";
 import Header from "@components/Header";
+import Theme from "@theme/theme";
 import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StatusBar,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { styles } from "./styles";
 
 type ScreenContainerProps = {
   children: React.ReactNode;
@@ -16,8 +24,8 @@ type ScreenContainerProps = {
   withKeyboardAvoiding?: boolean;
   withStatusBar?: boolean;
   backgroundColorVariant?: "neutral50" | "neutral100";
-  style?: any;
-  contentContainerStyle?: any;
+  style?: StyleProp<ViewStyle>;
+  contentContainerStyle?: StyleProp<ViewStyle>;
   statusBarColor?: string;
   showLogout?: boolean;
   withGradientBackground?: boolean;
