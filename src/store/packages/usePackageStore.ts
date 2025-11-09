@@ -54,7 +54,9 @@ export const usePackageStore = create<PackageState>((set, get) => ({
 
     try {
       const result = await sendToWebhook(newPkg);
-      if (!result.success) {
+      if (result.success) {
+        set({ packages: getAllPackages(clientCode) });
+      } else {
         console.warn(`Falha ao enviar pacote ${code} para o webhook`);
       }
     } catch (err) {
