@@ -1,5 +1,6 @@
 import { NavigationStack } from "@app/navigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { useNetworkSync } from "@hooks/useNetworkSync";
 import { NavigationContainer } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -7,6 +8,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { setupAllDatabases } from "src/services/database/setup";
 
 export default function App() {
+  useNetworkSync();
+
   useEffect(() => {
     async function prepareDatabases() {
       try {

@@ -6,19 +6,21 @@ import { useAppNavigation } from "@hooks/useAppNavigation";
 import { usePackageStore } from "@store/packages/usePackageStore";
 import Theme from "@theme/theme";
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from "expo-camera";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation(Routes.Scan);
   const updateAllModalRef = useRef<BottomSheetModal>(null);
   const [permission, requestPermission] = useCameraPermissions();
-  const { currentSessionPackages, scanPackage, loadPackages } = usePackageStore();
+  const { currentSessionPackages, scanPackage, loadPackages, pendingCount, resetSession } =
+    usePackageStore();
 
   const scannedCodesRef = useRef<Set<string>>(new Set());
 
@@ -28,6 +30,12 @@ export default function ScanScreen() {
   useEffect(() => {
     loadPackages();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      resetSession();
+    }, [resetSession]),
+  );
 
   if (!permission) {
     return (
@@ -78,6 +86,7 @@ export default function ScanScreen() {
 
         <View style={styles.infoHeader}>
           <Text style={styles.infoText}>Pacotes bipados</Text>
+          <Text style={styles.infoText}>Pendentes: {pendingCount}</Text>
           <TouchableOpacity onPress={openUpdateAllModal}>
             <Text style={styles.infoTouchableText}>Atualizar todos</Text>
           </TouchableOpacity>
