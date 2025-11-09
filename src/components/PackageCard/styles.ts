@@ -12,6 +12,14 @@ export const styles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
     gap: 8,
+    width: "100%",
+  },
+  infoRow: {
+    flexWrap: "wrap",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    width: "100%",
   },
   text: {
     color: Theme.colors.neutral[700],
@@ -25,11 +33,11 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
   },
   buttonContainer: {
-    flex: 1,
     flexDirection: "column",
     gap: 8,
-    width: "100%",
     alignItems: "flex-end",
+    justifyContent: "center",
+    minWidth: 100,
   },
   buttonItem: {
     height: 36,

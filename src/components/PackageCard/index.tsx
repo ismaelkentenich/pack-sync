@@ -4,6 +4,7 @@ import { styles } from "./styles";
 import Card from "@components/Card";
 import { Package } from "@services/database/packages/packages";
 import Button from "@components/Button";
+import Badge from "@components/Badge";
 
 type PackageCards = {
   item: Package;
@@ -24,8 +25,14 @@ export default function PackageCard({
     <Card style={styles.card} onPress={!showButtons ? onPress : undefined} touchable={pressable}>
       <View style={styles.infoContainer}>
         <Text style={styles.codeText}>Código: {item.code}</Text>
-        <Text style={styles.text}>Status do pacote: {item.status}</Text>
-        <Text style={styles.text}>Status do envio: {item.deliveryStatus}</Text>
+        <View style={styles.infoRow}>
+          <Text style={styles.text}>Status do pacote:</Text>
+          <Badge label={item.status} variant="status" />
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.text}>Status do envio:</Text>
+          <Badge label={item.deliveryStatus} variant="delivery" />
+        </View>
         <Text style={styles.text}>Escaneado em: {new Date(item.scanned_at).toLocaleString()}</Text>
       </View>
       {showButtons ? (

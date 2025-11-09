@@ -21,10 +21,17 @@ export const styles = StyleSheet.create({
     lineHeight: Theme.fontSizes.md,
     paddingVertical: 4,
   },
-  detailRow: {
+  detailHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 16,
+    alignContent: "center",
+    alignItems: "center",
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: 8,
     alignContent: "center",
     alignItems: "center",
   },

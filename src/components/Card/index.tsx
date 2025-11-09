@@ -1,7 +1,6 @@
 import React from "react";
-import { View, TouchableOpacity, ViewStyle, StyleProp, TouchableOpacityProps } from "react-native";
+import { StyleProp, TouchableOpacity, TouchableOpacityProps, View, ViewStyle } from "react-native";
 import { styles } from "./styles";
-import Theme from "@theme/theme";
 
 type CardProps = TouchableOpacityProps & {
   children: React.ReactNode;

@@ -9,6 +9,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 import { usePackageStore } from "@store/packages/usePackageStore";
 import Card from "@components/Card";
+import Badge from "@components/Badge";
 
 type PackageDetailsRouteProp = RouteProp<RootStackParamList, "PackageDetails">;
 
@@ -25,9 +26,8 @@ export default function PackageDetailsScreen() {
     <ScreenContainer headerTitle="Detalhes do Pacote">
       <View style={styles.container}>
         <Card style={styles.cardContainer} touchable={false}>
-          <Text style={styles.detailTitle}>Código: {packageData.code}</Text>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailText}>Status: {packageData.status}</Text>
+          <View style={styles.detailHeader}>
+            <Text style={styles.detailTitle}>Código: {packageData.code}</Text>
             <Button
               title="Alterar status"
               onPress={() => updateStatusModalRef.current?.present()}
@@ -35,7 +35,14 @@ export default function PackageDetailsScreen() {
               style={styles.button}
             />
           </View>
-          <Text style={styles.detailText}>Delivery: {packageData.deliveryStatus}</Text>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailText}>Status:</Text>
+            <Badge label={packageData.status} variant="status" />
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailText}>Delivery:</Text>
+            <Badge label={packageData.deliveryStatus} variant="delivery" />
+          </View>
           <Text style={styles.detailText}>Cliente: {packageData.clientCode}</Text>
           <Text style={styles.detailText}>
             Escaneado em: {new Date(packageData.scanned_at).toLocaleString()}
