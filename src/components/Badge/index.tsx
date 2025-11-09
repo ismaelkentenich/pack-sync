@@ -17,8 +17,10 @@ export default function Badge({ label, variant, style }: BadgeProps) {
   const textColor = variant === "status" ? Theme.colors.primary[900] : Theme.colors.secondary[900];
 
   return (
-    <View style={[styles.container, { backgroundColor }, style]}>
-      <Text style={[styles.text, { color: textColor }]}>{label}</Text>
+    <View>
+      <View style={[styles.container, { backgroundColor }, style]}>
+        <Text style={[styles.text, { color: textColor }]}>{label}</Text>
+      </View>
     </View>
   );
 }
