@@ -28,16 +28,16 @@ export const usePackageStore = create<PackageState>((set, get) => ({
 
   loadPackages: () => {
     const { user } = useAuthStore.getState();
-    if (!user?.id) return;
-    const pkgs = getAllPackages(user.id);
+    if (!user?.uid) return;
+    const pkgs = getAllPackages(user.uid);
     const pending = pkgs.filter((p) => p.deliveryStatus === DeliveryStatus.PENDING).length;
     set({ packages: pkgs, pendingCount: pending });
   },
 
   scanPackage: async (code) => {
     const { user } = useAuthStore.getState();
-    if (!user?.id) return;
-    const clientCode = user.id;
+    if (!user?.uid) return;
+    const clientCode = user.uid;
 
     const existing = getAllPackages(clientCode).find((p) => p.code === code);
     if (existing) return;
@@ -71,8 +71,8 @@ export const usePackageStore = create<PackageState>((set, get) => ({
 
   changeStatus: (id, status) => {
     const { user } = useAuthStore.getState();
-    if (!user?.id) return;
-    const clientCode = user.id;
+    if (!user?.uid) return;
+    const clientCode = user.uid;
     updatePackageStatus(id, status, clientCode);
     get().loadPackages();
   },
@@ -82,7 +82,7 @@ export const usePackageStore = create<PackageState>((set, get) => ({
   sendPackage: async (pkg, receiverName?: string) => {
     const result = await sendToWebhook(pkg, receiverName);
     const { user } = useAuthStore.getState();
-    if (user?.id) {
+    if (user?.uid) {
       get().loadPackages();
     }
     if (!result.success) {
@@ -92,8 +92,8 @@ export const usePackageStore = create<PackageState>((set, get) => ({
 
   syncPendingPackages: async () => {
     const { user } = useAuthStore.getState();
-    if (!user?.id) return;
-    const allPkgs = getAllPackages(user.id);
+    if (!user?.uid) return;
+    const allPkgs = getAllPackages(user.uid);
     const pendings = allPkgs.filter((p) => p.deliveryStatus === DeliveryStatus.PENDING);
 
     if (pendings.length === 0) {

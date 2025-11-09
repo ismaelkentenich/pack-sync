@@ -15,5 +15,7 @@ export const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: "100%",
+    gap: 8,
+    marginTop: 24,
   },
 });

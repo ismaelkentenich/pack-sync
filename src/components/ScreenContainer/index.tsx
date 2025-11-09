@@ -42,7 +42,7 @@ export default function ScreenContainer({
     <View style={{ flex: 1 }}>
       <StatusBar backgroundColor={statusBarColor} barStyle="dark-content" translucent={false} />
 
-      <SafeAreaView style={[styles.container, { backgroundColor: statusBarColor }, style]}>
+      <SafeAreaView style={[styles.container, { backgroundColor }, style]}>
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}

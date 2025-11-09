@@ -14,25 +14,24 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const login = useAuthStore((state) => state.login);
-  const { isKeyboardOpened, keyboardHeight } = useIsKeyboardOpened();
 
   const handleLogin = async () => {
-    if (!email) {
-      Alert.alert("Erro", "Digite seu e-mail.");
+    if (!email || !password) {
+      Alert.alert("Erro", "Preencha todos os campos.");
       return;
     }
 
     try {
-      await login(email);
+      await login(email, password);
       navigation.navigate("Home");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      Alert.alert("Erro", "Não foi possível fazer login.");
+      Alert.alert("Erro ao entrar", error.message || "Verifique suas credenciais.");
     }
   };
 
   return (
-    <ScreenContainer scrollable withHeader={false}>
+    <ScreenContainer withHeader={false} withKeyboardAvoiding>
       <View style={styles.container}>
         <Text style={styles.text}>Login</Text>
         <Input
@@ -49,10 +48,13 @@ export default function LoginScreen() {
           secure
         />
 
-        <View
-          style={[styles.buttonContainer, isKeyboardOpened && { paddingBottom: keyboardHeight }]}
-        >
+        <View style={styles.buttonContainer}>
           <Button title="Login" onPress={handleLogin} />
+          <Button
+            title="Cadastrar"
+            onPress={() => navigation.navigate("SignUp")}
+            variant="outline"
+          />
         </View>
       </View>
     </ScreenContainer>

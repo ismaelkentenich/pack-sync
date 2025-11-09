@@ -5,6 +5,7 @@ export const Routes = Object.freeze({
   Home: "Home",
   Scan: "Scan",
   PackagesList: "PackagesList",
+  SignUp: "SignUp",
 } as const);
 
 export type RouteName = keyof RootStackParamList;

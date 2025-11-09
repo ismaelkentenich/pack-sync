@@ -6,4 +6,5 @@ export type RootStackParamList = {
   Scan: undefined;
   PackagesList: undefined;
   PackageDetails: { pkg: Package };
+  SignUp: undefined;
 };
