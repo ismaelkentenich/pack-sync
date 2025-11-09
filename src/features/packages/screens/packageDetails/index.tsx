@@ -11,6 +11,7 @@ import { usePackageStore } from "@store/packages/usePackageStore";
 import Card from "@components/Card";
 import Badge from "@components/Badge";
 import { PackageStatus } from "@services/database/packages/enums";
+import { formatDate } from "@utils/date";
 
 type PackageDetailsRouteProp = RouteProp<RootStackParamList, "PackageDetails">;
 
@@ -48,9 +49,7 @@ export default function PackageDetailsScreen() {
             <Text style={styles.detailText}>Recebedor: {packageData.receiverName}</Text>
           )}
 
-          <Text style={styles.detailText}>
-            Escaneado em: {new Date(packageData.scanned_at).toLocaleString()}
-          </Text>
+          <Text style={styles.detailText}>Escaneado: {formatDate(packageData.scanned_at)}</Text>
         </Card>
       </View>
 

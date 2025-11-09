@@ -5,6 +5,7 @@ import Card from "@components/Card";
 import { Package } from "@services/database/packages/packages";
 import Button from "@components/Button";
 import Badge from "@components/Badge";
+import { formatDate } from "@utils/date";
 
 type PackageCards = {
   item: Package;
@@ -33,7 +34,7 @@ export default function PackageCard({
           <Text style={styles.text}>Status do envio:</Text>
           <Badge label={item.deliveryStatus} variant="delivery" />
         </View>
-        <Text style={styles.text}>Escaneado em: {new Date(item.scanned_at).toLocaleString()}</Text>
+        <Text style={styles.text}>Escaneado: {formatDate(item.scanned_at)}</Text>
       </View>
       {showButtons ? (
         <View style={styles.buttonContainer}>
