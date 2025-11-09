@@ -11,25 +11,23 @@ import PackageCard from "@components/PackageCard";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Package } from "@services/database/packages/packages";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
+import { Picker } from "@react-native-picker/picker";
+import { PackageStatus } from "@services/database/packages/enums";
 
 export default function PackagesListScreen() {
   const navigation = useAppNavigation("PackagesList");
   const updateStatusModalRef = useRef<BottomSheetModal>(null);
-  const { packages, loadPackages } = usePackageStore();
-  const [searchTerm, setSearchTerm] = useState("");
+  const {
+    packages,
+    searchTerm,
+    setSearchTerm,
+    filteredPackages,
+    loadPackages,
+    statusFilter,
+    setStatusFilter,
+  } = usePackageStore();
   const [refreshing, setRefreshing] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
-
-  const normalize = (text: string) =>
-    text
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim()
-      .toLowerCase();
-
-  const filteredPackages = packages.filter((pkg) =>
-    normalize(pkg.code).includes(normalize(searchTerm)),
-  );
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -55,10 +53,10 @@ export default function PackagesListScreen() {
           </View>
         ) : (
           <FlatList
-            data={filteredPackages}
+            data={filteredPackages()}
             contentContainerStyle={styles.flatlistContainer}
             ListHeaderComponent={
-              <View>
+              <View style={styles.headerContainer}>
                 <Input
                   placeholder="Buscar por código..."
                   value={searchTerm}
@@ -66,6 +64,25 @@ export default function PackagesListScreen() {
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
+                <View style={styles.pickerWrapper}>
+                  <Picker
+                    selectedValue={statusFilter}
+                    onValueChange={setStatusFilter}
+                    style={styles.pickerContainer}
+                    dropdownIconColor={Theme.colors.neutral[300]}
+                    mode="dropdown"
+                  >
+                    <Picker.Item label="Todos" value="" style={styles.pickerLabel} />
+                    {Object.values(PackageStatus).map((status) => (
+                      <Picker.Item
+                        key={status}
+                        label={status}
+                        value={status}
+                        style={styles.pickerLabel}
+                      />
+                    ))}
+                  </Picker>
+                </View>
               </View>
             }
             keyExtractor={(item) => String(item.id ?? item.code)}

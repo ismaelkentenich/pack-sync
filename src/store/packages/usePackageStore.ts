@@ -8,6 +8,7 @@ import {
 import { PackageStatus, DeliveryStatus } from "@services/database/packages/enums";
 import { useAuthStore } from "@store/auth/useAuthStore";
 import { sendToWebhook } from "@services/webhook/sendToWebhook";
+import { normalizeText } from "@utils/string";
 
 type PackageState = {
   packages: Package[];
@@ -19,12 +20,22 @@ type PackageState = {
   resetSession: () => void;
   sendPackage: (pkg: Package, receiverName?: string) => Promise<void>;
   syncPendingPackages: () => Promise<void>;
+  searchTerm: string;
+  statusFilter: string;
+  setSearchTerm: (term: string) => void;
+  setStatusFilter: (status: string) => void;
+  filteredPackages: () => Package[];
 };
 
 export const usePackageStore = create<PackageState>((set, get) => ({
   packages: [],
   currentSessionPackages: [],
   pendingCount: 0,
+  searchTerm: "",
+  statusFilter: "",
+
+  setSearchTerm: (term: string) => set({ searchTerm: term }),
+  setStatusFilter: (status: string) => set({ statusFilter: status }),
 
   loadPackages: () => {
     const { user } = useAuthStore.getState();
@@ -67,6 +78,16 @@ export const usePackageStore = create<PackageState>((set, get) => ({
     } catch (err) {
       console.error("Erro ao enviar webhook durante escaneamento:", err);
     }
+  },
+
+  filteredPackages: () => {
+    const term = normalizeText(get().searchTerm);
+    const status = get().statusFilter;
+    return get().packages.filter((pkg) => {
+      const codeMatch = normalizeText(pkg.code).includes(term);
+      const statusMatch = status ? pkg.status === status : true;
+      return codeMatch && statusMatch;
+    });
   },
 
   changeStatus: (id, status, receiverName?: string) => {

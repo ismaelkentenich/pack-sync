@@ -25,6 +25,7 @@ export const styles = StyleSheet.create({
     fontSize: Theme.fontSizes.sm,
     lineHeight: Theme.fontSizes.md,
   },
+
   flatlistContainer: {
     paddingBottom: 24,
     paddingTop: 16,
@@ -32,5 +33,24 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     width: "100%",
     alignSelf: "center",
+  },
+  headerContainer: {
+    gap: 4,
+  },
+  pickerContainer: {
+    color: Theme.colors.neutral[700],
+    borderRadius: 8,
+  },
+
+  pickerLabel: {
+    fontSize: Theme.fontSizes.md,
+    color: Theme.colors.neutral[700],
+    height: "100%",
+  },
+  pickerWrapper: {
+    backgroundColor: Theme.colors.neutral[50],
+    borderRadius: Theme.borderRadius.sm,
+    height: 48,
+    justifyContent: "center",
   },
 });
