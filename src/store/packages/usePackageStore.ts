@@ -10,6 +10,12 @@ import { useAuthStore } from "@store/auth/useAuthStore";
 import { sendToWebhook } from "@services/webhook/sendToWebhook";
 import { normalizeText } from "@utils/string";
 
+type Feedback = {
+  loading: boolean;
+  success?: string;
+  error?: string;
+};
+
 type PackageState = {
   packages: Package[];
   currentSessionPackages: Package[];
@@ -25,6 +31,8 @@ type PackageState = {
   setSearchTerm: (term: string) => void;
   setStatusFilter: (status: string) => void;
   filteredPackages: () => Package[];
+  feedback: Feedback;
+  setFeedback: (feedback: Feedback) => void;
 };
 
 export const usePackageStore = create<PackageState>((set, get) => ({
@@ -33,6 +41,9 @@ export const usePackageStore = create<PackageState>((set, get) => ({
   pendingCount: 0,
   searchTerm: "",
   statusFilter: "",
+  feedback: { loading: false },
+
+  setFeedback: (feedback) => set({ feedback }),
 
   setSearchTerm: (term: string) => set({ searchTerm: term }),
   setStatusFilter: (status: string) => set({ statusFilter: status }),
@@ -48,35 +59,35 @@ export const usePackageStore = create<PackageState>((set, get) => ({
   scanPackage: async (code) => {
     const { user } = useAuthStore.getState();
     if (!user?.uid) return;
-    const clientCode = user.uid;
 
-    const existing = getAllPackages(clientCode).find((p) => p.code === code);
-    if (existing) return;
-
-    const pkgToInsert: Package = {
-      code,
-      status: PackageStatus.COLETADO,
-      deliveryStatus: DeliveryStatus.PENDING,
-      clientCode,
-      scanned_at: new Date().toISOString(),
-    };
-
-    const newPkg = insertPackage(pkgToInsert);
-    set((state) => ({
-      packages: [newPkg, ...state.packages],
-      currentSessionPackages: [newPkg, ...state.currentSessionPackages],
-      pendingCount: state.pendingCount + 1,
-    }));
-
+    set({ feedback: { loading: true } });
     try {
+      const existing = getAllPackages(user.uid).find((p) => p.code === code);
+      if (existing) throw new Error("Pacote já escaneado");
+
+      const pkgToInsert: Package = {
+        code,
+        status: PackageStatus.COLETADO,
+        deliveryStatus: DeliveryStatus.PENDING,
+        clientCode: user.uid,
+        scanned_at: new Date().toISOString(),
+      };
+
+      const newPkg = insertPackage(pkgToInsert);
+      set((state) => ({
+        packages: [newPkg, ...state.packages],
+        currentSessionPackages: [newPkg, ...state.currentSessionPackages],
+        pendingCount: state.pendingCount + 1,
+      }));
+
       const result = await sendToWebhook(newPkg);
-      if (result.success) {
-        get().loadPackages();
-      } else {
-        console.warn(`Falha ao enviar pacote ${code} para o webhook`);
-      }
-    } catch (err) {
-      console.error("Erro ao enviar webhook durante escaneamento:", err);
+      if (!result.success) throw new Error(`Falha ao enviar pacote ${code} para o webhook`);
+
+      get().loadPackages();
+      set({ feedback: { loading: false, success: `Pacote ${code} enviado com sucesso!` } });
+    } catch (err: any) {
+      console.warn(err.message);
+      set({ feedback: { loading: false, error: err.message } });
     }
   },
 

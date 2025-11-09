@@ -98,7 +98,7 @@ export default function PackagesListScreen() {
                 item={item}
                 onPress={() => navigation.navigate("PackageDetails", { pkg: item })}
                 onPressUpdate={() => handleOpenUpdateModal(item)}
-                showButtons={true}
+                showButtons={false}
               />
             )}
           />

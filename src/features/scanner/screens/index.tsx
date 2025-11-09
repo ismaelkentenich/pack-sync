@@ -20,8 +20,7 @@ export default function ScanScreen() {
   const navigation = useAppNavigation(Routes.Scan);
   const updateAllModalRef = useRef<BottomSheetModal>(null);
   const [permission, requestPermission] = useCameraPermissions();
-  const { currentSessionPackages, scanPackage, loadPackages, pendingCount, resetSession } =
-    usePackageStore();
+  const { currentSessionPackages, scanPackage, loadPackages, resetSession } = usePackageStore();
 
   const scannedCodesRef = useRef<Set<string>>(new Set());
 
@@ -85,33 +84,40 @@ export default function ScanScreen() {
           />
         </View>
 
-        <View style={styles.infoHeader}>
-          <Text style={styles.infoText}>Pacotes bipados</Text>
-          <Text style={styles.infoText}>Pendentes: {pendingCount}</Text>
-          <TouchableOpacity onPress={openUpdateAllModal}>
-            <Text style={styles.infoTouchableText}>Atualizar todos</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.infoWrapper}>
-          <FlatList
-            data={currentSessionPackages}
-            keyExtractor={(item) => item.code}
-            contentContainerStyle={[
-              styles.flatlistContainer,
-              { paddingBottom: insets.bottom + 64 },
-            ]}
-            renderItem={({ item }) => <PackageCard item={item} pressable={false} />}
-          />
-          <View style={[styles.buttonContainer, { marginBottom: insets.bottom }]}>
-            <Button
-              title="Ver todos os pacotes"
-              onPress={() => {
-                navigation.navigate("PackagesList");
-              }}
-            />
+        {currentSessionPackages.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>Nenhum pacote escaneado ainda</Text>
           </View>
-        </View>
+        ) : (
+          <>
+            <View style={styles.infoHeader}>
+              <Text style={styles.infoText}>Pacotes bipados</Text>
+              <TouchableOpacity onPress={openUpdateAllModal}>
+                <Text style={styles.infoTouchableText}>Atualizar todos</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.infoWrapper}>
+              <FlatList
+                data={currentSessionPackages}
+                keyExtractor={(item) => item.code}
+                contentContainerStyle={[
+                  styles.flatlistContainer,
+                  { paddingBottom: insets.bottom + 64 },
+                ]}
+                renderItem={({ item }) => <PackageCard item={item} pressable={false} />}
+              />
+              <View style={[styles.buttonContainer, { marginBottom: insets.bottom }]}>
+                <Button
+                  title="Ver todos os pacotes"
+                  onPress={() => {
+                    navigation.navigate("PackagesList");
+                  }}
+                />
+              </View>
+            </View>
+          </>
+        )}
+
         <LinearGradient
           colors={["transparent", Theme.colors.primary[200]]}
           style={[styles.background]}

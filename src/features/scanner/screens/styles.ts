@@ -88,6 +88,18 @@ export const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: "20%",
-    // zIndex: -1,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 24,
+    paddingHorizontal: 16,
+  },
+  emptyText: {
+    fontSize: Theme.fontSizes.lg,
+    fontWeight: "500",
+    color: Theme.colors.neutral[900],
+    textAlign: "center",
   },
 });
