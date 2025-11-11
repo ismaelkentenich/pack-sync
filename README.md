@@ -1,4 +1,4 @@
-# 📦 Pack Sync
+# 📦 Pack Sync - App de Gestão de entregas e escaneamento de pacotes
 
 Uma aplicação moderna React Native construída com Expo e TypeScript para escaneamento e gerenciamento de entregas de pacotes. Possui arquitetura offline-first com persistência SQLite, escaneamento em tempo real de códigos de barras/QR e integração webhook para notificações de entrega.
 
