@@ -173,6 +173,14 @@ src/
 - Tratamento elegante de problemas de conectividade de rede
 - Persistência de dados através das sessões da aplicação
 
+### Motivações e Experiências
+
+Durante o desenvolvimento, busquei expandir minhas experiências técnicas e explorar novas abordagens fora das tecnologias que utilizo no dia a dia profissional.
+
+Escolhi SQLite e Zustand para sair da zona de conforto e experimentar ferramentas diferentes do Redux, que é o gerenciador de estado que mais utilizo atualmente.
+
+ Essa escolha me permitiu entender melhor os conceitos de persistência offline, arquitetura reativa leve e sincronização de dados, além de aprimorar minha visão sobre performance e simplicidade de estado em projetos React Native.
+
 ## 🔗 Configuração do Webhook
 
 ### Instruções de Configuração
@@ -291,6 +299,16 @@ A aplicação envia a seguinte estrutura de payload JSON:
    - Mantenha histórico persistente de pacotes através das sessões
    - Revise performance de entrega e estatísticas
 
+
+## 🧭 Próximos Passos
+
+- Implementar testes unitários para garantir estabilidade e confiabilidade nas principais funções e serviços
+
+- Implementar Storybook para componentes permitindo documentar visualmente os componentes e promover consistência no design
+
+- Atualizar os designs e refinar a UI seguindo boas práticas de UX e identidade visual
+
+- Implementar webhook dinâmico, permitindo que o próprio usuário adicione seu endpoint webhook, com vinculação no banco de dados
 
 ---
 
