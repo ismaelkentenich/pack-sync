@@ -1,5 +1,5 @@
 import { DeliveryStatus, PackageStatus } from "./enums";
-import { runSync, getFirstSync, getAllSync } from "./index";
+import { packagesDb } from "./index";
 
 export type Package = {
   id?: number;
@@ -13,16 +13,21 @@ export type Package = {
 };
 
 export function insertPackage(pkg: Package) {
-  const safeCode = pkg.code.replace(/'/g, "''");
+  const existing = packagesDb.getFirstSync<Package>(`SELECT * FROM packages WHERE code = ?`, [
+    pkg.code,
+  ]);
 
-  const existing = getFirstSync<Package>(`SELECT * FROM packages WHERE code='${safeCode}'`);
   if (!existing) {
-    runSync(`
-    INSERT INTO packages (code, status, deliveryStatus, clientCode, scanned_at)
-    VALUES ('${pkg.code}', '${pkg.status}', '${pkg.deliveryStatus}', '${pkg.clientCode ?? "NULL"}', '${pkg.scanned_at}')
-  `);
+    packagesDb.runSync(
+      `INSERT INTO packages (code, status, deliveryStatus, clientCode, scanned_at)
+       VALUES (?, ?, ?, ?, ?)`,
+      [pkg.code, pkg.status, pkg.deliveryStatus, pkg.clientCode ?? null, pkg.scanned_at],
+    );
   }
-  const inserted = getFirstSync<Package>(`SELECT * FROM packages WHERE code='${safeCode}'`);
+
+  const inserted = packagesDb.getFirstSync<Package>(`SELECT * FROM packages WHERE code = ?`, [
+    pkg.code,
+  ]);
   return inserted!;
 }
 
@@ -32,24 +37,27 @@ export function updatePackageStatus(
   clientCode?: string,
   receiverName?: string,
 ) {
-  runSync(`
-    UPDATE packages 
-    SET status='${status}', clientCode='${clientCode}', receiverName='${receiverName ?? ""}'
-    WHERE id=${id}
-  `);
+  packagesDb.runSync(
+    `UPDATE packages 
+     SET status = ?, clientCode = ?, receiverName = ?
+     WHERE id = ?`,
+    [status, clientCode ?? null, receiverName ?? null, id],
+  );
 }
 
 export function markPackageSent(id: number) {
   const now = new Date().toISOString();
-  runSync(`
-    UPDATE packages 
-    SET deliveryStatus='${DeliveryStatus.SENT}', sent_at='${now}' 
-    WHERE id=${id}
-  `);
+  packagesDb.runSync(
+    `UPDATE packages 
+     SET deliveryStatus = ?, sent_at = ? 
+     WHERE id = ?`,
+    [DeliveryStatus.SENT, now, id],
+  );
 }
 
 export function getAllPackages(clientCode: string): Package[] {
-  return getAllSync<Package>(
-    `SELECT * FROM packages WHERE clientCode = '${clientCode}' ORDER BY scanned_at DESC`,
+  return packagesDb.getAllSync<Package>(
+    `SELECT * FROM packages WHERE clientCode = ? ORDER BY scanned_at DESC`,
+    [clientCode],
   );
 }

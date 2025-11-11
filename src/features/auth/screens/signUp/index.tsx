@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Routes } from "@app/navigation/routes";
 import Button from "@components/Button";
 import Input from "@components/Input";
 import ScreenContainer from "@components/ScreenContainer";
-import { useAuthStore } from "@store/auth/useAuthStore";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import { Routes } from "@app/navigation/routes";
-import { styles } from "./styles";
-import { isEmailValid, isPasswordValid } from "@utils/validators";
 import { useShowAlert } from "@hooks/useShowAlert";
+import { useAuthStore } from "@store/auth/useAuthStore";
+import { isEmailValid, isPasswordValid } from "@utils/validators";
+import React, { useState } from "react";
+import { Text, View } from "react-native";
+import { styles } from "./styles";
 
 export default function SignupScreen() {
   const navigation = useAppNavigation(Routes.SignUp);
@@ -42,9 +42,10 @@ export default function SignupScreen() {
     try {
       await signup(email, password);
       showAlert("Conta criada com sucesso!", "success");
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      showAlert(error.message || "Tente novamente.", "error");
+      const message = error instanceof Error ? error.message : "Tente novamente.";
+      showAlert(message, "error");
     }
   };
 

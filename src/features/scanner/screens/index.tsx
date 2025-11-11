@@ -14,6 +14,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Package } from "@services/database/packages/packages";
 
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
@@ -76,6 +77,11 @@ export default function ScanScreen() {
     scanPackage(data);
   };
 
+  const renderItem = useCallback(
+    ({ item }: { item: Package }) => <PackageCard item={item} pressable={false} />,
+    [],
+  );
+
   return (
     <ScreenContainer headerTitle="Scanner">
       <View style={[styles.container]}>
@@ -117,7 +123,9 @@ export default function ScanScreen() {
                   styles.flatlistContainer,
                   { paddingBottom: insets.bottom + 64 },
                 ]}
-                renderItem={({ item }) => <PackageCard item={item} pressable={false} />}
+                renderItem={renderItem}
+                showsVerticalScrollIndicator={false}
+                initialNumToRender={5} 
               />
               <View style={[styles.buttonContainer, { marginBottom: insets.bottom }]}>
                 <Button

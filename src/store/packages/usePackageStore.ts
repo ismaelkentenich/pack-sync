@@ -1,14 +1,8 @@
-import { create } from "zustand";
-import {
-  Package,
-  insertPackage,
-  updatePackageStatus,
-  getAllPackages,
-} from "@services/database/packages/packages";
-import { PackageStatus, DeliveryStatus } from "@services/database/packages/enums";
+import { PackageStatus } from "@services/database/packages/enums";
+import { Package } from "@services/database/packages/packages";
+import { packageService } from "@services/packages/PackageService";
 import { useAuthStore } from "@store/auth/useAuthStore";
-import { sendToWebhook } from "@services/webhook/sendToWebhook";
-import { normalizeText } from "@utils/string";
+import { create } from "zustand";
 
 type Feedback = {
   loading: boolean;
@@ -52,8 +46,8 @@ export const usePackageStore = create<PackageState>((set, get) => ({
   loadPackages: () => {
     const { user } = useAuthStore.getState();
     if (!user?.uid) return;
-    const pkgs = getAllPackages(user.uid);
-    const pending = pkgs.filter((p) => p.deliveryStatus === DeliveryStatus.PENDING).length;
+    const pkgs = packageService.getAllPackages(user.uid);
+    const pending = packageService.getPendingCount(user.uid);
     set({ packages: pkgs, pendingCount: pending });
   },
 
@@ -63,18 +57,7 @@ export const usePackageStore = create<PackageState>((set, get) => ({
 
     set({ feedback: { loading: true } });
     try {
-      const existing = getAllPackages(user.uid).find((p) => p.code === code);
-      if (existing) throw new Error("Pacote já escaneado");
-
-      const pkgToInsert: Package = {
-        code,
-        status: PackageStatus.COLETADO,
-        deliveryStatus: DeliveryStatus.PENDING,
-        clientCode: user.uid,
-        scanned_at: new Date().toISOString(),
-      };
-
-      const newPkg = insertPackage(pkgToInsert);
+      const newPkg = await packageService.scanPackage(code, user.uid);
       set((state) => ({
         packages: [newPkg, ...state.packages],
         currentSessionPackages: [newPkg, ...state.currentSessionPackages],
@@ -83,9 +66,10 @@ export const usePackageStore = create<PackageState>((set, get) => ({
 
       get().loadPackages();
       set({ feedback: { loading: false, success: `Pacote ${code} escaneado com sucesso!` } });
-    } catch (err: any) {
-      console.warn(err.message);
-      set({ feedback: { loading: false, error: err.message } });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro ao escanear pacote";
+      console.warn(message);
+      set({ feedback: { loading: false, error: message } });
     }
   },
 
@@ -95,40 +79,46 @@ export const usePackageStore = create<PackageState>((set, get) => ({
 
     set({ feedback: { loading: true } });
     try {
-      for (const pkg of currentSessionPackages) {
-        await get().sendPackage(pkg);
+      const result = await packageService.sendMultiplePackages(currentSessionPackages);
+
+      if (result.success) {
+        set({ feedback: { loading: false, success: "Todos os pacotes enviados com sucesso!" } });
+      } else {
+        set({
+          feedback: { loading: false, error: result.error ?? "Falha ao enviar alguns pacotes." },
+        });
       }
-      set({ feedback: { loading: false, success: "Todos os pacotes enviados com sucesso!" } });
+
       get().resetSession();
-    } catch (err: any) {
-      console.warn(err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro ao enviar pacotes";
+      console.warn(message);
       set({ feedback: { loading: false, error: "Falha ao enviar alguns pacotes." } });
     }
   },
 
   filteredPackages: () => {
-    const term = normalizeText(get().searchTerm);
-    const status = get().statusFilter;
-    return get().packages.filter((pkg) => {
-      const codeMatch = normalizeText(pkg.code).includes(term);
-      const statusMatch = status ? pkg.status === status : true;
-      return codeMatch && statusMatch;
-    });
+    return packageService.filterPackages(get().packages, get().searchTerm, get().statusFilter);
   },
 
   changeStatus: (id, status, receiverName?: string) => {
     const { user } = useAuthStore.getState();
     if (!user?.uid) return;
-    const clientCode = user.uid;
 
-    updatePackageStatus(id, status, clientCode, receiverName);
-    get().loadPackages();
+    try {
+      packageService.changePackageStatus(id, status, user.uid, receiverName);
+      get().loadPackages();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro ao atualizar status";
+      console.warn(message);
+      set({ feedback: { loading: false, error: message } });
+    }
   },
 
   resetSession: () => set({ currentSessionPackages: [] }),
 
   sendPackage: async (pkg, receiverName?: string) => {
-    const result = await sendToWebhook(pkg, receiverName);
+    const result = await packageService.sendPackageToWebhook(pkg, receiverName);
     const { user } = useAuthStore.getState();
     if (user?.uid) {
       get().loadPackages();
@@ -141,21 +131,15 @@ export const usePackageStore = create<PackageState>((set, get) => ({
   syncPendingPackages: async () => {
     const { user } = useAuthStore.getState();
     if (!user?.uid) return;
-    const allPkgs = getAllPackages(user.uid);
-    const pendings = allPkgs.filter((p) => p.deliveryStatus === DeliveryStatus.PENDING);
 
-    if (pendings.length === 0) {
+    console.log("Iniciando sincronização de pacotes pendentes...");
+
+    const result = await packageService.syncPendingPackages(user.uid);
+
+    if (result.data === 0) {
       console.log("Nenhum pacote pendente para sincronizar.");
-      return;
-    }
-
-    console.log(`Tentando reenviar ${pendings.length} pacotes pendentes...`);
-
-    for (const pkg of pendings) {
-      const result = await sendToWebhook(pkg);
-      if (!result.success) {
-        console.warn(`Falha ao reenviar pacote ${pkg.code}`);
-      }
+    } else {
+      console.log(`${result.data} pacote(s) sincronizado(s) com sucesso.`);
     }
 
     get().loadPackages();
