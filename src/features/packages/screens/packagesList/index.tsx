@@ -1,6 +1,6 @@
 import Card from "@components/Card";
 import ScreenContainer from "@components/ScreenContainer";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { styles } from "./styles";
 import { usePackageStore } from "@store/packages/usePackageStore";
@@ -27,6 +27,8 @@ export default function PackagesListScreen() {
     setStatusFilter,
   } = usePackageStore();
   const [refreshing, setRefreshing] = useState(false);
+  const filteredData = useMemo(() => filteredPackages(), [packages, searchTerm, statusFilter]);
+
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
 
   const handleRefresh = useCallback(async () => {
@@ -44,6 +46,49 @@ export default function PackagesListScreen() {
     updateStatusModalRef.current?.present();
   };
 
+  const renderItem = useCallback(
+    ({ item }: { item: Package }) => (
+      <PackageCard
+        item={item}
+        onPress={() => navigation.navigate("PackageDetails", { pkg: item })}
+        onPressUpdate={() => handleOpenUpdateModal(item)}
+        showButtons={false}
+      />
+    ),
+    [navigation, handleOpenUpdateModal],
+  );
+
+  const keyExtractor = useCallback((item: Package) => String(item.id ?? item.code), []);
+
+  const ListHeaderComponent = useMemo(
+    () => (
+      <View style={styles.headerContainer}>
+        <Input
+          placeholder="Buscar por código..."
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <View style={styles.pickerWrapper}>
+          <Picker
+            selectedValue={statusFilter}
+            onValueChange={setStatusFilter}
+            style={styles.pickerContainer}
+            dropdownIconColor={Theme.colors.neutral[300]}
+            mode="dropdown"
+          >
+            <Picker.Item label="Todos" value="" style={styles.pickerLabel} />
+            {Object.values(PackageStatus).map((status) => (
+              <Picker.Item key={status} label={status} value={status} style={styles.pickerLabel} />
+            ))}
+          </Picker>
+        </View>
+      </View>
+    ),
+    [searchTerm, setSearchTerm, statusFilter, setStatusFilter],
+  );
+
   return (
     <ScreenContainer headerTitle="Lista de Pacotes" withGradientBackground>
       <View style={styles.container}>
@@ -53,39 +98,11 @@ export default function PackagesListScreen() {
           </View>
         ) : (
           <FlatList
-            data={filteredPackages()}
+            data={filteredData}
+            renderItem={renderItem}
             contentContainerStyle={styles.flatlistContainer}
-            ListHeaderComponent={
-              <View style={styles.headerContainer}>
-                <Input
-                  placeholder="Buscar por código..."
-                  value={searchTerm}
-                  onChangeText={setSearchTerm}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <View style={styles.pickerWrapper}>
-                  <Picker
-                    selectedValue={statusFilter}
-                    onValueChange={setStatusFilter}
-                    style={styles.pickerContainer}
-                    dropdownIconColor={Theme.colors.neutral[300]}
-                    mode="dropdown"
-                  >
-                    <Picker.Item label="Todos" value="" style={styles.pickerLabel} />
-                    {Object.values(PackageStatus).map((status) => (
-                      <Picker.Item
-                        key={status}
-                        label={status}
-                        value={status}
-                        style={styles.pickerLabel}
-                      />
-                    ))}
-                  </Picker>
-                </View>
-              </View>
-            }
-            keyExtractor={(item) => String(item.id ?? item.code)}
+            ListHeaderComponent={ListHeaderComponent}
+            keyExtractor={keyExtractor}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -93,14 +110,9 @@ export default function PackagesListScreen() {
                 colors={[Theme.colors.primary[500]]}
               />
             }
-            renderItem={({ item }) => (
-              <PackageCard
-                item={item}
-                onPress={() => navigation.navigate("PackageDetails", { pkg: item })}
-                onPressUpdate={() => handleOpenUpdateModal(item)}
-                showButtons={false}
-              />
-            )}
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
           />
         )}
       </View>
