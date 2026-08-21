@@ -1,7 +1,10 @@
 import Button from "@components/Button";
 import Card from "@components/Card";
 import Input from "@components/Input";
-import { ModalCloseIcon, ModalWrapper } from "@components/ModalWrapper";
+import {
+  ModalCloseIcon,
+  ModalWrapper,
+} from "@components/ModalWrapper";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Picker } from "@react-native-picker/picker";
 import { PackageStatus } from "@services/database/packages/enums";
@@ -24,14 +27,19 @@ export default forwardRef(function UpdateStatusModal(
   ref: Ref<BottomSheetModal>,
 ) {
   const insets = useSafeAreaInsets();
-  const { changeStatus, loadPackages, sendPackage } = usePackageStore();
+  const { changeStatus, loadPackages, sendPackage } =
+    usePackageStore();
   const showAlert = useShowAlert((state) => state.show);
 
-  const [selectedStatus, setSelectedStatus] = useState<PackageStatus>(packageData.status);
+  const [selectedStatus, setSelectedStatus] =
+    useState<PackageStatus>(packageData.status);
   const [receiverName, setReceiverName] = useState("");
 
   const handleUpdate = () => {
-    if (selectedStatus === PackageStatus.ENTREGUE && !receiverName.trim()) {
+    if (
+      selectedStatus === PackageStatus.ENTREGUE &&
+      !receiverName.trim()
+    ) {
       showAlert("Informe o nome do recebedor.", "error");
       return;
     }
@@ -39,14 +47,19 @@ export default forwardRef(function UpdateStatusModal(
     changeStatus(
       packageData.id!,
       selectedStatus,
-      selectedStatus === PackageStatus.ENTREGUE ? receiverName : undefined,
+      selectedStatus === PackageStatus.ENTREGUE
+        ? receiverName
+        : undefined,
     );
     loadPackages();
     handleCloseModal();
   };
 
   const handleSendWebhook = async () => {
-    if (selectedStatus === PackageStatus.ENTREGUE && !receiverName.trim()) {
+    if (
+      selectedStatus === PackageStatus.ENTREGUE &&
+      !receiverName.trim()
+    ) {
       showAlert("Informe o nome do recebedor.", "error");
       return;
     }
@@ -55,7 +68,9 @@ export default forwardRef(function UpdateStatusModal(
       changeStatus(
         packageData.id!,
         selectedStatus,
-        selectedStatus === PackageStatus.ENTREGUE ? receiverName : undefined,
+        selectedStatus === PackageStatus.ENTREGUE
+          ? receiverName
+          : undefined,
       );
       loadPackages();
       await sendPackage(
@@ -71,34 +86,58 @@ export default forwardRef(function UpdateStatusModal(
     handleCloseModal();
   };
   return (
-    <ModalWrapper ref={ref} style={styles.wrapper} hasInputInsideModal>
+    <ModalWrapper
+      ref={ref}
+      style={styles.wrapper}
+      hasInputInsideModal
+    >
       <ModalCloseIcon onPress={handleCloseModal} />
-      <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-        <Text style={styles.title}>Alteração de status </Text>
+      <View
+        style={[
+          styles.container,
+          { paddingBottom: insets.bottom },
+        ]}
+      >
+        <Text style={styles.title}>
+          Alteração de status{" "}
+        </Text>
 
-        <Text style={styles.text}>Selecione o novo status do pacote:</Text>
+        <Text style={styles.text}>
+          Selecione o novo status do pacote:
+        </Text>
         <Card touchable={false}>
-          <Text style={styles.text}>Pacote: {packageData.code}</Text>
+          <Text style={styles.text}>
+            Pacote: {packageData.code}
+          </Text>
         </Card>
 
         <View style={styles.pickerWrapper}>
           <Picker
             selectedValue={selectedStatus}
-            onValueChange={(value) => setSelectedStatus(value)}
+            onValueChange={(value) =>
+              setSelectedStatus(value)
+            }
             style={styles.pickerContainer}
             dropdownIconColor={Theme.colors.neutral[300]}
             itemStyle={styles.pickerItem}
             mode="dropdown"
           >
             {Object.values(PackageStatus).map((status) => (
-              <Picker.Item key={status} label={status} value={status} style={styles.pickerLabel} />
+              <Picker.Item
+                key={status}
+                label={status}
+                value={status}
+                style={styles.pickerLabel}
+              />
             ))}
           </Picker>
         </View>
 
         {selectedStatus === PackageStatus.ENTREGUE && (
           <View>
-            <Text style={styles.text}>Nome do recebedor:</Text>
+            <Text style={styles.text}>
+              Nome do recebedor:
+            </Text>
             <Input
               placeholder="Ex: João da Silva"
               value={receiverName}
@@ -106,9 +145,21 @@ export default forwardRef(function UpdateStatusModal(
             />
           </View>
         )}
-        <View style={[styles.buttonContainer, { paddingBottom: insets.bottom }]}>
-          <Button title="Atualizar" onPress={handleUpdate} />
-          <Button title="Enviar para Webhook" onPress={handleSendWebhook} variant="outline" />
+        <View
+          style={[
+            styles.buttonContainer,
+            { paddingBottom: insets.bottom },
+          ]}
+        >
+          <Button
+            title="Atualizar"
+            onPress={handleUpdate}
+          />
+          <Button
+            title="Enviar para Webhook"
+            onPress={handleSendWebhook}
+            variant="outline"
+          />
         </View>
       </View>
     </ModalWrapper>

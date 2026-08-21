@@ -5,7 +5,10 @@ import ScreenContainer from "@components/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { useShowAlert } from "@hooks/useShowAlert";
 import { useAuthStore } from "@store/auth/useAuthStore";
-import { isEmailValid, isPasswordValid } from "@utils/validators";
+import {
+  isEmailValid,
+  isPasswordValid,
+} from "@utils/validators";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { styles } from "./styles";
@@ -16,7 +19,8 @@ export default function SignupScreen() {
   const showAlert = useShowAlert((state) => state.show);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] =
+    useState("");
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
@@ -30,7 +34,10 @@ export default function SignupScreen() {
     }
 
     if (!isPasswordValid(password)) {
-      showAlert("A senha deve ter pelo menos 6 caracteres.", "error");
+      showAlert(
+        "A senha deve ter pelo menos 6 caracteres.",
+        "error",
+      );
       return;
     }
 
@@ -43,14 +50,20 @@ export default function SignupScreen() {
       await signup(email, password);
       showAlert("Conta criada com sucesso!", "success");
     } catch (error) {
-      console.error(error);
-      const message = error instanceof Error ? error.message : "Tente novamente.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Tente novamente.";
       showAlert(message, "error");
     }
   };
 
   return (
-    <ScreenContainer scrollable withHeader={false} withKeyboardAvoiding>
+    <ScreenContainer
+      scrollable
+      withHeader={false}
+      withKeyboardAvoiding
+    >
       <View style={styles.container}>
         <Text style={styles.text}>Criar Conta</Text>
         <Input
@@ -74,7 +87,10 @@ export default function SignupScreen() {
           secure
         />
         <View style={styles.buttonContainer}>
-          <Button title="Cadastrar" onPress={handleSignup} />
+          <Button
+            title="Cadastrar"
+            onPress={handleSignup}
+          />
           <Button
             title="Já tem conta?"
             onPress={() => navigation.navigate("Login")}

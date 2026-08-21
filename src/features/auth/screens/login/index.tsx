@@ -4,7 +4,10 @@ import Input from "@components/Input";
 import ScreenContainer from "@components/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { useShowAlert } from "@hooks/useShowAlert";
-import { isEmailValid, isPasswordValid } from "@utils/validators";
+import {
+  isEmailValid,
+  isPasswordValid,
+} from "@utils/validators";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { useAuthStore } from "src/store/auth/useAuthStore";
@@ -30,7 +33,10 @@ export default function LoginScreen() {
     }
 
     if (!isPasswordValid(password)) {
-      showAlert("A senha deve ter pelo menos 6 caracteres.", "error");
+      showAlert(
+        "A senha deve ter pelo menos 6 caracteres.",
+        "error",
+      );
       return;
     }
 
@@ -38,14 +44,19 @@ export default function LoginScreen() {
       await login(email, password);
       navigation.navigate("Home");
     } catch (error) {
-      console.error(error);
-      const message = error instanceof Error ? error.message : "Verifique suas credenciais.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Verifique suas credenciais.";
       showAlert(message, "error");
     }
   };
 
   return (
-    <ScreenContainer withHeader={false} withKeyboardAvoiding>
+    <ScreenContainer
+      withHeader={false}
+      withKeyboardAvoiding
+    >
       <View style={styles.container}>
         <Text style={styles.text}>Login</Text>
         <Input
