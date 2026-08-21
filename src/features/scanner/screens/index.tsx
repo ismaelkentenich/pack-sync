@@ -20,7 +20,9 @@ export default function ScanScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation(Routes.Scan);
   const updateAllModalRef = useRef<BottomSheetModal>(null);
+
   const [permission, requestPermission] = useCameraPermissions();
+
   const {
     currentSessionPackages,
     scanPackage,
@@ -31,16 +33,46 @@ export default function ScanScreen() {
 
   const scannedCodesRef = useRef<Set<string>>(new Set());
 
-  const openUpdateAllModal = () => updateAllModalRef.current?.present();
-  const closeUpdateAllModal = () => updateAllModalRef.current?.close();
+  const openUpdateAllModal = useCallback(() => {
+    updateAllModalRef.current?.present();
+  }, []);
+
+  const closeUpdateAllModal = useCallback(() => {
+    updateAllModalRef.current?.close();
+  }, []);
+
+  const handleBarCodeScanned = useCallback(
+    (result: BarcodeScanningResult) => {
+      const data = result.data.trim();
+
+      if (!data || scannedCodesRef.current.has(data)) {
+        return;
+      }
+
+      scannedCodesRef.current.add(data);
+      scanPackage(data);
+    },
+    [scanPackage],
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: Package }) => (
+      <PackageCard
+        item={item}
+        pressable={false}
+      />
+    ),
+    [],
+  );
 
   useEffect(() => {
     loadPackages();
-  }, []);
+  }, [loadPackages]);
 
   useFocusEffect(
     useCallback(() => {
       resetSession();
+      scannedCodesRef.current.clear();
     }, [resetSession]),
   );
 
@@ -48,8 +80,14 @@ export default function ScanScreen() {
     return (
       <ScreenContainer>
         <View style={styles.noPermissionContainer}>
-          <Text style={styles.noPermissionTitle}>Solicitando permissão de câmera...</Text>
-          <ActivityIndicator size="large" color={Theme.colors.primary[600]} />
+          <Text style={styles.noPermissionTitle}>
+            Solicitando permissão de câmera...
+          </Text>
+
+          <ActivityIndicator
+            size="large"
+            color={Theme.colors.primary[600]}
+          />
         </View>
       </ScreenContainer>
     );
@@ -62,29 +100,21 @@ export default function ScanScreen() {
           <Text style={styles.noPermissionTitle}>
             Para escanear os pacotes, ative a permissão da câmera.
           </Text>
+
           <View style={styles.noPermissionButton}>
-            <Button title="Conceder permissão" onPress={requestPermission} />
+            <Button
+              title="Conceder permissão"
+              onPress={requestPermission}
+            />
           </View>
         </View>
       </ScreenContainer>
     );
   }
 
-  const handleBarCodeScanned = (result: BarcodeScanningResult) => {
-    const data = result.data.trim();
-    if (scannedCodesRef.current.has(data)) return;
-    scannedCodesRef.current.add(data);
-    scanPackage(data);
-  };
-
-  const renderItem = useCallback(
-    ({ item }: { item: Package }) => <PackageCard item={item} pressable={false} />,
-    [],
-  );
-
   return (
     <ScreenContainer headerTitle="Scanner">
-      <View style={[styles.container]}>
+      <View style={styles.container}>
         <View style={styles.cameraWrapper}>
           <CameraView
             style={styles.camera}
@@ -98,41 +128,56 @@ export default function ScanScreen() {
 
         {currentSessionPackages.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>Nenhum pacote escaneado ainda</Text>
+            <Text style={styles.emptyText}>
+              Nenhum pacote escaneado ainda
+            </Text>
           </View>
         ) : (
           <>
             <View style={styles.infoHeader}>
-              <TouchableOpacity onPress={openUpdateAllModal} style={styles.infoHeaderItem}>
-                <Text style={styles.infoTouchableText}>Atualizar todos</Text>
+              <TouchableOpacity
+                onPress={openUpdateAllModal}
+                style={styles.infoHeaderItem}
+              >
+                <Text style={styles.infoTouchableText}>
+                  Atualizar todos
+                </Text>
               </TouchableOpacity>
+
               <View style={styles.infoHeaderItem}>
                 <Button
                   title="Enviar para webhook"
-                  onPress={() => {
-                    sendAllCurrentSessionPackages();
-                  }}
+                  onPress={sendAllCurrentSessionPackages}
                 />
               </View>
             </View>
+
             <View style={styles.infoWrapper}>
               <FlatList
                 data={currentSessionPackages}
                 keyExtractor={(item) => item.code}
                 contentContainerStyle={[
                   styles.flatlistContainer,
-                  { paddingBottom: insets.bottom + 64 },
+                  {
+                    paddingBottom: insets.bottom + 64,
+                  },
                 ]}
                 renderItem={renderItem}
                 showsVerticalScrollIndicator={false}
-                initialNumToRender={5} 
+                initialNumToRender={5}
               />
-              <View style={[styles.buttonContainer, { marginBottom: insets.bottom }]}>
+
+              <View
+                style={[
+                  styles.buttonContainer,
+                  {
+                    marginBottom: insets.bottom,
+                  },
+                ]}
+              >
                 <Button
                   title="Ver todos os pacotes"
-                  onPress={() => {
-                    navigation.navigate("PackagesList");
-                  }}
+                  onPress={() => navigation.navigate("PackagesList")}
                 />
               </View>
             </View>
@@ -141,13 +186,16 @@ export default function ScanScreen() {
 
         <LinearGradient
           colors={["transparent", Theme.colors.primary[200]]}
-          style={[styles.background]}
+          style={styles.background}
         />
       </View>
+
       <UpdateAllPackagesModal
         ref={updateAllModalRef}
         handleCloseModal={closeUpdateAllModal}
-        onSuccessNavigate={() => navigation.navigate("PackagesList")}
+        onSuccessNavigate={() =>
+          navigation.navigate("PackagesList")
+        }
       />
     </ScreenContainer>
   );
