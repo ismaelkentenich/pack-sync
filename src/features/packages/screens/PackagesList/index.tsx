@@ -23,7 +23,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Package } from "@features/packages/domain/package.types";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 import { Picker } from "@react-native-picker/picker";
-import { PackageStatus } from "@infrastructure/database/packages/enums";
+import { PackageStatus } from "@features/packages/domain/package.enums";
 
 export default function PackagesListScreen() {
   const navigation = useAppNavigation("PackagesList");

@@ -1,10 +1,10 @@
-import {
-  DeliveryStatus,
-  PackageStatus,
-} from "../../../infrastructure/database/packages/enums";
 import { packageRepository } from "../../../infrastructure/database/packages/PackageRepository";
 import { Package } from "@features/packages/domain/package.types";
 import { sendToWebhook } from "../../../infrastructure/webhook/sendToWebhook";
+import {
+  DeliveryStatus,
+  PackageStatus,
+} from "@features/packages/domain/package.enums";
 
 export type ServiceResult<T = void> = {
   success: boolean;
