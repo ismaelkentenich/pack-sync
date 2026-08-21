@@ -7,7 +7,7 @@ import {
 } from "@components/composites/ModalWrapper";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Picker } from "@react-native-picker/picker";
-import { PackageStatus } from "@infrastructure/database/packages/enums";
+import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import Theme from "@theme/theme";

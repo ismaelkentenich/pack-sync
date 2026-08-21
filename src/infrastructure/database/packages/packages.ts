@@ -1,6 +1,9 @@
-import { Package } from "@features/packages/domain/package.types";
-import { DeliveryStatus, PackageStatus } from "./enums";
+import {
+  DeliveryStatus,
+  PackageStatus,
+} from "@features/packages/domain/package.enums";
 import { packagesDb } from "./index";
+import { Package } from "@features/packages/domain/package.types";
 
 export function insertPackage(pkg: Package) {
   const existing = packagesDb.getFirstSync<Package>(
