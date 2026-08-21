@@ -20,7 +20,7 @@ import Theme from "@theme/theme";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import PackageCard from "@features/packages/components/PackageCard";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Package } from "@infrastructure/database/packages/packages";
+import { Package } from "@features/packages/domain/package.types";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 import { Picker } from "@react-native-picker/picker";
 import { PackageStatus } from "@infrastructure/database/packages/enums";

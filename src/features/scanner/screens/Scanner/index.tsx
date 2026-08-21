@@ -28,7 +28,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Package } from "@infrastructure/database/packages/packages";
+import { Package } from "@features/packages/domain/package.types";
 
 export default function ScanScreen() {
   const insets = useSafeAreaInsets();
