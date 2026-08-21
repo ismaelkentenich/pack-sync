@@ -8,7 +8,7 @@ export type Package = {
   code: string;
   status: PackageStatus;
   deliveryStatus: DeliveryStatus;
-  clientCode?: string;
+  clientCode: string;
   scanned_at: string;
   sent_at?: string;
   receiverName?: string;

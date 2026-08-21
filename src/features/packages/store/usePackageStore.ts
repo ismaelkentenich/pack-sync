@@ -2,7 +2,7 @@ import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { create } from "zustand";
-import { packageService } from "@features/packages/services/PackageService";
+import { packageService } from "@features/packages/package.dependencies";
 
 type Feedback = {
   loading: boolean;
@@ -157,24 +157,33 @@ export const usePackageStore = create<PackageState>(
 
     changeStatus: (id, status, receiverName?: string) => {
       const { user } = useAuthStore.getState();
-      if (!user?.uid) return;
+
+      if (!user?.uid) {
+        return;
+      }
 
       try {
         packageService.changePackageStatus(
           id,
-          status,
           user.uid,
+          status,
           receiverName,
         );
+
         get().loadPackages();
-      } catch (err) {
+      } catch (error) {
         const message =
-          err instanceof Error
-            ? err.message
+          error instanceof Error
+            ? error.message
             : "Erro ao atualizar status";
+
         console.warn(message);
+
         set({
-          feedback: { loading: false, error: message },
+          feedback: {
+            loading: false,
+            error: message,
+          },
         });
       }
     },
