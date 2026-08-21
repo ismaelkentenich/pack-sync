@@ -1,8 +1,8 @@
-import { PackageStatus } from "@services/database/packages/enums";
-import { Package } from "@services/database/packages/packages";
-import { packageService } from "@features/packages/services/PackageService";
+import { PackageStatus } from "@infrastructure/database/packages/enums";
+import { Package } from "@infrastructure/database/packages/packages";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { create } from "zustand";
+import { packageService } from "@features/packages/services/PackageService";
 
 type Feedback = {
   loading: boolean;

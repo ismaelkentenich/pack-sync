@@ -14,7 +14,7 @@
       "@utils/*": ["./src/utils/*"],
       "@theme/*": ["./src/theme/*"],
       "@store/*": ["./src/store/*"],
-      "@services/*": ["./src/services/*"],
+      "@infrastructure/*": ["./src/infrastructure/*"],
       "@types/*": ["./src/types/*"]
     }
   }

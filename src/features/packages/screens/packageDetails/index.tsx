@@ -13,7 +13,7 @@ import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import Card from "@components/primitives/Card";
 import Badge from "@components/primitives/Badge";
-import { PackageStatus } from "@services/database/packages/enums";
+import { PackageStatus } from "@infrastructure/database/packages/enums";
 import { formatDate } from "@utils/date";
 
 type PackageDetailsRouteProp = RouteProp<

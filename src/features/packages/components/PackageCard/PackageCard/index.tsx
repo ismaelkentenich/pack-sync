@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import { styles } from "./styles";
 import Card from "@components/primitives/Card";
-import { Package } from "@services/database/packages/packages";
+import { Package } from "@infrastructure/database/packages/packages";
 import Button from "@components/primitives/Button";
 import Badge from "@components/primitives/Badge";
 import { formatDate } from "@utils/date";
