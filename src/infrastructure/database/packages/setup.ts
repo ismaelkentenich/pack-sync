@@ -1,16 +1,71 @@
-import { runSync } from "./index";
+import { packagesDb } from "./index";
+import {
+  createPackagesIndexes,
+  createPackagesTable,
+  PACKAGES_SCHEMA_VERSION,
+} from "./schema";
+import { migrateToMultiUserIdentity } from "./migrations/migrateToMultiUserIdentity";
 
-export const setupPackagesDatabase = () => {
-  runSync(`
-    CREATE TABLE IF NOT EXISTS packages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      status TEXT NOT NULL DEFAULT 'Coletado',
-      deliveryStatus TEXT NOT NULL DEFAULT 'pending',
-      clientCode INTEGER,
-      scanned_at TEXT NOT NULL,
-      sent_at TEXT,
-      receiverName TEXT
-    );
-  `);
+type TableExistsResult = {
+  name: string;
 };
+
+type UserVersionResult = {
+  user_version: number;
+};
+
+function packagesTableExists(): boolean {
+  const result = packagesDb.getFirstSync<TableExistsResult>(
+    `
+        SELECT name
+        FROM sqlite_master
+        WHERE type = 'table'
+          AND name = 'packages'
+        LIMIT 1;
+      `,
+  );
+
+  return Boolean(result);
+}
+
+function getDatabaseVersion(): number {
+  const result = packagesDb.getFirstSync<UserVersionResult>(
+    "PRAGMA user_version;",
+  );
+
+  return result?.user_version ?? 0;
+}
+
+function setDatabaseVersion(version: number): void {
+  packagesDb.execSync(`PRAGMA user_version = ${version};`);
+}
+
+function createCurrentSchema(): void {
+  createPackagesTable();
+  createPackagesIndexes();
+
+  setDatabaseVersion(PACKAGES_SCHEMA_VERSION);
+}
+
+export function setupPackagesDatabase(): void {
+  if (!packagesTableExists()) {
+    createCurrentSchema();
+    return;
+  }
+
+  const databaseVersion = getDatabaseVersion();
+
+  if (databaseVersion < PACKAGES_SCHEMA_VERSION) {
+    migrateToMultiUserIdentity();
+  }
+
+  createPackagesIndexes();
+
+  const updatedVersion = getDatabaseVersion();
+
+  if (updatedVersion > PACKAGES_SCHEMA_VERSION) {
+    throw new Error(
+      `Versão do banco não suportada. Atual: ${updatedVersion}. Suportada: ${PACKAGES_SCHEMA_VERSION}.`,
+    );
+  }
+}

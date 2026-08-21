@@ -1,10 +1,10 @@
-import { packageRepository } from "../../../infrastructure/database/packages/PackageRepository";
-import { Package } from "@features/packages/domain/package.types";
-import { sendToWebhook } from "../../../infrastructure/webhook/sendToWebhook";
 import {
   DeliveryStatus,
   PackageStatus,
 } from "@features/packages/domain/package.enums";
+import { PackageRepository } from "@features/packages/domain/package.repository";
+import { Package } from "@features/packages/domain/package.types";
+import { sendToWebhook } from "@infrastructure/webhook/sendToWebhook";
 
 export type ServiceResult<T = void> = {
   success: boolean;
@@ -13,14 +13,19 @@ export type ServiceResult<T = void> = {
 };
 
 export class PackageService {
+  constructor(
+    private readonly packageRepository: PackageRepository,
+  ) {}
+
   async scanPackage(
     code: string,
     userId: string,
   ): Promise<Package> {
-    const existing = packageRepository.findByCode(
+    const existing = this.packageRepository.findByCode(
       code,
       userId,
     );
+
     if (existing) {
       throw new Error("Pacote já escaneado");
     }
@@ -33,13 +38,13 @@ export class PackageService {
       scanned_at: new Date().toISOString(),
     };
 
-    return packageRepository.create(pkgToInsert);
+    return this.packageRepository.create(pkgToInsert);
   }
 
   changePackageStatus(
     id: number,
+    userId: string,
     status: PackageStatus,
-    clientCode?: string,
     receiverName?: string,
   ): void {
     if (
@@ -51,10 +56,10 @@ export class PackageService {
       );
     }
 
-    packageRepository.updateStatus(
+    this.packageRepository.updateStatus(
       id,
+      userId,
       status,
-      clientCode,
       receiverName,
     );
   }
@@ -63,23 +68,37 @@ export class PackageService {
     pkg: Package,
     receiverName?: string,
   ): Promise<ServiceResult> {
+    if (pkg.id === undefined) {
+      return {
+        success: false,
+        error: "Pacote inválido para sincronização",
+      };
+    }
+
     try {
       const result = await sendToWebhook(pkg, receiverName);
 
-      if (result.success && pkg.id) {
-        packageRepository.markAsSent(pkg.id);
-        return { success: true };
+      if (!result.success) {
+        return {
+          success: false,
+          error: `Falha ao enviar pacote ${pkg.code}`,
+        };
       }
 
+      this.packageRepository.markAsSent(
+        pkg.id,
+        pkg.clientCode,
+      );
+
       return {
-        success: false,
-        error: `Falha ao enviar pacote ${pkg.code}`,
+        success: true,
       };
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
           : "Erro desconhecido";
+
       return {
         success: false,
         error: `Erro ao enviar pacote: ${message}`,
@@ -91,7 +110,10 @@ export class PackageService {
     packages: Package[],
     receiverName?: string,
   ): Promise<
-    ServiceResult<{ sent: number; failed: number }>
+    ServiceResult<{
+      sent: number;
+      failed: number;
+    }>
   > {
     let sent = 0;
     let failed = 0;
@@ -101,16 +123,20 @@ export class PackageService {
         pkg,
         receiverName,
       );
+
       if (result.success) {
-        sent++;
+        sent += 1;
       } else {
-        failed++;
+        failed += 1;
       }
     }
 
     return {
       success: failed === 0,
-      data: { sent, failed },
+      data: {
+        sent,
+        failed,
+      },
       error:
         failed > 0
           ? `${failed} pacote(s) falharam ao enviar`
@@ -122,7 +148,7 @@ export class PackageService {
     userId: string,
   ): Promise<ServiceResult<number>> {
     const pendingPackages =
-      packageRepository.findByDeliveryStatus(
+      this.packageRepository.findByDeliveryStatus(
         userId,
         DeliveryStatus.PENDING,
       );
@@ -138,8 +164,9 @@ export class PackageService {
 
     for (const pkg of pendingPackages) {
       const result = await this.sendPackageToWebhook(pkg);
+
       if (result.success) {
-        syncedCount++;
+        syncedCount += 1;
       }
     }
 
@@ -150,11 +177,11 @@ export class PackageService {
   }
 
   getAllPackages(userId: string): Package[] {
-    return packageRepository.findAllByUser(userId);
+    return this.packageRepository.findAllByUser(userId);
   }
 
   getPendingCount(userId: string): number {
-    return packageRepository.countByDeliveryStatus(
+    return this.packageRepository.countByDeliveryStatus(
       userId,
       DeliveryStatus.PENDING,
     );
@@ -165,23 +192,32 @@ export class PackageService {
     searchTerm: string,
     statusFilter?: string,
   ): Package[] {
+    const normalizedSearchTerm =
+      this.normalizeText(searchTerm);
+
     return packages.filter((pkg) => {
-      const codeMatch = this.normalizeText(
+      const codeMatches = this.normalizeText(
         pkg.code,
-      ).includes(this.normalizeText(searchTerm));
-      const statusMatch = statusFilter
+      ).includes(normalizedSearchTerm);
+
+      const statusMatches = statusFilter
         ? pkg.status === statusFilter
         : true;
-      return codeMatch && statusMatch;
+
+      return codeMatches && statusMatches;
     });
   }
 
   async updateAndSendMultiple(
     packages: Package[],
+    userId: string,
     status: PackageStatus,
     receiverName?: string,
   ): Promise<
-    ServiceResult<{ sent: number; failed: number }>
+    ServiceResult<{
+      sent: number;
+      failed: number;
+    }>
   > {
     if (
       status === PackageStatus.ENTREGUE &&
@@ -195,11 +231,13 @@ export class PackageService {
     }
 
     try {
-      const packageIds = packages
-        .map((p) => p.id!)
-        .filter((id) => id !== undefined);
-      packageRepository.batchUpdateStatus(
+      const packageIds = packages.flatMap((pkg) =>
+        pkg.id !== undefined ? [pkg.id] : [],
+      );
+
+      this.packageRepository.batchUpdateStatus(
         packageIds,
+        userId,
         status,
         receiverName,
       );
@@ -210,17 +248,16 @@ export class PackageService {
         receiverName,
       }));
 
-      const sendResult = await this.sendMultiplePackages(
+      return this.sendMultiplePackages(
         updatedPackages,
         receiverName,
       );
-
-      return sendResult;
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
           : "Erro desconhecido";
+
       return {
         success: false,
         error: message,
@@ -236,5 +273,3 @@ export class PackageService {
       .toLowerCase();
   }
 }
-
-export const packageService = new PackageService();
