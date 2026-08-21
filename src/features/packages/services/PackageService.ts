@@ -1,7 +1,10 @@
-import { DeliveryStatus, PackageStatus } from "../database/packages/enums";
-import { packageRepository } from "../database/packages/PackageRepository";
-import { Package } from "../database/packages/packages";
-import { sendToWebhook } from "../webhook/sendToWebhook";
+import {
+  DeliveryStatus,
+  PackageStatus,
+} from "../../../services/database/packages/enums";
+import { packageRepository } from "../../../services/database/packages/PackageRepository";
+import { Package } from "../../../services/database/packages/packages";
+import { sendToWebhook } from "../../../services/webhook/sendToWebhook";
 
 export type ServiceResult<T = void> = {
   success: boolean;
@@ -10,8 +13,14 @@ export type ServiceResult<T = void> = {
 };
 
 export class PackageService {
-  async scanPackage(code: string, userId: string): Promise<Package> {
-    const existing = packageRepository.findByCode(code, userId);
+  async scanPackage(
+    code: string,
+    userId: string,
+  ): Promise<Package> {
+    const existing = packageRepository.findByCode(
+      code,
+      userId,
+    );
     if (existing) {
       throw new Error("Pacote já escaneado");
     }
@@ -33,14 +42,27 @@ export class PackageService {
     clientCode?: string,
     receiverName?: string,
   ): void {
-    if (status === PackageStatus.ENTREGUE && !receiverName?.trim()) {
-      throw new Error("Nome do recebedor é obrigatório para pacotes entregues");
+    if (
+      status === PackageStatus.ENTREGUE &&
+      !receiverName?.trim()
+    ) {
+      throw new Error(
+        "Nome do recebedor é obrigatório para pacotes entregues",
+      );
     }
 
-    packageRepository.updateStatus(id, status, clientCode, receiverName);
+    packageRepository.updateStatus(
+      id,
+      status,
+      clientCode,
+      receiverName,
+    );
   }
 
-  async sendPackageToWebhook(pkg: Package, receiverName?: string): Promise<ServiceResult> {
+  async sendPackageToWebhook(
+    pkg: Package,
+    receiverName?: string,
+  ): Promise<ServiceResult> {
     try {
       const result = await sendToWebhook(pkg, receiverName);
 
@@ -54,7 +76,10 @@ export class PackageService {
         error: `Falha ao enviar pacote ${pkg.code}`,
       };
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Erro desconhecido";
       return {
         success: false,
         error: `Erro ao enviar pacote: ${message}`,
@@ -65,12 +90,17 @@ export class PackageService {
   async sendMultiplePackages(
     packages: Package[],
     receiverName?: string,
-  ): Promise<ServiceResult<{ sent: number; failed: number }>> {
+  ): Promise<
+    ServiceResult<{ sent: number; failed: number }>
+  > {
     let sent = 0;
     let failed = 0;
 
     for (const pkg of packages) {
-      const result = await this.sendPackageToWebhook(pkg, receiverName);
+      const result = await this.sendPackageToWebhook(
+        pkg,
+        receiverName,
+      );
       if (result.success) {
         sent++;
       } else {
@@ -81,12 +111,21 @@ export class PackageService {
     return {
       success: failed === 0,
       data: { sent, failed },
-      error: failed > 0 ? `${failed} pacote(s) falharam ao enviar` : undefined,
+      error:
+        failed > 0
+          ? `${failed} pacote(s) falharam ao enviar`
+          : undefined,
     };
   }
 
-  async syncPendingPackages(userId: string): Promise<ServiceResult<number>> {
-    const pendingPackages = packageRepository.findByDeliveryStatus(userId, DeliveryStatus.PENDING);
+  async syncPendingPackages(
+    userId: string,
+  ): Promise<ServiceResult<number>> {
+    const pendingPackages =
+      packageRepository.findByDeliveryStatus(
+        userId,
+        DeliveryStatus.PENDING,
+      );
 
     if (pendingPackages.length === 0) {
       return {
@@ -115,13 +154,24 @@ export class PackageService {
   }
 
   getPendingCount(userId: string): number {
-    return packageRepository.countByDeliveryStatus(userId, DeliveryStatus.PENDING);
+    return packageRepository.countByDeliveryStatus(
+      userId,
+      DeliveryStatus.PENDING,
+    );
   }
 
-  filterPackages(packages: Package[], searchTerm: string, statusFilter?: string): Package[] {
+  filterPackages(
+    packages: Package[],
+    searchTerm: string,
+    statusFilter?: string,
+  ): Package[] {
     return packages.filter((pkg) => {
-      const codeMatch = this.normalizeText(pkg.code).includes(this.normalizeText(searchTerm));
-      const statusMatch = statusFilter ? pkg.status === statusFilter : true;
+      const codeMatch = this.normalizeText(
+        pkg.code,
+      ).includes(this.normalizeText(searchTerm));
+      const statusMatch = statusFilter
+        ? pkg.status === statusFilter
+        : true;
       return codeMatch && statusMatch;
     });
   }
@@ -130,17 +180,29 @@ export class PackageService {
     packages: Package[],
     status: PackageStatus,
     receiverName?: string,
-  ): Promise<ServiceResult<{ sent: number; failed: number }>> {
-    if (status === PackageStatus.ENTREGUE && !receiverName?.trim()) {
+  ): Promise<
+    ServiceResult<{ sent: number; failed: number }>
+  > {
+    if (
+      status === PackageStatus.ENTREGUE &&
+      !receiverName?.trim()
+    ) {
       return {
         success: false,
-        error: "Nome do recebedor é obrigatório para pacotes entregues",
+        error:
+          "Nome do recebedor é obrigatório para pacotes entregues",
       };
     }
 
     try {
-      const packageIds = packages.map((p) => p.id!).filter((id) => id !== undefined);
-      packageRepository.batchUpdateStatus(packageIds, status, receiverName);
+      const packageIds = packages
+        .map((p) => p.id!)
+        .filter((id) => id !== undefined);
+      packageRepository.batchUpdateStatus(
+        packageIds,
+        status,
+        receiverName,
+      );
 
       const updatedPackages = packages.map((pkg) => ({
         ...pkg,
@@ -148,11 +210,17 @@ export class PackageService {
         receiverName,
       }));
 
-      const sendResult = await this.sendMultiplePackages(updatedPackages, receiverName);
+      const sendResult = await this.sendMultiplePackages(
+        updatedPackages,
+        receiverName,
+      );
 
       return sendResult;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Erro desconhecido";
       return {
         success: false,
         error: message,

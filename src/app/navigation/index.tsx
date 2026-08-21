@@ -1,8 +1,8 @@
 import React from "react";
 import { AuthStack } from "./AuthStack";
 import { AppStack } from "./AppStack";
-import { useAuthStore } from "@store/auth/useAuthStore";
-import { usePersistedAuth } from "@hooks/usePersistedAuth";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
 import { View, ActivityIndicator } from "react-native";
 import Theme from "@theme/theme";
 
@@ -20,7 +20,10 @@ export function NavigationStack() {
           justifyContent: "center",
         }}
       >
-        <ActivityIndicator size="large" color={Theme.colors.primary[600]} />
+        <ActivityIndicator
+          size="large"
+          color={Theme.colors.primary[600]}
+        />
       </View>
     );
   }
