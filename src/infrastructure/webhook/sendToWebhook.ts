@@ -1,7 +1,7 @@
-import { markPackageSent } from "@services/database/packages/packages";
-import { Package } from "@services/database/packages/packages";
+import { markPackageSent } from "@infrastructure/database/packages/packages";
+import { Package } from "@infrastructure/database/packages/packages";
 import { WEBSOCKET_URL } from "@env";
-import { PackageStatus } from "@services/database/packages/enums";
+import { PackageStatus } from "@infrastructure/database/packages/enums";
 
 export async function sendToWebhook(
   pkg: Package,

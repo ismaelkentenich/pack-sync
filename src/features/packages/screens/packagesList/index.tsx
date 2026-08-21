@@ -20,10 +20,10 @@ import Theme from "@theme/theme";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import PackageCard from "@features/packages/components/PackageCard/PackageCard";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Package } from "@services/database/packages/packages";
+import { Package } from "@infrastructure/database/packages/packages";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 import { Picker } from "@react-native-picker/picker";
-import { PackageStatus } from "@services/database/packages/enums";
+import { PackageStatus } from "@infrastructure/database/packages/enums";
 
 export default function PackagesListScreen() {
   const navigation = useAppNavigation("PackagesList");

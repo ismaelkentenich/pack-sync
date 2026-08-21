@@ -1,5 +1,8 @@
-import { auth } from "@services/firebase/config";
-import { getErrorMessage, isFirebaseAuthError } from "@utils/typeGuards";
+import { auth } from "@infrastructure/firebase/config";
+import {
+  getErrorMessage,
+  isFirebaseAuthError,
+} from "@utils/typeGuards";
 import {
   createUserWithEmailAndPassword,
   User as FirebaseUser,
@@ -13,7 +16,10 @@ type AuthState = {
   user: FirebaseUser | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  signup: (
+    email: string,
+    password: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   restoreSession: () => void;
 };
@@ -24,7 +30,11 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   login: async (email, password) => {
     try {
-      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      const { user } = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
       set({ user, isAuthenticated: true });
     } catch (error) {
       let message = "Credenciais inválidas.";
@@ -44,10 +54,16 @@ export const useAuthStore = create<AuthState>((set) => ({
             message = "Conta desativada.";
             break;
           default:
-            message = getErrorMessage(error, "Credenciais inválidas.");
+            message = getErrorMessage(
+              error,
+              "Credenciais inválidas.",
+            );
         }
       } else {
-        message = getErrorMessage(error, "Credenciais inválidas.");
+        message = getErrorMessage(
+          error,
+          "Credenciais inválidas.",
+        );
       }
 
       throw new Error(message);
@@ -56,7 +72,11 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signup: async (email, password) => {
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
       set({ user, isAuthenticated: true });
     } catch (error) {
       let message = "Não foi possível criar a conta.";
@@ -74,13 +94,20 @@ export const useAuthStore = create<AuthState>((set) => ({
             message = "Cadastro desativado no momento.";
             break;
           case "auth/weak-password":
-            message = "Senha muito fraca. Use pelo menos 6 caracteres.";
+            message =
+              "Senha muito fraca. Use pelo menos 6 caracteres.";
             break;
           default:
-            message = getErrorMessage(error, "Não foi possível criar a conta.");
+            message = getErrorMessage(
+              error,
+              "Não foi possível criar a conta.",
+            );
         }
       } else {
-        message = getErrorMessage(error, "Não foi possível criar a conta.");
+        message = getErrorMessage(
+          error,
+          "Não foi possível criar a conta.",
+        );
       }
 
       throw new Error(message);

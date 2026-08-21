@@ -1,4 +1,4 @@
-import { Package } from "@services/database/packages/packages";
+import { Package } from "@infrastructure/database/packages/packages";
 
 export type RootStackParamList = {
   Login: undefined;
