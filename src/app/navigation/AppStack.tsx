@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "@features/home/screens";
-import PackagesListScreen from "@features/packages/screens/packagesList";
-import PackageDetailsScreen from "@features/packages/screens/packageDetails";
-import ScanScreen from "@features/scanner/screens";
+import HomeScreen from "@features/home/screens/Home";
+import PackagesListScreen from "@features/packages/screens/PackagesList";
+import PackageDetailsScreen from "@features/packages/screens/PackageDetails";
+import ScanScreen from "@features/scanner/screens/Scanner";
 
 const Stack = createNativeStackNavigator();
 
@@ -11,8 +11,14 @@ export function AppStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Scan" component={ScanScreen} />
-      <Stack.Screen name="PackagesList" component={PackagesListScreen} />
-      <Stack.Screen name="PackageDetails" component={PackageDetailsScreen} />
+      <Stack.Screen
+        name="PackagesList"
+        component={PackagesListScreen}
+      />
+      <Stack.Screen
+        name="PackageDetails"
+        component={PackageDetailsScreen}
+      />
     </Stack.Navigator>
   );
 }
