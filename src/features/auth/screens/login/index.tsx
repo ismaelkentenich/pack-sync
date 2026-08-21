@@ -3,7 +3,7 @@ import Button from "@components/primitives/Button";
 import Input from "@components/primitives/Input";
 import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import { useShowAlert } from "@hooks/useShowAlert";
+import { useShowAlert } from "@store/useAlertStore";
 import {
   isEmailValid,
   isPasswordValid,

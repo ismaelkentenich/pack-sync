@@ -1,7 +1,7 @@
 import { NavigationStack } from "@app/navigation";
 import GlobalAlert from "@components/composites/CustomAlert";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { useNetworkSync } from "@hooks/useNetworkSync";
+import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
 import { NavigationContainer } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
