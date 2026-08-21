@@ -1,6 +1,6 @@
 import { DeliveryStatus, PackageStatus } from "./enums";
 import { packagesDb } from "./index";
-import { Package } from "./packages";
+import { Package } from "@features/packages/domain/package.types";
 
 export class PackageRepository {
   findByCode(code: string, userId: string): Package | null {
@@ -18,7 +18,10 @@ export class PackageRepository {
     );
   }
 
-  findByDeliveryStatus(userId: string, status: DeliveryStatus): Package[] {
+  findByDeliveryStatus(
+    userId: string,
+    status: DeliveryStatus,
+  ): Package[] {
     return packagesDb.getAllSync<Package>(
       `SELECT * FROM packages WHERE clientCode = ? AND deliveryStatus = ? ORDER BY scanned_at DESC`,
       [userId, status],
@@ -29,10 +32,19 @@ export class PackageRepository {
     packagesDb.runSync(
       `INSERT INTO packages (code, status, deliveryStatus, clientCode, scanned_at)
        VALUES (?, ?, ?, ?, ?)`,
-      [pkg.code, pkg.status, pkg.deliveryStatus, pkg.clientCode ?? null, pkg.scanned_at],
+      [
+        pkg.code,
+        pkg.status,
+        pkg.deliveryStatus,
+        pkg.clientCode ?? null,
+        pkg.scanned_at,
+      ],
     );
 
-    const created = this.findByCode(pkg.code, pkg.clientCode!);
+    const created = this.findByCode(
+      pkg.code,
+      pkg.clientCode!,
+    );
     if (!created) {
       throw new Error("Failed to create package");
     }
@@ -46,25 +58,35 @@ export class PackageRepository {
     receiverName?: string,
   ): void {
     packagesDb.runSync(
-      `UPDATE packages 
+      `UPDATE packages
        SET status = ?, clientCode = ?, receiverName = ?
        WHERE id = ?`,
-      [status, clientCode ?? null, receiverName ?? null, id],
+      [
+        status,
+        clientCode ?? null,
+        receiverName ?? null,
+        id,
+      ],
     );
   }
 
   markAsSent(id: number): void {
     const now = new Date().toISOString();
     packagesDb.runSync(
-      `UPDATE packages 
-       SET deliveryStatus = ?, sent_at = ? 
+      `UPDATE packages
+       SET deliveryStatus = ?, sent_at = ?
        WHERE id = ?`,
       [DeliveryStatus.SENT, now, id],
     );
   }
 
-  countByDeliveryStatus(userId: string, status: DeliveryStatus): number {
-    const result = packagesDb.getFirstSync<{ count: number }>(
+  countByDeliveryStatus(
+    userId: string,
+    status: DeliveryStatus,
+  ): number {
+    const result = packagesDb.getFirstSync<{
+      count: number;
+    }>(
       `SELECT COUNT(*) as count FROM packages WHERE clientCode = ? AND deliveryStatus = ?`,
       [userId, status],
     );
@@ -72,17 +94,23 @@ export class PackageRepository {
   }
 
   delete(id: number): void {
-    packagesDb.runSync(`DELETE FROM packages WHERE id = ?`, [id]);
+    packagesDb.runSync(
+      `DELETE FROM packages WHERE id = ?`,
+      [id],
+    );
   }
 
-  batchUpdateStatus(packageIds: number[], status: PackageStatus, receiverName?: string): void {
+  batchUpdateStatus(
+    packageIds: number[],
+    status: PackageStatus,
+    receiverName?: string,
+  ): void {
     packagesDb.withTransactionSync(() => {
       packageIds.forEach((id) => {
-        packagesDb.runSync(`UPDATE packages SET status = ?, receiverName = ? WHERE id = ?`, [
-          status,
-          receiverName ?? null,
-          id,
-        ]);
+        packagesDb.runSync(
+          `UPDATE packages SET status = ?, receiverName = ? WHERE id = ?`,
+          [status, receiverName ?? null, id],
+        );
       });
     });
   }

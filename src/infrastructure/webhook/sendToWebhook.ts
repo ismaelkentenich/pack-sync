@@ -1,5 +1,5 @@
 import { markPackageSent } from "@infrastructure/database/packages/packages";
-import { Package } from "@infrastructure/database/packages/packages";
+import { Package } from "@features/packages/domain/package.types";
 import { WEBSOCKET_URL } from "@env";
 import { PackageStatus } from "@infrastructure/database/packages/enums";
 

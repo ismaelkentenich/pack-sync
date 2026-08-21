@@ -3,7 +3,7 @@ import {
   PackageStatus,
 } from "../../../infrastructure/database/packages/enums";
 import { packageRepository } from "../../../infrastructure/database/packages/PackageRepository";
-import { Package } from "../../../infrastructure/database/packages/packages";
+import { Package } from "@features/packages/domain/package.types";
 import { sendToWebhook } from "../../../infrastructure/webhook/sendToWebhook";
 
 export type ServiceResult<T = void> = {

@@ -1,5 +1,5 @@
 import { PackageStatus } from "@infrastructure/database/packages/enums";
-import { Package } from "@infrastructure/database/packages/packages";
+import { Package } from "@features/packages/domain/package.types";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { create } from "zustand";
 import { packageService } from "@features/packages/services/PackageService";
