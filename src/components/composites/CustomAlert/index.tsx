@@ -1,7 +1,12 @@
-import { useShowAlert } from "@hooks/useShowAlert";
+import { useShowAlert } from "@store/useAlertStore";
 import { styles } from "./styles";
 import React, { useEffect } from "react";
-import { Modal, View, Text, TouchableOpacity } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 
 type CustomAlertProps = {
   visible: boolean;
@@ -25,14 +30,25 @@ function CustomAlert({
   }, [visible]);
 
   return (
-    <Modal transparent animationType="fade" visible={visible}>
+    <Modal
+      transparent
+      animationType="fade"
+      visible={visible}
+    >
       <View style={styles.overlay}>
         <View style={styles.container}>
-          {title && <Text style={styles.title}>{title}</Text>}
+          {title && (
+            <Text style={styles.title}>{title}</Text>
+          )}
           <Text style={styles.message}>{message}</Text>
 
-          <TouchableOpacity onPress={onClose} style={styles.button}>
-            <Text style={styles.buttonText}>{confirmText}</Text>
+          <TouchableOpacity
+            onPress={onClose}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>
+              {confirmText}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

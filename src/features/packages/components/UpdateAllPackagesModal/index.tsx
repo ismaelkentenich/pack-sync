@@ -13,7 +13,7 @@ import React, { forwardRef, Ref, useState } from "react";
 import { Alert, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { useShowAlert } from "@hooks/useShowAlert";
+import { useShowAlert } from "@store/useAlertStore";
 
 interface UpdateAllPackagesModalProps {
   handleCloseModal: () => void;
