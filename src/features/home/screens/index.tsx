@@ -1,6 +1,6 @@
 import { Routes } from "@app/navigation/routes";
-import Card from "@components/Card";
-import ScreenContainer from "@components/ScreenContainer";
+import Card from "@components/primitives/Card";
+import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { useAuthStore } from "@store/auth/useAuthStore";
 import Theme from "@theme/theme";
@@ -24,15 +24,33 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>Olá,</Text>
-          <Text style={styles.userInfoText}>{user?.email}</Text>
+          <Text style={styles.userInfoText}>
+            {user?.email}
+          </Text>
         </View>
-        <Card style={styles.card} onPress={() => navigation.navigate("Scan")}>
-          <ScanQrCode size={32} color={Theme.colors.neutral[700]} />
+        <Card
+          style={styles.card}
+          onPress={() => navigation.navigate("Scan")}
+        >
+          <ScanQrCode
+            size={32}
+            color={Theme.colors.neutral[700]}
+          />
           <Text style={styles.cardText}>Scanner</Text>
         </Card>
-        <Card style={styles.card} onPress={() => navigation.navigate("PackagesList")}>
-          <Scroll size={32} color={Theme.colors.neutral[700]} />
-          <Text style={styles.cardText}>Lista de Pacotes</Text>
+        <Card
+          style={styles.card}
+          onPress={() =>
+            navigation.navigate("PackagesList")
+          }
+        >
+          <Scroll
+            size={32}
+            color={Theme.colors.neutral[700]}
+          />
+          <Text style={styles.cardText}>
+            Lista de Pacotes
+          </Text>
         </Card>
       </View>
     </ScreenContainer>

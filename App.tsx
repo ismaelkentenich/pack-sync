@@ -1,5 +1,5 @@
 import { NavigationStack } from "@app/navigation";
-import GlobalAlert from "@components/CustomAlert";
+import GlobalAlert from "@components/composites/CustomAlert";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useNetworkSync } from "@hooks/useNetworkSync";
 import { NavigationContainer } from "@react-navigation/native";
