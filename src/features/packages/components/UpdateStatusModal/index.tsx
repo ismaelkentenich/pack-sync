@@ -1,10 +1,10 @@
-import Button from "@components/Button";
-import Card from "@components/Card";
-import Input from "@components/Input";
+import Button from "@components/primitives/Button";
+import Card from "@components/primitives/Card";
+import Input from "@components/primitives/Input";
 import {
   ModalCloseIcon,
   ModalWrapper,
-} from "@components/ModalWrapper";
+} from "@components/composites/ModalWrapper";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Picker } from "@react-native-picker/picker";
 import { PackageStatus } from "@services/database/packages/enums";

@@ -1,4 +1,4 @@
-import Header from "@components/Header";
+import Header from "@components/composites/Header";
 import Theme from "@theme/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";

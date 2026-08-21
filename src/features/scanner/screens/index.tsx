@@ -1,13 +1,27 @@
 import { Routes } from "@app/navigation/routes";
-import Button from "@components/Button";
-import PackageCard from "@components/PackageCard";
-import ScreenContainer from "@components/ScreenContainer";
+import Button from "@components/primitives/Button";
+import PackageCard from "@features/packages/components/PackageCard/PackageCard";
+import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { usePackageStore } from "@store/packages/usePackageStore";
 import Theme from "@theme/theme";
-import { BarcodeScanningResult, CameraView, useCameraPermissions } from "expo-camera";
-import React, { useCallback, useEffect, useRef } from "react";
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+import {
+  BarcodeScanningResult,
+  CameraView,
+  useCameraPermissions,
+} from "expo-camera";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -21,7 +35,8 @@ export default function ScanScreen() {
   const navigation = useAppNavigation(Routes.Scan);
   const updateAllModalRef = useRef<BottomSheetModal>(null);
 
-  const [permission, requestPermission] = useCameraPermissions();
+  const [permission, requestPermission] =
+    useCameraPermissions();
 
   const {
     currentSessionPackages,
@@ -57,10 +72,7 @@ export default function ScanScreen() {
 
   const renderItem = useCallback(
     ({ item }: { item: Package }) => (
-      <PackageCard
-        item={item}
-        pressable={false}
-      />
+      <PackageCard item={item} pressable={false} />
     ),
     [],
   );
@@ -98,7 +110,8 @@ export default function ScanScreen() {
       <ScreenContainer>
         <View style={styles.noPermissionContainer}>
           <Text style={styles.noPermissionTitle}>
-            Para escanear os pacotes, ative a permissão da câmera.
+            Para escanear os pacotes, ative a permissão da
+            câmera.
           </Text>
 
           <View style={styles.noPermissionButton}>
@@ -177,7 +190,9 @@ export default function ScanScreen() {
               >
                 <Button
                   title="Ver todos os pacotes"
-                  onPress={() => navigation.navigate("PackagesList")}
+                  onPress={() =>
+                    navigation.navigate("PackagesList")
+                  }
                 />
               </View>
             </View>
@@ -185,7 +200,10 @@ export default function ScanScreen() {
         )}
 
         <LinearGradient
-          colors={["transparent", Theme.colors.primary[200]]}
+          colors={[
+            "transparent",
+            Theme.colors.primary[200],
+          ]}
           style={styles.background}
         />
       </View>
