@@ -18,7 +18,7 @@ import { usePackageStore } from "@features/packages/store/usePackageStore";
 import Input from "@components/primitives/Input";
 import Theme from "@theme/theme";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import PackageCard from "@features/packages/components/PackageCard/PackageCard";
+import PackageCard from "@features/packages/components/PackageCard";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Package } from "@infrastructure/database/packages/packages";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";

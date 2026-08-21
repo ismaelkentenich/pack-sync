@@ -1,6 +1,6 @@
 import { Routes } from "@app/navigation/routes";
 import Button from "@components/primitives/Button";
-import PackageCard from "@features/packages/components/PackageCard/PackageCard";
+import PackageCard from "@features/packages/components/PackageCard";
 import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
