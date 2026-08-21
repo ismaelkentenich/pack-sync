@@ -2,7 +2,7 @@ import { Routes } from "@app/navigation/routes";
 import Card from "@components/primitives/Card";
 import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import { useAuthStore } from "@store/auth/useAuthStore";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 import Theme from "@theme/theme";
 import { ScanQrCode, Scroll } from "lucide-react-native";
 import React from "react";

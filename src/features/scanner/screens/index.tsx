@@ -3,7 +3,7 @@ import Button from "@components/primitives/Button";
 import PackageCard from "@features/packages/components/PackageCard/PackageCard";
 import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import { usePackageStore } from "@store/packages/usePackageStore";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
 import Theme from "@theme/theme";
 import {
   BarcodeScanningResult,

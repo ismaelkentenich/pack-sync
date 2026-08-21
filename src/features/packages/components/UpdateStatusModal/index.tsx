@@ -9,7 +9,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Picker } from "@react-native-picker/picker";
 import { PackageStatus } from "@services/database/packages/enums";
 import { Package } from "@services/database/packages/packages";
-import { usePackageStore } from "@store/packages/usePackageStore";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
 import Theme from "@theme/theme";
 import React, { forwardRef, Ref, useState } from "react";
 import { Alert, Text, View } from "react-native";

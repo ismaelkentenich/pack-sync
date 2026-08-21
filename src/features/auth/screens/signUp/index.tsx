@@ -4,7 +4,7 @@ import Input from "@components/primitives/Input";
 import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { useShowAlert } from "@hooks/useShowAlert";
-import { useAuthStore } from "@store/auth/useAuthStore";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 import {
   isEmailValid,
   isPasswordValid,

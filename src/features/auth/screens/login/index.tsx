@@ -10,7 +10,7 @@ import {
 } from "@utils/validators";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
-import { useAuthStore } from "@store/auth/useAuthStore";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { styles } from "./styles";
 
 export default function LoginScreen() {

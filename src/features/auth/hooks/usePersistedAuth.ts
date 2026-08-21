@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useAuthStore } from "@store/auth/useAuthStore";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 
 export function usePersistedAuth() {
-  const { restoreSession, isAuthenticated } = useAuthStore();
+  const { restoreSession, isAuthenticated } =
+    useAuthStore();
   const [isRestoring, setIsRestoring] = useState(true);
 
   useEffect(() => {
@@ -10,7 +11,10 @@ export function usePersistedAuth() {
       try {
         await restoreSession();
       } catch (error) {
-        console.error("[usePersistedAuth] Failed to restore session:", error);
+        console.error(
+          "[usePersistedAuth] Failed to restore session:",
+          error,
+        );
       } finally {
         setIsRestoring(false);
       }

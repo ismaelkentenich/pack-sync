@@ -14,7 +14,7 @@ import {
   View,
 } from "react-native";
 import { styles } from "./styles";
-import { usePackageStore } from "@store/packages/usePackageStore";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
 import Input from "@components/primitives/Input";
 import Theme from "@theme/theme";
 import { useAppNavigation } from "@hooks/useAppNavigation";

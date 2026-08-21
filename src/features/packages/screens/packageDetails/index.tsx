@@ -10,7 +10,7 @@ import { RootStackParamList } from "@app/navigation/types";
 import Button from "@components/primitives/Button";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
-import { usePackageStore } from "@store/packages/usePackageStore";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
 import Card from "@components/primitives/Card";
 import Badge from "@components/primitives/Badge";
 import { PackageStatus } from "@services/database/packages/enums";
