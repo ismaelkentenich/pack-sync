@@ -2,21 +2,20 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "baseUrl": ".",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "paths": {
-      "@app/*": ["src/app/*"],
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@features/*": ["src/features/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@utils/*": ["src/utils/*"],
-      "@theme/*": ["src/theme/*"],
-      "@store/*": ["src/store/*"],
-      "@services/*": ["src/services/*"],
-      "@types/*": ["src/types/*"]
+      "@app/*": ["./src/app/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@features/*": ["./src/features/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@theme/*": ["./src/theme/*"],
+      "@store/*": ["./src/store/*"],
+      "@services/*": ["./src/services/*"],
+      "@types/*": ["./src/types/*"]
     }
   }
 }
