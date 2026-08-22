@@ -2,21 +2,32 @@ import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { packageService } from "@features/packages/package.dependencies";
 import {
-  FeedbackMessage,
   getPackageErrorFeedback,
+  PackageFeedbackMessage,
 } from "@features/packages/utils/getPackageErrorFeedback";
 import { create } from "zustand";
 
 type Feedback = {
   loading: boolean;
-  success?: FeedbackMessage;
-  error?: FeedbackMessage;
+  success?: PackageFeedbackMessage;
+  error?: PackageFeedbackMessage;
+};
+
+type BatchUpdateResult = {
+  success: boolean;
+  sent: number;
+  failed: number;
 };
 
 type PackageState = {
   packages: Package[];
   currentSessionPackages: Package[];
   pendingCount: number;
+
+  searchTerm: string;
+  statusFilter: string;
+
+  feedback: Feedback;
 
   loadPackages: (userId: string) => void;
 
@@ -46,17 +57,20 @@ type PackageState = {
     userId: string,
   ) => Promise<void>;
 
-  searchTerm: string;
-  statusFilter: string;
+  updateAndSendCurrentSessionPackages: (
+    userId: string,
+    status: PackageStatus,
+    receiverName?: string,
+  ) => Promise<BatchUpdateResult>;
 
   setSearchTerm: (term: string) => void;
+
   setStatusFilter: (status: string) => void;
 
   filteredPackages: () => Package[];
 
-  feedback: Feedback;
-
   setFeedback: (feedback: Feedback) => void;
+
   clearFeedback: () => void;
 };
 
@@ -155,7 +169,48 @@ export const usePackageStore = create<PackageState>(
         set({
           feedback: {
             loading: false,
+
             error: getPackageErrorFeedback(error),
+          },
+        });
+      }
+    },
+
+    changeStatus: (id, userId, status, receiverName) => {
+      try {
+        packageService.changePackageStatus(
+          id,
+          userId,
+          status,
+          receiverName,
+        );
+
+        get().loadPackages(userId);
+      } catch (error) {
+        set({
+          feedback: {
+            loading: false,
+
+            error: getPackageErrorFeedback(error),
+          },
+        });
+      }
+    },
+
+    sendPackage: async (pkg, userId, receiverName) => {
+      const result = await packageService.syncPackage(
+        pkg,
+        receiverName,
+      );
+
+      get().loadPackages(userId);
+
+      if (!result.success && result.error) {
+        set({
+          feedback: {
+            loading: false,
+
+            error: getPackageErrorFeedback(result.error),
           },
         });
       }
@@ -220,56 +275,67 @@ export const usePackageStore = create<PackageState>(
       }
     },
 
-    filteredPackages: () =>
-      packageService.filterPackages(
-        get().packages,
-        get().searchTerm,
-        get().statusFilter,
-      ),
+    updateAndSendCurrentSessionPackages: async (
+      userId,
+      status,
+      receiverName,
+    ) => {
+      const { currentSessionPackages } = get();
 
-    changeStatus: (id, userId, status, receiverName) => {
+      if (currentSessionPackages.length === 0) {
+        return {
+          success: false,
+          sent: 0,
+          failed: 0,
+        };
+      }
+
+      set({
+        feedback: {
+          loading: true,
+        },
+      });
+
       try {
-        packageService.changePackageStatus(
-          id,
-          userId,
-          status,
-          receiverName,
-        );
+        const result =
+          await packageService.updateAndSendMultiple(
+            currentSessionPackages,
+            userId,
+            status,
+            receiverName,
+          );
 
         get().loadPackages(userId);
-      } catch (error) {
+
+        get().resetSession();
+
         set({
           feedback: {
             loading: false,
-
-            error: getPackageErrorFeedback(error),
           },
         });
-      }
-    },
 
-    resetSession: () => {
-      set({
-        currentSessionPackages: [],
-      });
-    },
+        return {
+          success: result.success,
+          sent: result.data?.sent ?? 0,
+          failed: result.data?.failed ?? 0,
+        };
+      } catch {
+        get().loadPackages(userId);
 
-    sendPackage: async (pkg, userId, receiverName) => {
-      const result = await packageService.syncPackage(
-        pkg,
-        receiverName,
-      );
+        get().resetSession();
 
-      get().loadPackages(userId);
-
-      if (!result.success && result.error) {
         set({
           feedback: {
             loading: false,
-
-            error: getPackageErrorFeedback(result.error),
           },
         });
+
+        return {
+          success: false,
+          sent: 0,
+          failed: currentSessionPackages.length,
+        };
       }
     },
 
@@ -278,5 +344,18 @@ export const usePackageStore = create<PackageState>(
 
       get().loadPackages(userId);
     },
+
+    resetSession: () => {
+      set({
+        currentSessionPackages: [],
+      });
+    },
+
+    filteredPackages: () =>
+      packageService.filterPackages(
+        get().packages,
+        get().searchTerm,
+        get().statusFilter,
+      ),
   }),
 );

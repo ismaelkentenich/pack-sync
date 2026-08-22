@@ -6,6 +6,7 @@ import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPacka
 import PackageCard from "@features/packages/components/PackageCard";
 import { Package } from "@features/packages/domain/package.types";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { translatePackageFeedback } from "@features/packages/utils/getPackageErrorFeedback";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { useFocusEffect } from "@react-navigation/native";
@@ -51,15 +52,33 @@ export default function ScanScreen() {
   const [permission, requestPermission] =
     useCameraPermissions();
 
-  const {
-    currentSessionPackages,
-    feedback,
-    scanPackage,
-    loadPackages,
-    resetSession,
-    clearFeedback,
-    sendAllCurrentSessionPackages,
-  } = usePackageStore();
+  const currentSessionPackages = usePackageStore(
+    (state) => state.currentSessionPackages,
+  );
+
+  const feedback = usePackageStore(
+    (state) => state.feedback,
+  );
+
+  const scanPackage = usePackageStore(
+    (state) => state.scanPackage,
+  );
+
+  const loadPackages = usePackageStore(
+    (state) => state.loadPackages,
+  );
+
+  const resetSession = usePackageStore(
+    (state) => state.resetSession,
+  );
+
+  const clearFeedback = usePackageStore(
+    (state) => state.clearFeedback,
+  );
+
+  const sendAllCurrentSessionPackages = usePackageStore(
+    (state) => state.sendAllCurrentSessionPackages,
+  );
 
   const openUpdateAllModal = useCallback(() => {
     updateAllModalRef.current?.present();
@@ -106,7 +125,7 @@ export default function ScanScreen() {
   useEffect(() => {
     if (feedback.success) {
       showAlert(
-        t(feedback.success.key, feedback.success.params),
+        translatePackageFeedback(t, feedback.success),
         "success",
       );
 
@@ -117,7 +136,7 @@ export default function ScanScreen() {
 
     if (feedback.error) {
       showAlert(
-        t(feedback.error.key, feedback.error.params),
+        translatePackageFeedback(t, feedback.error),
         "error",
       );
 

@@ -37,18 +37,21 @@ export default forwardRef(function UpdateAllPackagesModal(
 
   const showAlert = useShowAlert((state) => state.show);
 
-  const {
-    currentSessionPackages,
-    changeStatus,
-    sendPackage,
-    resetSession,
-    loadPackages,
-  } = usePackageStore();
+  const currentSessionPackages = usePackageStore(
+    (state) => state.currentSessionPackages,
+  );
+
+  const updateAndSendCurrentSessionPackages =
+    usePackageStore(
+      (state) => state.updateAndSendCurrentSessionPackages,
+    );
 
   const [selectedStatus, setSelectedStatus] =
     useState<PackageStatus>(PackageStatus.COLETADO);
 
   const [receiverName, setReceiverName] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleApplyToAll = async () => {
     if (currentSessionPackages.length === 0) {
@@ -56,6 +59,7 @@ export default forwardRef(function UpdateAllPackagesModal(
         t("packages.updateAll.emptySession"),
         "error",
       );
+
       return;
     }
 
@@ -67,43 +71,38 @@ export default forwardRef(function UpdateAllPackagesModal(
         t("packages.updateStatus.receiverRequired"),
         "error",
       );
+
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
-      for (const pkg of currentSessionPackages) {
-        changeStatus(
-          pkg.id!,
+      const result =
+        await updateAndSendCurrentSessionPackages(
           userId,
           selectedStatus,
           selectedStatus === PackageStatus.ENTREGUE
-            ? receiverName
+            ? receiverName.trim()
             : undefined,
         );
-
-        await sendPackage(
-          {
-            ...pkg,
-            status: selectedStatus,
-          },
-          userId,
-          selectedStatus === PackageStatus.ENTREGUE
-            ? receiverName
-            : undefined,
-        );
-      }
-
-      resetSession();
-
-      loadPackages(userId);
 
       handleCloseModal();
 
-      showAlert(t("packages.updateAll.success"), "success");
+      if (result.success) {
+        showAlert(
+          t("packages.updateAll.success"),
+          "success",
+        );
 
-      onSuccessNavigate?.();
-    } catch {
+        onSuccessNavigate?.();
+
+        return;
+      }
+
       showAlert(t("packages.updateAll.error"), "error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -149,6 +148,7 @@ export default forwardRef(function UpdateAllPackagesModal(
               dropdownIconColor={Theme.colors.neutral[300]}
               itemStyle={styles.pickerItem}
               mode="dropdown"
+              enabled={!isSubmitting}
             >
               {Object.values(PackageStatus).map(
                 (status) => (
@@ -179,6 +179,7 @@ export default forwardRef(function UpdateAllPackagesModal(
               )}
               value={receiverName}
               onChangeText={setReceiverName}
+              editable={!isSubmitting}
             />
           </View>
         ) : null}
@@ -186,7 +187,11 @@ export default forwardRef(function UpdateAllPackagesModal(
         <View style={styles.buttonContainer}>
           <Button
             title={t("packages.actions.updateAndSync")}
-            onPress={handleApplyToAll}
+            onPress={() => {
+              void handleApplyToAll();
+            }}
+            loading={isSubmitting}
+            disabled={isSubmitting}
           />
         </View>
       </View>
