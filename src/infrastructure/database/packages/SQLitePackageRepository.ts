@@ -92,11 +92,19 @@ export class SQLitePackageRepository implements PackageRepository {
       `
         UPDATE packages
         SET status = ?,
-            receiverName = ?
+            receiverName = ?,
+            deliveryStatus = ?,
+            sent_at = NULL
         WHERE id = ?
           AND clientCode = ?
       `,
-      [status, receiverName ?? null, id, userId],
+      [
+        status,
+        receiverName ?? null,
+        DeliveryStatus.PENDING,
+        id,
+        userId,
+      ],
     );
   }
 
@@ -161,11 +169,19 @@ export class SQLitePackageRepository implements PackageRepository {
           `
             UPDATE packages
             SET status = ?,
-                receiverName = ?
+                receiverName = ?,
+                deliveryStatus = ?,
+                sent_at = NULL
             WHERE id = ?
               AND clientCode = ?
           `,
-          [status, receiverName ?? null, id, userId],
+          [
+            status,
+            receiverName ?? null,
+            DeliveryStatus.PENDING,
+            id,
+            userId,
+          ],
         );
       }
     });
