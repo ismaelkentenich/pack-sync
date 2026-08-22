@@ -3,44 +3,45 @@ import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   card: {
-    flex: 1,
     width: "100%",
-    flexDirection: "row",
-    gap: Theme.spacing.xs,
-  },
-  infoContainer: {
-    flexDirection: "column",
-    flex: 1,
-    gap: Theme.spacing.xs,
-    width: "100%",
-  },
-  infoRow: {
-    flexWrap: "wrap",
     flexDirection: "row",
     alignItems: "center",
-    gap: Theme.spacing.xs,
-    width: "100%",
+    gap: Theme.spacing.md,
   },
+
+  infoContainer: {
+    flex: 1,
+    gap: Theme.spacing.xs,
+  },
+
+  infoRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: Theme.spacing.xs,
+  },
+
   text: {
     color: Theme.colors.neutral[700],
     fontSize: Theme.typography.size.sm,
     lineHeight: Theme.typography.lineHeight.md,
   },
+
   codeText: {
     color: Theme.colors.neutral[700],
     fontSize: Theme.typography.size.sm,
     lineHeight: Theme.typography.lineHeight.md,
     fontWeight: Theme.typography.weight.semibold,
   },
+
   buttonContainer: {
     flexDirection: "column",
-    gap: Theme.spacing.xs,
-    alignItems: "flex-end",
+    alignItems: "stretch",
     justifyContent: "center",
-    minWidth: 100,
+    gap: Theme.spacing.xs,
   },
+
   buttonItem: {
-    height: 36,
     width: "100%",
   },
 });
