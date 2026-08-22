@@ -10,7 +10,7 @@ import {
 } from "@components/composites/ModalWrapper";
 import { Button } from "@components/primitives/Button";
 import Card from "@components/primitives/Card";
-import Input from "@components/primitives/Input";
+import { Input } from "@components/primitives/Input";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
