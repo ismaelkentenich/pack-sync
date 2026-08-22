@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import { Routes } from "@app/navigation/routes";
-import Card from "@components/primitives/Card";
+import { Card } from "@components/primitives/Card";
 import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { useAppNavigation } from "@hooks/useAppNavigation";
