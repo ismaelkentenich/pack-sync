@@ -40,6 +40,102 @@ describe("PackageService", () => {
     service = new PackageService(repository, syncGateway);
   });
 
+  describe("scanPackage", () => {
+    it("allows different users to scan the same package code", async () => {
+      const existingForUserOne = createPackage({
+        id: 1,
+        code: "PKG-SHARED",
+        clientCode: "user-1",
+      });
+
+      repository.findByCode.mockImplementation(
+        (code, userId) => {
+          if (
+            code === "PKG-SHARED" &&
+            userId === "user-1"
+          ) {
+            return existingForUserOne;
+          }
+
+          return null;
+        },
+      );
+
+      repository.create.mockImplementation((pkg) => ({
+        ...pkg,
+        id: 2,
+      }));
+
+      const result = await service.scanPackage(
+        "PKG-SHARED",
+        "user-2",
+      );
+
+      expect(repository.findByCode).toHaveBeenCalledWith(
+        "PKG-SHARED",
+        "user-2",
+      );
+
+      expect(repository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          code: "PKG-SHARED",
+          clientCode: "user-2",
+          status: PackageStatus.COLETADO,
+          deliveryStatus: DeliveryStatus.PENDING,
+        }),
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: 2,
+          code: "PKG-SHARED",
+          clientCode: "user-2",
+        }),
+      );
+    });
+
+    it("rejects a duplicate scan for the same user", async () => {
+      repository.findByCode.mockReturnValue(
+        createPackage({
+          code: "PKG-001",
+          clientCode: "user-1",
+        }),
+      );
+
+      await expect(
+        service.scanPackage("PKG-001", "user-1"),
+      ).rejects.toMatchObject({
+        code: PackageErrorCode.ALREADY_SCANNED,
+      });
+
+      expect(repository.create).not.toHaveBeenCalled();
+    });
+
+    it("creates a new scanned package as pending", async () => {
+      repository.findByCode.mockReturnValue(null);
+
+      repository.create.mockImplementation((pkg) => ({
+        ...pkg,
+        id: 1,
+      }));
+
+      const result = await service.scanPackage(
+        "PKG-001",
+        "user-1",
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: 1,
+          code: "PKG-001",
+          clientCode: "user-1",
+          status: PackageStatus.COLETADO,
+          deliveryStatus: DeliveryStatus.PENDING,
+        }),
+      );
+    });
+  });
+
   describe("changePackageStatus", () => {
     it("delegates the status update to the repository", () => {
       service.changePackageStatus(
@@ -66,6 +162,25 @@ describe("PackageService", () => {
           1,
           "user-1",
           PackageStatus.ENTREGUE,
+        ),
+      ).toThrow(
+        new PackageError(
+          PackageErrorCode.RECEIVER_REQUIRED,
+        ),
+      );
+
+      expect(
+        repository.updateStatus,
+      ).not.toHaveBeenCalled();
+    });
+
+    it("rejects delivered status when receiver contains only whitespace", () => {
+      expect(() =>
+        service.changePackageStatus(
+          1,
+          "user-1",
+          PackageStatus.ENTREGUE,
+          "   ",
         ),
       ).toThrow(
         new PackageError(
@@ -179,6 +294,35 @@ describe("PackageService", () => {
         1,
         "user-1",
       );
+    });
+
+    it("keeps the package pending when synchronization fails", async () => {
+      const pkg = createPackage({
+        deliveryStatus: DeliveryStatus.PENDING,
+        sent_at: undefined,
+      });
+
+      repository.findById.mockReturnValue(pkg);
+
+      syncGateway.send.mockResolvedValue({
+        success: false,
+      });
+
+      const result = await service.syncPackage(pkg);
+
+      expect(result.success).toBe(false);
+
+      expect(result.error?.code).toBe(
+        PackageErrorCode.SYNC_FAILED,
+      );
+
+      expect(repository.markAsSent).not.toHaveBeenCalled();
+
+      expect(pkg.deliveryStatus).toBe(
+        DeliveryStatus.PENDING,
+      );
+
+      expect(pkg.sent_at).toBeUndefined();
     });
 
     it("synchronizes batch packages using the persisted receiverName", async () => {
@@ -357,7 +501,6 @@ describe("PackageService", () => {
       syncGateway.send.mockReturnValue(deferred.promise);
 
       const first = service.syncPendingPackages("user-1");
-
       const second = service.syncPendingPackages("user-1");
 
       expect(
@@ -398,6 +541,92 @@ describe("PackageService", () => {
       ).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe("sendMultiplePackages", () => {
+    it("reports a partial batch failure without hiding successful sends", async () => {
+      const first = createPackage({
+        id: 1,
+        code: "PKG-001",
+      });
+
+      const second = createPackage({
+        id: 2,
+        code: "PKG-002",
+      });
+
+      const third = createPackage({
+        id: 3,
+        code: "PKG-003",
+      });
+
+      repository.findById.mockImplementation((id) => {
+        if (id === 1) {
+          return first;
+        }
+
+        if (id === 2) {
+          return second;
+        }
+
+        if (id === 3) {
+          return third;
+        }
+
+        return null;
+      });
+
+      syncGateway.send
+        .mockResolvedValueOnce({
+          success: true,
+        })
+        .mockResolvedValueOnce({
+          success: false,
+        })
+        .mockResolvedValueOnce({
+          success: true,
+        });
+
+      const result = await service.sendMultiplePackages([
+        first,
+        second,
+        third,
+      ]);
+
+      expect(result.success).toBe(false);
+
+      expect(result.data).toEqual({
+        sent: 2,
+        failed: 1,
+      });
+
+      expect(result.error?.code).toBe(
+        PackageErrorCode.MULTIPLE_SYNC_FAILED,
+      );
+
+      expect(result.error?.params).toEqual({
+        count: 1,
+      });
+
+      expect(repository.markAsSent).toHaveBeenCalledTimes(
+        2,
+      );
+
+      expect(repository.markAsSent).toHaveBeenCalledWith(
+        1,
+        "user-1",
+      );
+
+      expect(repository.markAsSent).toHaveBeenCalledWith(
+        3,
+        "user-1",
+      );
+
+      expect(
+        repository.markAsSent,
+      ).not.toHaveBeenCalledWith(2, "user-1");
+    });
+  });
+
   describe("updateAndSendMultiple", () => {
     it("updates the packages before synchronizing them", async () => {
       const packages = [
