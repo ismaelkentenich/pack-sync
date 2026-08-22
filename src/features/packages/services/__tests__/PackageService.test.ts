@@ -15,6 +15,19 @@ import {
 } from "@test";
 import { PackageService } from "../PackageService";
 
+function createDeferred<T>() {
+  let resolve = (_value: T) => {};
+
+  const promise = new Promise<T>((resolver) => {
+    resolve = resolver;
+  });
+
+  return {
+    promise,
+    resolve,
+  };
+}
+
 describe("PackageService", () => {
   let repository: jest.Mocked<PackageRepository>;
   let syncGateway: jest.Mocked<PackageSyncGateway>;
@@ -245,6 +258,144 @@ describe("PackageService", () => {
         },
         error: undefined,
       });
+    });
+
+    it("shares one sync operation for concurrent calls of the same package", async () => {
+      const pkg = createPackage();
+
+      repository.findById.mockReturnValue(pkg);
+
+      const deferred = createDeferred<{
+        success: boolean;
+      }>();
+
+      syncGateway.send.mockReturnValue(deferred.promise);
+
+      const first = service.syncPackage(pkg);
+      const second = service.syncPackage(pkg);
+
+      expect(syncGateway.send).toHaveBeenCalledTimes(1);
+
+      expect(repository.findById).toHaveBeenCalledTimes(1);
+
+      deferred.resolve({
+        success: true,
+      });
+
+      const [firstResult, secondResult] = await Promise.all(
+        [first, second],
+      );
+
+      expect(firstResult.success).toBe(true);
+      expect(secondResult.success).toBe(true);
+
+      expect(syncGateway.send).toHaveBeenCalledTimes(1);
+
+      expect(repository.markAsSent).toHaveBeenCalledTimes(
+        1,
+      );
+    });
+
+    it("releases the package lock after a successful sync", async () => {
+      const pkg = createPackage();
+
+      repository.findById.mockReturnValue(pkg);
+
+      syncGateway.send.mockResolvedValue({
+        success: true,
+      });
+
+      await service.syncPackage(pkg);
+      await service.syncPackage(pkg);
+
+      expect(syncGateway.send).toHaveBeenCalledTimes(2);
+
+      expect(repository.markAsSent).toHaveBeenCalledTimes(
+        2,
+      );
+    });
+
+    it("releases the package lock after a failed sync", async () => {
+      const pkg = createPackage();
+
+      repository.findById.mockReturnValue(pkg);
+
+      syncGateway.send
+        .mockResolvedValueOnce({
+          success: false,
+        })
+        .mockResolvedValueOnce({
+          success: true,
+        });
+
+      const firstResult = await service.syncPackage(pkg);
+
+      expect(firstResult.success).toBe(false);
+
+      const secondResult = await service.syncPackage(pkg);
+
+      expect(secondResult.success).toBe(true);
+
+      expect(syncGateway.send).toHaveBeenCalledTimes(2);
+    });
+
+    it("shares one pending reconciliation for concurrent calls", async () => {
+      const pkg = createPackage({
+        deliveryStatus: DeliveryStatus.PENDING,
+      });
+
+      repository.findByDeliveryStatus.mockReturnValue([
+        pkg,
+      ]);
+
+      repository.findById.mockReturnValue(pkg);
+
+      const deferred = createDeferred<{
+        success: boolean;
+      }>();
+
+      syncGateway.send.mockReturnValue(deferred.promise);
+
+      const first = service.syncPendingPackages("user-1");
+
+      const second = service.syncPendingPackages("user-1");
+
+      expect(
+        repository.findByDeliveryStatus,
+      ).toHaveBeenCalledTimes(1);
+
+      expect(syncGateway.send).toHaveBeenCalledTimes(1);
+
+      deferred.resolve({
+        success: true,
+      });
+
+      const [firstResult, secondResult] = await Promise.all(
+        [first, second],
+      );
+
+      expect(firstResult).toEqual({
+        success: true,
+        data: 1,
+      });
+
+      expect(secondResult).toEqual({
+        success: true,
+        data: 1,
+      });
+
+      expect(syncGateway.send).toHaveBeenCalledTimes(1);
+    });
+
+    it("releases the pending reconciliation lock after completion", async () => {
+      repository.findByDeliveryStatus.mockReturnValue([]);
+
+      await service.syncPendingPackages("user-1");
+      await service.syncPendingPackages("user-1");
+
+      expect(
+        repository.findByDeliveryStatus,
+      ).toHaveBeenCalledTimes(2);
     });
   });
   describe("updateAndSendMultiple", () => {
