@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import Badge from "@components/primitives/Badge";
 import { Button } from "@components/primitives/Button";
-import Card from "@components/primitives/Card";
+import { Card } from "@components/primitives/Card";
 import { Package } from "@features/packages/domain/package.types";
 import {
   translateDeliveryStatus,
