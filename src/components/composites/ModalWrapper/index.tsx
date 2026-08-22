@@ -20,7 +20,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { useIsKeyboardOpened } from "@hooks/useIsKeyboardOpened";
-import Theme from "@theme/legacy/legacyTheme";
+import Theme from "@theme/theme";
 import { styles } from "./styles";
 
 interface ModalWrapperProps {

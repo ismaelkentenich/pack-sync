@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import Theme from "@theme/legacy/legacyTheme";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   container: {
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: Theme.colors.neutral[300],
-    borderRadius: Theme.borderRadius.sm,
+    borderRadius: Theme.radius.sm,
     backgroundColor: Theme.colors.neutral[50],
     paddingHorizontal: 12,
   },
@@ -25,13 +25,13 @@ export const styles = StyleSheet.create({
     color: Theme.colors.neutral[800],
   },
   inputError: {
-    borderColor: Theme.colors.attention[500],
+    borderColor: Theme.colors.error[500],
   },
   iconButton: {
     paddingHorizontal: 4,
   },
   errorText: {
-    color: Theme.colors.attention[500],
+    color: Theme.colors.error[500],
     fontSize: 12,
     marginTop: 4,
   },

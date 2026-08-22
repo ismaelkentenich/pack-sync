@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
-import Theme from "@theme/legacy/legacyTheme";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.md,
+    borderRadius: Theme.radius.md,
     padding: 16,
     borderWidth: 1,
     borderColor: Theme.colors.neutral[200],

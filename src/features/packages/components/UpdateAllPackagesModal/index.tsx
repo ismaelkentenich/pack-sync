@@ -14,7 +14,7 @@ import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
 import { useShowAlert } from "@store/useAlertStore";
-import Theme from "@theme/legacy/legacyTheme";
+import Theme from "@theme/theme";
 import { styles } from "./styles";
 
 interface UpdateAllPackagesModalProps {
