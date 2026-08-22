@@ -42,7 +42,6 @@ export default function LoginScreen() {
 
     try {
       await login(email, password);
-      navigation.navigate("Home");
     } catch (error) {
       const message =
         error instanceof Error
