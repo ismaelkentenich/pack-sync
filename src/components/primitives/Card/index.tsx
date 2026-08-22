@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleProp, TouchableOpacity, TouchableOpacityProps, View, ViewStyle } from "react-native";
+import {
+  StyleProp,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  View,
+  ViewStyle,
+} from "react-native";
 import { styles } from "./styles";
 
 type CardProps = TouchableOpacityProps & {
@@ -8,7 +14,12 @@ type CardProps = TouchableOpacityProps & {
   style?: StyleProp<ViewStyle>;
 };
 
-export default function Card({ children, touchable = true, style, ...rest }: CardProps) {
+export default function Card({
+  children,
+  touchable = true,
+  style,
+  ...rest
+}: CardProps) {
   const Container = touchable ? TouchableOpacity : View;
 
   return (

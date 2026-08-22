@@ -1,3 +1,4 @@
+import { PackageSyncGateway } from "@features/packages/domain/package-sync.gateway";
 import {
   DeliveryStatus,
   PackageStatus,
@@ -7,7 +8,6 @@ import {
   PackageErrorCode,
 } from "@features/packages/domain/package.errors";
 import { PackageRepository } from "@features/packages/domain/package.repository";
-import { PackageSyncGateway } from "@features/packages/domain/package-sync.gateway";
 import { Package } from "@features/packages/domain/package.types";
 
 export type ServiceResult<T = void> = {

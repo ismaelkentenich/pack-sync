@@ -1,8 +1,8 @@
+import { TFunction } from "i18next";
 import {
   PackageError,
   PackageErrorCode,
 } from "@features/packages/domain/package.errors";
-import { TFunction } from "i18next";
 
 export type PackageFeedbackMessage =
   | {

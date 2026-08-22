@@ -1,10 +1,10 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, LogOut } from "lucide-react-native";
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
 
 type HeaderProps = {
   title?: string;

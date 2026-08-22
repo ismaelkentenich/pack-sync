@@ -1,8 +1,8 @@
+import { TFunction } from "i18next";
 import {
   DeliveryStatus,
   PackageStatus,
 } from "@features/packages/domain/package.enums";
-import { TFunction } from "i18next";
 
 export function translatePackageStatus(
   status: PackageStatus,

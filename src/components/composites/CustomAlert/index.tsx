@@ -1,4 +1,3 @@
-import { useShowAlert } from "@store/useAlertStore";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -7,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useShowAlert } from "@store/useAlertStore";
 import { styles } from "./styles";
 
 type CustomAlertProps = {
