@@ -7,6 +7,20 @@ import { Package } from "@features/packages/domain/package.types";
 import { packagesDb } from "./index";
 
 export class SQLitePackageRepository implements PackageRepository {
+  findById(id: number, userId: string): Package | null {
+    const result = packagesDb.getFirstSync<Package>(
+      `
+      SELECT *
+      FROM packages
+      WHERE id = ?
+        AND clientCode = ?
+    `,
+      [id, userId],
+    );
+
+    return result ?? null;
+  }
+
   findByCode(code: string, userId: string): Package | null {
     const result = packagesDb.getFirstSync<Package>(
       `

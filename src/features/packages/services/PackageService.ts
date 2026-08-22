@@ -71,11 +71,10 @@ export class PackageService {
     );
   }
 
-  async syncPackage(
-    pkg: Package,
-    receiverName?: string,
-  ): Promise<ServiceResult> {
-    if (pkg.id === undefined) {
+  async syncPackage(pkg: Package): Promise<ServiceResult> {
+    const packageId = pkg.id;
+
+    if (packageId === undefined) {
       return {
         success: false,
         error: new PackageError(
@@ -85,16 +84,34 @@ export class PackageService {
     }
 
     try {
-      const packageToSync: Package = {
-        ...pkg,
-        deliveryStatus: DeliveryStatus.PENDING,
-        sent_at: undefined,
-      };
-
-      const result = await this.packageSyncGateway.send(
-        packageToSync,
-        receiverName,
+      const packageToSync = this.packageRepository.findById(
+        packageId,
+        pkg.clientCode,
       );
+
+      if (!packageToSync) {
+        return {
+          success: false,
+          error: new PackageError(
+            PackageErrorCode.INVALID_FOR_SYNC,
+          ),
+        };
+      }
+
+      if (
+        packageToSync.status === PackageStatus.ENTREGUE &&
+        !packageToSync.receiverName?.trim()
+      ) {
+        return {
+          success: false,
+          error: new PackageError(
+            PackageErrorCode.RECEIVER_REQUIRED,
+          ),
+        };
+      }
+
+      const result =
+        await this.packageSyncGateway.send(packageToSync);
 
       if (!result.success) {
         return {
@@ -102,15 +119,15 @@ export class PackageService {
           error: new PackageError(
             PackageErrorCode.SYNC_FAILED,
             {
-              code: pkg.code,
+              code: packageToSync.code,
             },
           ),
         };
       }
 
       this.packageRepository.markAsSent(
-        pkg.id,
-        pkg.clientCode,
+        packageId,
+        packageToSync.clientCode,
       );
 
       return {
@@ -129,10 +146,7 @@ export class PackageService {
     }
   }
 
-  async sendMultiplePackages(
-    packages: Package[],
-    receiverName?: string,
-  ): Promise<
+  async sendMultiplePackages(packages: Package[]): Promise<
     ServiceResult<{
       sent: number;
       failed: number;
@@ -142,10 +156,7 @@ export class PackageService {
     let failed = 0;
 
     for (const pkg of packages) {
-      const result = await this.syncPackage(
-        pkg,
-        receiverName,
-      );
+      const result = await this.syncPackage(pkg);
 
       if (result.success) {
         sent += 1;
@@ -271,18 +282,7 @@ export class PackageService {
         receiverName,
       );
 
-      const updatedPackages = packages.map((pkg) => ({
-        ...pkg,
-        status,
-        receiverName,
-        deliveryStatus: DeliveryStatus.PENDING,
-        sent_at: undefined,
-      }));
-
-      return this.sendMultiplePackages(
-        updatedPackages,
-        receiverName,
-      );
+      return this.sendMultiplePackages(packages);
     } catch {
       return {
         success: false,

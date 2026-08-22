@@ -7,16 +7,13 @@ import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 
 export class WebhookPackageSyncGateway implements PackageSyncGateway {
-  async send(
-    pkg: Package,
-    receiverName?: string,
-  ): Promise<PackageSyncResult> {
+  async send(pkg: Package): Promise<PackageSyncResult> {
     try {
       const payload = {
         code: pkg.code,
         clientName:
           pkg.status === PackageStatus.ENTREGUE
-            ? receiverName?.trim() || undefined
+            ? pkg.receiverName?.trim() || undefined
             : undefined,
         status: pkg.status,
         deliveryStatus: pkg.deliveryStatus,

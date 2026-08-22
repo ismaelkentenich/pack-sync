@@ -97,16 +97,7 @@ export default forwardRef(function UpdateStatusModal(
 
       loadPackages(userId);
 
-      await sendPackage(
-        {
-          ...packageData,
-          status: selectedStatus,
-        },
-        userId,
-        selectedStatus === PackageStatus.ENTREGUE
-          ? receiverName
-          : undefined,
-      );
+      await sendPackage(packageData, userId);
     } finally {
       handleCloseModal();
     }
