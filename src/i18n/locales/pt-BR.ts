@@ -166,5 +166,8 @@ export const ptBR = {
       back: "Voltar",
       logout: "Sair",
     },
+    modal: {
+      close: "Fechar modal",
+    },
   },
 } as const;

@@ -4,16 +4,16 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { X } from "lucide-react-native";
-import { forwardRef, ReactNode, useEffect } from "react";
+import { forwardRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
   TouchableOpacity,
-  TouchableOpacityProps,
   TouchableWithoutFeedback,
   View,
-  ViewProps,
 } from "react-native";
 import {
   SafeAreaView,
@@ -22,20 +22,10 @@ import {
 import { useIsKeyboardOpened } from "@hooks/useIsKeyboardOpened";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
-
-interface ModalWrapperProps {
-  children: ReactNode;
-  isBlocked?: boolean;
-  onDismiss?(): void;
-  style?: ViewProps["style"];
-  snapPoints?: (string | number)[];
-  isModalFixed?: boolean;
-  hasInputInsideModal?: boolean;
-}
-
-interface CloseIconProps extends TouchableOpacityProps {
-  onPress(): void;
-}
+import type {
+  ModalCloseIconProps,
+  ModalWrapperProps,
+} from "./types";
 
 export const ModalWrapper = forwardRef<
   BottomSheetModal,
@@ -48,12 +38,22 @@ export const ModalWrapper = forwardRef<
     snapPoints,
     style,
     isModalFixed = false,
-    hasInputInsideModal,
+    hasInputInsideModal = false,
+    testID,
   },
   ref,
 ) {
   const isKeyboardOpened = useIsKeyboardOpened();
+
   const insets = useSafeAreaInsets();
+
+  const contentStyle = StyleSheet.flatten([
+    styles.container,
+    style,
+    {
+      paddingBottom: insets.bottom + Theme.spacing.xl,
+    },
+  ]);
 
   useEffect(() => {
     if (!ref || typeof ref === "function") {
@@ -79,7 +79,9 @@ export const ModalWrapper = forwardRef<
   return (
     <BottomSheetModal
       ref={ref}
-      handleIndicatorStyle={{ display: "none" }}
+      handleIndicatorStyle={{
+        display: "none",
+      }}
       enablePanDownToClose={!isBlocked}
       onDismiss={onDismiss}
       snapPoints={snapPoints ?? ["60%", "75%", "95%"]}
@@ -98,58 +100,74 @@ export const ModalWrapper = forwardRef<
       )}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView
-          style={styles.safeAreaContainer}
-          edges={["bottom"]}
+        <View
+          testID="modalWrapperDismissKeyboardArea"
+          style={styles.dismissKeyboardArea}
         >
-          <KeyboardAvoidingView
-            behavior={
-              Platform.OS === "ios" ? "padding" : "height"
-            }
-            style={{ flex: 1 }}
-            keyboardVerticalOffset={
-              insets.bottom + Theme.spacing.xl
-            }
+          <SafeAreaView
+            testID="modalWrapperSafeArea"
+            style={styles.safeAreaContainer}
+            edges={["bottom"]}
           >
-            <BottomSheetView
-              style={[
-                styles.container,
-                style,
-                {
-                  paddingBottom:
-                    insets.bottom + Theme.spacing.xl,
-                },
-              ]}
+            <KeyboardAvoidingView
+              testID="modalWrapperKeyboardAvoiding"
+              behavior={
+                Platform.OS === "ios" ? "padding" : "height"
+              }
+              style={styles.keyboardAvoiding}
+              keyboardVerticalOffset={
+                insets.bottom + Theme.spacing.xl
+              }
             >
-              {children}
-            </BottomSheetView>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
+              <BottomSheetView
+                testID={testID ?? "modalWrapperContent"}
+                style={contentStyle}
+              >
+                {children}
+              </BottomSheetView>
+            </KeyboardAvoidingView>
+          </SafeAreaView>
+        </View>
       </TouchableWithoutFeedback>
     </BottomSheetModal>
   );
 });
 
-export const ModalCloseIcon = ({
+export function ModalCloseIcon({
   onPress,
+  testID,
+  accessibilityLabel,
   ...rest
-}: CloseIconProps) => {
+}: ModalCloseIconProps) {
+  const { t } = useTranslation();
+
   return (
     <TouchableOpacity
-      testID="closeModalButton"
-      onPress={onPress}
-      style={styles.closeIcon}
-      hitSlop={{
-        top: 16,
-        bottom: 16,
-        left: 16,
-        right: 16,
-      }}
       {...rest}
+      testID={testID ?? "modalCloseButton"}
+      accessibilityRole="button"
+      accessibilityLabel={
+        accessibilityLabel ?? t("accessibility.modal.close")
+      }
+      onPress={onPress}
+      style={[styles.closeIcon, rest.style]}
+      hitSlop={{
+        top: Theme.spacing.md,
+        bottom: Theme.spacing.md,
+        left: Theme.spacing.md,
+        right: Theme.spacing.md,
+      }}
     >
-      <View>
-        <X color={Theme.colors.neutral[200]} size={24} />
+      <View
+        testID="modalCloseIconContainer"
+        style={styles.closeIconContent}
+      >
+        <X
+          testID="modalCloseIcon"
+          color={Theme.colors.neutral[700]}
+          size={Theme.sizing.icon.md}
+        />
       </View>
     </TouchableOpacity>
   );
-};
+}

@@ -166,5 +166,8 @@ export const enUS = {
       back: "Go back",
       logout: "Log out",
     },
+    modal: {
+      close: "Close modal",
+    },
   },
 } as const;
