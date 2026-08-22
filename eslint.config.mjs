@@ -93,70 +93,11 @@ export default [
             "object",
             "type",
           ],
-
-          pathGroups: [
-            {
-              pattern: "@app/**",
-              group: "internal",
-            },
-            {
-              pattern: "@assets/**",
-              group: "internal",
-            },
-            {
-              pattern: "@components/**",
-              group: "internal",
-            },
-            {
-              pattern: "@features/**",
-              group: "internal",
-            },
-            {
-              pattern: "@hooks/**",
-              group: "internal",
-            },
-            {
-              pattern: "@i18n/**",
-              group: "internal",
-            },
-            {
-              pattern: "@infrastructure/**",
-              group: "internal",
-            },
-            {
-              pattern: "@store/**",
-              group: "internal",
-            },
-            {
-              pattern: "@test",
-              group: "internal",
-            },
-            {
-              pattern: "@test/**",
-              group: "internal",
-            },
-            {
-              pattern: "@theme/**",
-              group: "internal",
-            },
-            {
-              pattern: "@types/**",
-              group: "internal",
-            },
-            {
-              pattern: "@utils/**",
-              group: "internal",
-            },
-          ],
-
-          pathGroupsExcludedImportTypes: ["builtin"],
-
+          "newlines-between": "never",
           alphabetize: {
             order: "asc",
             caseInsensitive: true,
           },
-
-          "newlines-between": "never",
         },
       ],
 
