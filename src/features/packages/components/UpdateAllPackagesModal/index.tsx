@@ -18,12 +18,14 @@ import { useShowAlert } from "@store/useAlertStore";
 interface UpdateAllPackagesModalProps {
   handleCloseModal: () => void;
   onSuccessNavigate?: () => void;
+  userId: string;
 }
 
 export default forwardRef(function UpdateAllPackagesModal(
   {
     handleCloseModal,
     onSuccessNavigate,
+    userId,
   }: UpdateAllPackagesModalProps,
   ref: Ref<BottomSheetModal>,
 ) {
@@ -62,6 +64,7 @@ export default forwardRef(function UpdateAllPackagesModal(
       for (const pkg of currentSessionPackages) {
         changeStatus(
           pkg.id!,
+          userId,
           selectedStatus,
           selectedStatus === PackageStatus.ENTREGUE
             ? receiverName
@@ -77,7 +80,8 @@ export default forwardRef(function UpdateAllPackagesModal(
       }
 
       resetSession();
-      loadPackages();
+      loadPackages(userId);
+
       handleCloseModal();
       showAlert(
         "Status atualizado e pacotes enviados ao webhook!",

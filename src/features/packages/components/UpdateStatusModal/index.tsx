@@ -20,10 +20,15 @@ import { useShowAlert } from "@store/useAlertStore";
 interface UpdateStatusModalProps {
   handleCloseModal: () => void;
   packageData: Package;
+  userId: string;
 }
 
 export default forwardRef(function UpdateStatusModal(
-  { handleCloseModal, packageData }: UpdateStatusModalProps,
+  {
+    handleCloseModal,
+    packageData,
+    userId,
+  }: UpdateStatusModalProps,
   ref: Ref<BottomSheetModal>,
 ) {
   const insets = useSafeAreaInsets();
@@ -46,12 +51,14 @@ export default forwardRef(function UpdateStatusModal(
 
     changeStatus(
       packageData.id!,
+      userId,
       selectedStatus,
       selectedStatus === PackageStatus.ENTREGUE
         ? receiverName
         : undefined,
     );
-    loadPackages();
+
+    loadPackages(userId);
     handleCloseModal();
   };
 
@@ -67,17 +74,21 @@ export default forwardRef(function UpdateStatusModal(
     try {
       changeStatus(
         packageData.id!,
+        userId,
         selectedStatus,
         selectedStatus === PackageStatus.ENTREGUE
           ? receiverName
           : undefined,
       );
-      loadPackages();
+
+      loadPackages(userId);
+
       await sendPackage(
         {
           ...packageData,
           status: selectedStatus,
         },
+        userId,
         receiverName,
       );
     } catch (error) {

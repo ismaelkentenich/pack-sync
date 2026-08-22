@@ -1,6 +1,5 @@
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { create } from "zustand";
 import { packageService } from "@features/packages/package.dependencies";
 
@@ -14,19 +13,24 @@ type PackageState = {
   packages: Package[];
   currentSessionPackages: Package[];
   pendingCount: number;
-  loadPackages: () => void;
-  scanPackage: (code: string) => void;
+  loadPackages: (userId: string) => void;
+  scanPackage: (
+    code: string,
+    userId: string,
+  ) => Promise<void>;
   changeStatus: (
     id: number,
+    userId: string,
     status: PackageStatus,
-    clientName?: string,
+    receiverName?: string,
   ) => void;
   resetSession: () => void;
   sendPackage: (
     pkg: Package,
+    userId: string,
     receiverName?: string,
   ) => Promise<void>;
-  syncPendingPackages: () => Promise<void>;
+  syncPendingPackages: (userId: string) => Promise<void>;
   searchTerm: string;
   statusFilter: string;
   setSearchTerm: (term: string) => void;
@@ -34,7 +38,9 @@ type PackageState = {
   filteredPackages: () => Package[];
   feedback: Feedback;
   setFeedback: (feedback: Feedback) => void;
-  sendAllCurrentSessionPackages: () => Promise<void>;
+  sendAllCurrentSessionPackages: (
+    userId: string,
+  ) => Promise<void>;
 };
 
 export const usePackageStore = create<PackageState>(
@@ -53,59 +59,80 @@ export const usePackageStore = create<PackageState>(
     setStatusFilter: (status: string) =>
       set({ statusFilter: status }),
 
-    loadPackages: () => {
-      const user = useAuthStore((state) => state.user);
-      if (!user?.id) return;
-      const pkgs = packageService.getAllPackages(user.id);
-      const pending = packageService.getPendingCount(
-        user.id,
-      );
-      set({ packages: pkgs, pendingCount: pending });
+    loadPackages: (userId) => {
+      const pkgs = packageService.getAllPackages(userId);
+
+      const pending =
+        packageService.getPendingCount(userId);
+
+      set({
+        packages: pkgs,
+        pendingCount: pending,
+      });
     },
 
-    scanPackage: async (code) => {
-      const { user } = useAuthStore.getState();
-      if (!user?.id) return;
+    scanPackage: async (code, userId) => {
+      set({
+        feedback: {
+          loading: true,
+        },
+      });
 
-      set({ feedback: { loading: true } });
       try {
         const newPkg = await packageService.scanPackage(
           code,
-          user.id,
+          userId,
         );
+
         set((state) => ({
           packages: [newPkg, ...state.packages],
+
           currentSessionPackages: [
             newPkg,
             ...state.currentSessionPackages,
           ],
+
           pendingCount: state.pendingCount + 1,
         }));
 
-        get().loadPackages();
+        get().loadPackages(userId);
+
         set({
           feedback: {
             loading: false,
             success: `Pacote ${code} escaneado com sucesso!`,
           },
         });
-      } catch (err) {
+      } catch (error) {
         const message =
-          err instanceof Error
-            ? err.message
+          error instanceof Error
+            ? error.message
             : "Erro ao escanear pacote";
+
         console.warn(message);
+
         set({
-          feedback: { loading: false, error: message },
+          feedback: {
+            loading: false,
+            error: message,
+          },
         });
       }
     },
 
-    sendAllCurrentSessionPackages: async () => {
+    sendAllCurrentSessionPackages: async (userId) => {
       const { currentSessionPackages } = get();
-      if (currentSessionPackages.length === 0) return;
 
-      set({ feedback: { loading: true } });
+      if (currentSessionPackages.length === 0) {
+        return;
+      }
+
+      set({
+        feedback: {
+          loading: true,
+        },
+      });
+
       try {
         const result =
           await packageService.sendMultiplePackages(
@@ -132,12 +159,16 @@ export const usePackageStore = create<PackageState>(
         }
 
         get().resetSession();
-      } catch (err) {
+
+        get().loadPackages(userId);
+      } catch (error) {
         const message =
-          err instanceof Error
-            ? err.message
+          error instanceof Error
+            ? error.message
             : "Erro ao enviar pacotes";
+
         console.warn(message);
+
         set({
           feedback: {
             loading: false,
@@ -155,22 +186,21 @@ export const usePackageStore = create<PackageState>(
       );
     },
 
-    changeStatus: (id, status, receiverName?: string) => {
-      const { user } = useAuthStore.getState();
-
-      if (!user?.id) {
-        return;
-      }
-
+    changeStatus: (
+      id,
+      userId,
+      status,
+      receiverName?: string,
+    ) => {
       try {
         packageService.changePackageStatus(
           id,
-          user.id,
+          userId,
           status,
           receiverName,
         );
 
-        get().loadPackages();
+        get().loadPackages(userId);
       } catch (error) {
         const message =
           error instanceof Error
@@ -190,17 +220,17 @@ export const usePackageStore = create<PackageState>(
 
     resetSession: () => set({ currentSessionPackages: [] }),
 
-    sendPackage: async (pkg, receiverName?: string) => {
+    sendPackage: async (
+      pkg,
+      userId,
+      receiverName?: string,
+    ) => {
       const result = await packageService.syncPackage(
         pkg,
         receiverName,
       );
 
-      const { user } = useAuthStore.getState();
-
-      if (user?.id) {
-        get().loadPackages();
-      }
+      get().loadPackages(userId);
 
       if (!result.success) {
         console.warn(
@@ -209,16 +239,13 @@ export const usePackageStore = create<PackageState>(
       }
     },
 
-    syncPendingPackages: async () => {
-      const { user } = useAuthStore.getState();
-      if (!user?.id) return;
-
+    syncPendingPackages: async (userId) => {
       console.log(
         "Iniciando sincronização de pacotes pendentes...",
       );
 
       const result =
-        await packageService.syncPendingPackages(user.id);
+        await packageService.syncPendingPackages(userId);
 
       if (result.data === 0) {
         console.log(
@@ -230,7 +257,7 @@ export const usePackageStore = create<PackageState>(
         );
       }
 
-      get().loadPackages();
+      get().loadPackages(userId);
     },
   }),
 );

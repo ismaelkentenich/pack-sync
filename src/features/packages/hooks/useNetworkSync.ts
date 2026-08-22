@@ -1,20 +1,25 @@
+import { usePackageStore } from "@features/packages/store/usePackageStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useEffect } from "react";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
 
-export function useNetworkSync() {
+export function useNetworkSync(userId?: string) {
   const syncPendingPackages = usePackageStore(
-    (s) => s.syncPendingPackages,
+    (state) => state.syncPendingPackages,
   );
 
   useEffect(() => {
+    if (!userId) {
+      return;
+    }
+
     const unsubscribe = NetInfo.addEventListener(
       (state) => {
         if (state.isConnected) {
-          syncPendingPackages();
+          syncPendingPackages(userId);
         }
       },
     );
-    return () => unsubscribe();
-  }, [syncPendingPackages]);
+
+    return unsubscribe;
+  }, [syncPendingPackages, userId]);
 }

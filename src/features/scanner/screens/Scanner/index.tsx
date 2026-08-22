@@ -4,6 +4,7 @@ import PackageCard from "@features/packages/components/PackageCard";
 import ScreenContainer from "@components/primitives/ScreenContainer";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 import Theme from "@theme/theme";
 import {
   BarcodeScanningResult,
@@ -35,6 +36,8 @@ export default function ScanScreen() {
   const navigation = useAppNavigation(Routes.Scan);
   const updateAllModalRef = useRef<BottomSheetModal>(null);
 
+  const userId = useAuthStore((state) => state.user?.id);
+
   const [permission, requestPermission] =
     useCameraPermissions();
 
@@ -58,16 +61,17 @@ export default function ScanScreen() {
 
   const handleBarCodeScanned = useCallback(
     (result: BarcodeScanningResult) => {
+      if (!userId) {
+        return;
+      }
       const data = result.data.trim();
-
       if (!data || scannedCodesRef.current.has(data)) {
         return;
       }
-
       scannedCodesRef.current.add(data);
-      scanPackage(data);
+      scanPackage(data, userId);
     },
-    [scanPackage],
+    [scanPackage, userId],
   );
 
   const renderItem = useCallback(
@@ -78,8 +82,11 @@ export default function ScanScreen() {
   );
 
   useEffect(() => {
-    loadPackages();
-  }, [loadPackages]);
+    if (!userId) {
+      return;
+    }
+    loadPackages(userId);
+  }, [loadPackages, userId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -159,8 +166,13 @@ export default function ScanScreen() {
 
               <View style={styles.infoHeaderItem}>
                 <Button
-                  title="Sincronizar"
-                  onPress={sendAllCurrentSessionPackages}
+                  title="Sincronizar pacotes"
+                  onPress={() => {
+                    if (!userId) {
+                      return;
+                    }
+                    sendAllCurrentSessionPackages(userId);
+                  }}
                 />
               </View>
             </View>
@@ -208,13 +220,16 @@ export default function ScanScreen() {
         />
       </View>
 
-      <UpdateAllPackagesModal
-        ref={updateAllModalRef}
-        handleCloseModal={closeUpdateAllModal}
-        onSuccessNavigate={() =>
-          navigation.navigate("PackagesList")
-        }
-      />
+      {userId ? (
+        <UpdateAllPackagesModal
+          ref={updateAllModalRef}
+          handleCloseModal={closeUpdateAllModal}
+          onSuccessNavigate={() =>
+            navigation.navigate("PackagesList")
+          }
+          userId={userId}
+        />
+      ) : null}
     </ScreenContainer>
   );
 }
