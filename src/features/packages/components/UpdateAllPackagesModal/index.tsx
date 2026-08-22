@@ -8,7 +8,7 @@ import {
   ModalCloseIcon,
   ModalWrapper,
 } from "@components/composites/ModalWrapper";
-import Button from "@components/primitives/Button";
+import { Button } from "@components/primitives/Button";
 import Input from "@components/primitives/Input";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
