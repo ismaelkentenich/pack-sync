@@ -24,6 +24,10 @@ type PackageState = {
   currentSessionPackages: Package[];
   pendingCount: number;
 
+  syncingPackageIds: number[];
+  isSyncingSession: boolean;
+  isSyncingPending: boolean;
+
   searchTerm: string;
   statusFilter: string;
 
@@ -83,6 +87,10 @@ export const usePackageStore = create<PackageState>(
     packages: [],
     currentSessionPackages: [],
     pendingCount: 0,
+
+    syncingPackageIds: [],
+    isSyncingSession: false,
+    isSyncingPending: false,
 
     searchTerm: "",
     statusFilter: "",
@@ -198,29 +206,63 @@ export const usePackageStore = create<PackageState>(
     },
 
     sendPackage: async (pkg, userId) => {
-      const result = await packageService.syncPackage(pkg);
+      const packageId = pkg.id;
 
-      get().loadPackages(userId);
+      if (
+        packageId !== undefined &&
+        get().syncingPackageIds.includes(packageId)
+      ) {
+        return;
+      }
 
-      if (!result.success && result.error) {
-        set({
-          feedback: {
-            loading: false,
+      if (packageId !== undefined) {
+        set((state) => ({
+          syncingPackageIds: [
+            ...state.syncingPackageIds,
+            packageId,
+          ],
+        }));
+      }
 
-            error: getPackageErrorFeedback(result.error),
-          },
-        });
+      try {
+        const result =
+          await packageService.syncPackage(pkg);
+
+        if (!result.success && result.error) {
+          set({
+            feedback: {
+              loading: false,
+              error: getPackageErrorFeedback(result.error),
+            },
+          });
+        }
+      } finally {
+        if (packageId !== undefined) {
+          set((state) => ({
+            syncingPackageIds:
+              state.syncingPackageIds.filter(
+                (id) => id !== packageId,
+              ),
+          }));
+        }
+
+        get().loadPackages(userId);
       }
     },
 
     sendAllCurrentSessionPackages: async (userId) => {
-      const { currentSessionPackages } = get();
+      const { currentSessionPackages, isSyncingSession } =
+        get();
 
-      if (currentSessionPackages.length === 0) {
+      if (
+        currentSessionPackages.length === 0 ||
+        isSyncingSession
+      ) {
         return;
       }
 
       set({
+        isSyncingSession: true,
         feedback: {
           loading: true,
         },
@@ -236,7 +278,6 @@ export const usePackageStore = create<PackageState>(
           set({
             feedback: {
               loading: false,
-
               success: {
                 key: "packages.feedback.allSentSuccessfully",
               },
@@ -246,7 +287,6 @@ export const usePackageStore = create<PackageState>(
           set({
             feedback: {
               loading: false,
-
               error: result.error
                 ? getPackageErrorFeedback(result.error)
                 : {
@@ -257,17 +297,19 @@ export const usePackageStore = create<PackageState>(
         }
 
         get().resetSession();
-
         get().loadPackages(userId);
       } catch {
         set({
           feedback: {
             loading: false,
-
             error: {
               key: "packages.feedback.sendSomeFailed",
             },
           },
+        });
+      } finally {
+        set({
+          isSyncingSession: false,
         });
       }
     },
@@ -337,9 +379,23 @@ export const usePackageStore = create<PackageState>(
     },
 
     syncPendingPackages: async (userId) => {
-      await packageService.syncPendingPackages(userId);
+      if (get().isSyncingPending) {
+        return;
+      }
 
-      get().loadPackages(userId);
+      set({
+        isSyncingPending: true,
+      });
+
+      try {
+        await packageService.syncPendingPackages(userId);
+      } finally {
+        set({
+          isSyncingPending: false,
+        });
+
+        get().loadPackages(userId);
+      }
     },
 
     resetSession: () => {

@@ -34,18 +34,23 @@ export default forwardRef(function UpdateStatusModal(
   ref: Ref<BottomSheetModal>,
 ) {
   const { t } = useTranslation();
-
   const insets = useSafeAreaInsets();
 
   const { changeStatus, loadPackages, sendPackage } =
     usePackageStore();
 
   const showAlert = useShowAlert((state) => state.show);
+  const syncingPackageIds = usePackageStore(
+    (state) => state.syncingPackageIds,
+  );
 
   const [selectedStatus, setSelectedStatus] =
     useState<PackageStatus>(packageData.status);
-
   const [receiverName, setReceiverName] = useState("");
+
+  const isSyncing =
+    packageData.id !== undefined &&
+    syncingPackageIds.includes(packageData.id);
 
   const handleUpdate = () => {
     if (
@@ -74,7 +79,9 @@ export default forwardRef(function UpdateStatusModal(
   };
 
   const handleSendWebhook = async () => {
-    if (
+    if (isSyncing) {
+      return;
+    } else if (
       selectedStatus === PackageStatus.ENTREGUE &&
       !receiverName.trim()
     ) {
@@ -139,6 +146,7 @@ export default forwardRef(function UpdateStatusModal(
             onValueChange={(value) =>
               setSelectedStatus(value)
             }
+            enabled={!isSyncing}
             style={styles.pickerContainer}
             dropdownIconColor={Theme.colors.neutral[300]}
             itemStyle={styles.pickerItem}
@@ -167,6 +175,7 @@ export default forwardRef(function UpdateStatusModal(
               )}
               value={receiverName}
               onChangeText={setReceiverName}
+              editable={!isSyncing}
             />
           </View>
         ) : null}
@@ -182,12 +191,15 @@ export default forwardRef(function UpdateStatusModal(
           <Button
             title={t("common.update")}
             onPress={handleUpdate}
+            disabled={isSyncing}
           />
 
           <Button
             title={t("common.sync")}
             onPress={handleSendWebhook}
             variant="outline"
+            loading={isSyncing}
+            disabled={isSyncing}
           />
         </View>
       </View>

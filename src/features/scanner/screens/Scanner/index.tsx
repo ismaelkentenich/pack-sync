@@ -36,49 +36,42 @@ import { styles } from "./styles";
 
 export default function ScanScreen() {
   const { t } = useTranslation();
-
   const insets = useSafeAreaInsets();
-
   const navigation = useAppNavigation(Routes.Scan);
 
   const updateAllModalRef = useRef<BottomSheetModal>(null);
-
   const scannedCodesRef = useRef<Set<string>>(new Set());
 
   const userId = useAuthStore((state) => state.user?.id);
-
   const showAlert = useShowAlert((state) => state.show);
-
-  const [permission, requestPermission] =
-    useCameraPermissions();
+  const isSyncingSession = usePackageStore(
+    (state) => state.isSyncingSession,
+  );
 
   const currentSessionPackages = usePackageStore(
     (state) => state.currentSessionPackages,
   );
-
   const feedback = usePackageStore(
     (state) => state.feedback,
   );
-
   const scanPackage = usePackageStore(
     (state) => state.scanPackage,
   );
-
   const loadPackages = usePackageStore(
     (state) => state.loadPackages,
   );
-
   const resetSession = usePackageStore(
     (state) => state.resetSession,
   );
-
   const clearFeedback = usePackageStore(
     (state) => state.clearFeedback,
   );
-
   const sendAllCurrentSessionPackages = usePackageStore(
     (state) => state.sendAllCurrentSessionPackages,
   );
+
+  const [permission, requestPermission] =
+    useCameraPermissions();
 
   const openUpdateAllModal = useCallback(() => {
     updateAllModalRef.current?.present();
@@ -222,6 +215,7 @@ export default function ScanScreen() {
               <TouchableOpacity
                 onPress={openUpdateAllModal}
                 style={styles.infoHeaderItem}
+                disabled={isSyncingSession}
               >
                 <Text style={styles.infoTouchableText}>
                   {t("packages.actions.updateAll")}
@@ -231,6 +225,8 @@ export default function ScanScreen() {
               <View style={styles.infoHeaderItem}>
                 <Button
                   title={t("packages.actions.syncPackages")}
+                  loading={isSyncingSession}
+                  disabled={isSyncingSession}
                   onPress={() => {
                     if (!userId) {
                       return;

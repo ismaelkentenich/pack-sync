@@ -36,11 +36,12 @@ export default forwardRef(function UpdateAllPackagesModal(
   const insets = useSafeAreaInsets();
 
   const showAlert = useShowAlert((state) => state.show);
-
+  const isSyncingSession = usePackageStore(
+    (state) => state.isSyncingSession,
+  );
   const currentSessionPackages = usePackageStore(
     (state) => state.currentSessionPackages,
   );
-
   const updateAndSendCurrentSessionPackages =
     usePackageStore(
       (state) => state.updateAndSendCurrentSessionPackages,
@@ -48,13 +49,15 @@ export default forwardRef(function UpdateAllPackagesModal(
 
   const [selectedStatus, setSelectedStatus] =
     useState<PackageStatus>(PackageStatus.COLETADO);
-
   const [receiverName, setReceiverName] = useState("");
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const isBusy = isSubmitting || isSyncingSession;
+
   const handleApplyToAll = async () => {
-    if (currentSessionPackages.length === 0) {
+    if (isBusy) {
+      return;
+    } else if (currentSessionPackages.length === 0) {
       showAlert(
         t("packages.updateAll.emptySession"),
         "error",
@@ -148,7 +151,7 @@ export default forwardRef(function UpdateAllPackagesModal(
               dropdownIconColor={Theme.colors.neutral[300]}
               itemStyle={styles.pickerItem}
               mode="dropdown"
-              enabled={!isSubmitting}
+              enabled={!isBusy}
             >
               {Object.values(PackageStatus).map(
                 (status) => (
@@ -179,7 +182,7 @@ export default forwardRef(function UpdateAllPackagesModal(
               )}
               value={receiverName}
               onChangeText={setReceiverName}
-              editable={!isSubmitting}
+              editable={!isBusy}
             />
           </View>
         ) : null}
@@ -190,8 +193,8 @@ export default forwardRef(function UpdateAllPackagesModal(
             onPress={() => {
               void handleApplyToAll();
             }}
-            loading={isSubmitting}
-            disabled={isSubmitting}
+            loading={isBusy}
+            disabled={isBusy}
           />
         </View>
       </View>
