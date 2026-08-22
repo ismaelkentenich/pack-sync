@@ -54,24 +54,24 @@ export const usePackageStore = create<PackageState>(
       set({ statusFilter: status }),
 
     loadPackages: () => {
-      const { user } = useAuthStore.getState();
-      if (!user?.uid) return;
-      const pkgs = packageService.getAllPackages(user.uid);
+      const user = useAuthStore((state) => state.user);
+      if (!user?.id) return;
+      const pkgs = packageService.getAllPackages(user.id);
       const pending = packageService.getPendingCount(
-        user.uid,
+        user.id,
       );
       set({ packages: pkgs, pendingCount: pending });
     },
 
     scanPackage: async (code) => {
       const { user } = useAuthStore.getState();
-      if (!user?.uid) return;
+      if (!user?.id) return;
 
       set({ feedback: { loading: true } });
       try {
         const newPkg = await packageService.scanPackage(
           code,
-          user.uid,
+          user.id,
         );
         set((state) => ({
           packages: [newPkg, ...state.packages],
@@ -158,14 +158,14 @@ export const usePackageStore = create<PackageState>(
     changeStatus: (id, status, receiverName?: string) => {
       const { user } = useAuthStore.getState();
 
-      if (!user?.uid) {
+      if (!user?.id) {
         return;
       }
 
       try {
         packageService.changePackageStatus(
           id,
-          user.uid,
+          user.id,
           status,
           receiverName,
         );
@@ -197,7 +197,7 @@ export const usePackageStore = create<PackageState>(
           receiverName,
         );
       const { user } = useAuthStore.getState();
-      if (user?.uid) {
+      if (user?.id) {
         get().loadPackages();
       }
       if (!result.success) {
@@ -209,14 +209,14 @@ export const usePackageStore = create<PackageState>(
 
     syncPendingPackages: async () => {
       const { user } = useAuthStore.getState();
-      if (!user?.uid) return;
+      if (!user?.id) return;
 
       console.log(
         "Iniciando sincronização de pacotes pendentes...",
       );
 
       const result =
-        await packageService.syncPendingPackages(user.uid);
+        await packageService.syncPendingPackages(user.id);
 
       if (result.data === 0) {
         console.log(

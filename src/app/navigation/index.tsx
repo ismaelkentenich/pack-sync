@@ -1,13 +1,15 @@
-import React from "react";
-import { AuthStack } from "./AuthStack";
-import { AppStack } from "./AppStack";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
-import { View, ActivityIndicator } from "react-native";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 import Theme from "@theme/theme";
+import { ActivityIndicator, View } from "react-native";
+import { AppStack } from "./AppStack";
+import { AuthStack } from "./AuthStack";
 
 export function NavigationStack() {
-  const { isAuthenticated } = useAuthStore();
+  const isAuthenticated = useAuthStore(
+    (state) => state.isAuthenticated,
+  );
+
   const { isRestoring } = usePersistedAuth();
 
   if (isRestoring) {

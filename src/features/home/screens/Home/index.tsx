@@ -10,7 +10,7 @@ import { Text, View } from "react-native";
 import { styles } from "./styles";
 
 export default function HomeScreen() {
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
   const navigation = useAppNavigation(Routes.Home);
 
   return (
