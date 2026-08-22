@@ -2,6 +2,8 @@ import { Routes } from "@app/navigation/routes";
 import Button from "@components/primitives/Button";
 import Input from "@components/primitives/Input";
 import ScreenContainer from "@components/primitives/ScreenContainer";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { getAuthErrorMessage } from "@features/auth/utils/getAuthErrorMessage";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { useShowAlert } from "@store/useAlertStore";
 import {
@@ -9,11 +11,13 @@ import {
   isPasswordValid,
 } from "@utils/validators";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { styles } from "./styles";
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
+
   const navigation = useAppNavigation(Routes.Login);
   const login = useAuthStore((state) => state.login);
   const showAlert = useShowAlert((state) => state.show);
@@ -23,18 +27,21 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      showAlert("Preencha todos os campos.", "error");
+      showAlert(
+        t("auth.validation.requiredFields"),
+        "error",
+      );
       return;
     }
 
     if (!isEmailValid(email)) {
-      showAlert("Digite um e-mail válido.", "error");
+      showAlert(t("auth.validation.invalidEmail"), "error");
       return;
     }
 
     if (!isPasswordValid(password)) {
       showAlert(
-        "A senha deve ter pelo menos 6 caracteres.",
+        t("auth.validation.invalidPassword"),
         "error",
       );
       return;
@@ -43,11 +50,7 @@ export default function LoginScreen() {
     try {
       await login(email, password);
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Verifique suas credenciais.";
-      showAlert(message, "error");
+      showAlert(getAuthErrorMessage(error, t), "error");
     }
   };
 
@@ -57,25 +60,33 @@ export default function LoginScreen() {
       withKeyboardAvoiding
     >
       <View style={styles.container}>
-        <Text style={styles.text}>Login</Text>
+        <Text style={styles.text}>
+          {t("auth.login.title")}
+        </Text>
+
         <Input
-          label="E-mail"
-          placeholder="Digite seu e-mail"
+          label={t("common.email")}
+          placeholder={t("auth.login.emailPlaceholder")}
           value={email}
           onChangeText={setEmail}
         />
+
         <Input
-          label="Senha"
-          placeholder="Digite sua senha"
+          label={t("common.password")}
+          placeholder={t("auth.login.passwordPlaceholder")}
           value={password}
           onChangeText={setPassword}
           secure
         />
 
         <View style={styles.buttonContainer}>
-          <Button title="Login" onPress={handleLogin} />
           <Button
-            title="Cadastrar"
+            title={t("auth.login.submit")}
+            onPress={handleLogin}
+          />
+
+          <Button
+            title={t("auth.login.signup")}
             onPress={() => navigation.navigate("SignUp")}
             variant="outline"
           />
