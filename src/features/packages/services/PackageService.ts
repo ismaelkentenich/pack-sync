@@ -85,8 +85,14 @@ export class PackageService {
     }
 
     try {
+      const packageToSync: Package = {
+        ...pkg,
+        deliveryStatus: DeliveryStatus.PENDING,
+        sent_at: undefined,
+      };
+
       const result = await this.packageSyncGateway.send(
-        pkg,
+        packageToSync,
         receiverName,
       );
 
@@ -269,6 +275,8 @@ export class PackageService {
         ...pkg,
         status,
         receiverName,
+        deliveryStatus: DeliveryStatus.PENDING,
+        sent_at: undefined,
       }));
 
       return this.sendMultiplePackages(
