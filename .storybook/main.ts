@@ -31,6 +31,14 @@ const config: StorybookConfig = {
                 import.meta.url,
               ),
             ),
+
+          "@features/packages/store/usePackageStore":
+            fileURLToPath(
+              new URL(
+                "./mocks/usePackageStore.ts",
+                import.meta.url,
+              ),
+            ),
         },
       },
     });

@@ -2,46 +2,186 @@ import { StyleSheet } from "react-native";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
   container: {
     flex: 1,
-    justifyContent: "center",
+    gap: Theme.spacing.lg,
+    paddingHorizontal: Theme.spacing.md,
+    paddingTop: Theme.spacing.sm,
+  },
+
+  header: {
+    minHeight: Theme.sizing.control.md,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: Theme.spacing.md,
+  },
+
+  headerContent: {
+    flex: 1,
+    gap: Theme.spacing.xxs,
+    paddingRight: Theme.sizing.control.md,
+  },
+
+  title: {
+    color: Theme.colors.neutral[900],
+    fontSize: Theme.typography.size.xxl,
+    lineHeight: Theme.typography.lineHeight.xxl,
+    fontWeight: Theme.typography.weight.bold,
+  },
+
+  subtitle: {
+    color: Theme.colors.neutral[500],
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.sm,
+    fontWeight: Theme.typography.weight.medium,
+  },
+
+  packageCard: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: Theme.spacing.md,
     padding: Theme.spacing.md,
+    backgroundColor: Theme.colors.neutral[100],
   },
-  title: {
-    fontSize: Theme.typography.size.lg,
-    fontWeight: Theme.typography.weight.semibold,
-    color: Theme.colors.neutral[800],
+
+  packageIconContainer: {
+    width: Theme.sizing.control.md,
+    height: Theme.sizing.control.md,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: Theme.radius.md,
+    backgroundColor: Theme.colors.primary[100],
   },
-  text: {
-    color: Theme.colors.neutral[800],
+
+  packageInfo: {
+    flex: 1,
+    gap: Theme.spacing.xxs,
+  },
+
+  packageLabel: {
+    color: Theme.colors.neutral[500],
+    fontSize: Theme.typography.size.xs,
+    lineHeight: Theme.typography.lineHeight.xs,
+    fontWeight: Theme.typography.weight.medium,
+  },
+
+  packageCode: {
+    color: Theme.colors.neutral[900],
     fontSize: Theme.typography.size.md,
+    lineHeight: Theme.typography.lineHeight.md,
+    fontWeight: Theme.typography.weight.semibold,
   },
+
+  currentStateContainer: {
+    flexDirection: "row",
+    gap: Theme.spacing.md,
+  },
+
+  stateItem: {
+    flex: 1,
+    alignItems: "flex-start",
+    gap: Theme.spacing.xs,
+  },
+
+  stateLabel: {
+    color: Theme.colors.neutral[500],
+    fontSize: Theme.typography.size.xs,
+    lineHeight: Theme.typography.lineHeight.xs,
+    fontWeight: Theme.typography.weight.medium,
+  },
+
+  statusPill: {
+    minHeight: Theme.sizing.control.sm,
+    justifyContent: "center",
+    paddingHorizontal: Theme.spacing.sm,
+    borderRadius: Theme.radius.pill,
+    backgroundColor: Theme.colors.secondary[100],
+  },
+
+  statusPillText: {
+    color: Theme.colors.secondary[800],
+    fontSize: Theme.typography.size.xs,
+    lineHeight: Theme.typography.lineHeight.xs,
+    fontWeight: Theme.typography.weight.semibold,
+  },
+
+  deliveryPill: {
+    minHeight: Theme.sizing.control.sm,
+    justifyContent: "center",
+    paddingHorizontal: Theme.spacing.sm,
+    borderRadius: Theme.radius.pill,
+  },
+
+  deliveryPillPending: {
+    backgroundColor: Theme.colors.secondary[100],
+  },
+
+  deliveryPillSent: {
+    backgroundColor: Theme.colors.success[500],
+  },
+
+  deliveryPillText: {
+    color: Theme.colors.neutral[800],
+    fontSize: Theme.typography.size.xs,
+    lineHeight: Theme.typography.lineHeight.xs,
+    fontWeight: Theme.typography.weight.semibold,
+  },
+
+  form: {
+    gap: Theme.spacing.md,
+  },
+
+  field: {
+    gap: Theme.spacing.xs,
+  },
+
+  fieldLabel: {
+    color: Theme.colors.neutral[700],
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.sm,
+    fontWeight: Theme.typography.weight.semibold,
+  },
+
   pickerWrapper: {
+    minHeight: Theme.sizing.control.lg,
+    justifyContent: "center",
+    overflow: "hidden",
     borderWidth: 1,
     borderColor: Theme.colors.neutral[300],
-    borderRadius: Theme.radius.xxs,
-    overflow: "hidden",
-  },
-  pickerContainer: {
-    color: Theme.colors.neutral[800],
+    borderRadius: Theme.radius.md,
     backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.radius.sm,
-    height: Theme.sizing.control.md,
   },
+
+  picker: {
+    width: "100%",
+    color: Theme.colors.neutral[900],
+    backgroundColor: Theme.colors.neutral[50],
+  },
+
   pickerItem: {
-    flex: 1,
-    height: Theme.sizing.control.md,
-  },
-  pickerLabel: {
+    color: Theme.colors.neutral[900],
     fontSize: Theme.typography.size.md,
-    color: Theme.colors.neutral[800],
   },
-  buttonContainer: {
-    gap: Theme.spacing.md,
-    paddingVertical: Theme.spacing.md,
+
+  syncingInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Theme.spacing.xs,
+    padding: Theme.spacing.sm,
+    borderRadius: Theme.radius.md,
+    backgroundColor: Theme.colors.primary[100],
+  },
+
+  syncingText: {
+    color: Theme.colors.primary[700],
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.sm,
+    fontWeight: Theme.typography.weight.medium,
+  },
+
+  actions: {
+    gap: Theme.spacing.sm,
+    paddingTop: Theme.spacing.xs,
   },
 });

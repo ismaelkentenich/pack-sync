@@ -12,7 +12,7 @@ import { Button } from "@components/primitives/Button";
 import { Card } from "@components/primitives/Card";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
-import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
+import { UpdateStatusModal } from "@features/packages/components/UpdateStatusModal";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import {
