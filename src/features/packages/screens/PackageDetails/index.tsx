@@ -7,7 +7,7 @@ import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import { RootStackParamList } from "@app/navigation/types";
-import Badge from "@components/primitives/Badge";
+import { Badge } from "@components/primitives/Badge";
 import { Button } from "@components/primitives/Button";
 import { Card } from "@components/primitives/Card";
 import ScreenContainer from "@components/primitives/ScreenContainer";
