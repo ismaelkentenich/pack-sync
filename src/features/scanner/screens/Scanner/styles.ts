@@ -36,12 +36,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   infoText: {
-    fontWeight: "600",
+    fontWeight: Theme.typography.weight.semibold,
     fontSize: Theme.typography.size.lg,
     color: Theme.colors.neutral[900],
   },
   infoTouchableText: {
-    fontWeight: "400",
+    fontWeight: Theme.typography.weight.regular,
     fontSize: Theme.typography.size.md,
     color: Theme.colors.primary[600],
   },
@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
   },
   noPermissionTitle: {
     fontSize: Theme.typography.size.lg,
-    fontWeight: "500",
+    fontWeight: Theme.typography.weight.medium,
     color: Theme.colors.neutral[900],
     textAlign: "center",
   },
@@ -110,7 +110,7 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: Theme.typography.size.lg,
-    fontWeight: "500",
+    fontWeight: Theme.typography.weight.medium,
     color: Theme.colors.neutral[900],
     textAlign: "center",
   },

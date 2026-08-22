@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     fontSize: Theme.typography.size.lg,
     textAlign: "center",
     color: Theme.colors.neutral[50],
-    fontWeight: "600",
+    fontWeight: Theme.typography.weight.semibold,
   },
   headerContainer: {
     paddingVertical: 24,
@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
     fontSize: Theme.typography.size.xxxl,
     textAlign: "center",
     color: Theme.colors.neutral[50],
-    fontWeight: "700",
+    fontWeight: Theme.typography.weight.bold,
   },
   card: {
     justifyContent: "center",

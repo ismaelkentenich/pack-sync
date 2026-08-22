@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontSize: Theme.typography.size.lg,
-    fontWeight: "bold",
+    fontWeight: Theme.typography.weight.semibold,
     color: Theme.colors.neutral[800],
     lineHeight: Theme.typography.lineHeight.xl,
   },
