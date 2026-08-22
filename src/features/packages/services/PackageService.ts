@@ -17,6 +17,16 @@ export type ServiceResult<T = void> = {
 };
 
 export class PackageService {
+  private readonly packageSyncInFlight = new Map<
+    string,
+    Promise<ServiceResult>
+  >();
+
+  private readonly pendingSyncInFlight = new Map<
+    string,
+    Promise<ServiceResult<number>>
+  >();
+
   constructor(
     private readonly packageRepository: PackageRepository,
     private readonly packageSyncGateway: PackageSyncGateway,
@@ -71,18 +81,59 @@ export class PackageService {
     );
   }
 
-  async syncPackage(pkg: Package): Promise<ServiceResult> {
+  syncPackage(pkg: Package): Promise<ServiceResult> {
     const packageId = pkg.id;
 
     if (packageId === undefined) {
-      return {
+      return Promise.resolve({
         success: false,
         error: new PackageError(
           PackageErrorCode.INVALID_FOR_SYNC,
         ),
-      };
+      });
     }
 
+    const syncKey = `${pkg.clientCode}:${packageId}`;
+    const inFlight = this.packageSyncInFlight.get(syncKey);
+
+    if (inFlight) {
+      return inFlight;
+    }
+
+    const operation = this.performPackageSync(
+      pkg,
+      packageId,
+    );
+
+    const trackedOperation = operation.finally(() => {
+      if (
+        this.packageSyncInFlight.get(syncKey) ===
+        trackedOperation
+      ) {
+        this.packageSyncInFlight.delete(syncKey);
+      }
+    });
+
+    this.packageSyncInFlight.set(syncKey, trackedOperation);
+    return trackedOperation;
+  }
+
+  private async runPackageSync(
+    pkg: Package,
+    packageId: number,
+    syncKey: string,
+  ): Promise<ServiceResult> {
+    try {
+      return await this.performPackageSync(pkg, packageId);
+    } finally {
+      this.packageSyncInFlight.delete(syncKey);
+    }
+  }
+
+  private async performPackageSync(
+    pkg: Package,
+    packageId: number,
+  ): Promise<ServiceResult> {
     try {
       const packageToSync = this.packageRepository.findById(
         packageId,
@@ -183,7 +234,30 @@ export class PackageService {
     };
   }
 
-  async syncPendingPackages(
+  syncPendingPackages(
+    userId: string,
+  ): Promise<ServiceResult<number>> {
+    const inFlight = this.pendingSyncInFlight.get(userId);
+
+    if (inFlight) {
+      return inFlight;
+    }
+
+    const operation = this.performPendingSync(userId);
+    const trackedOperation = operation.finally(() => {
+      if (
+        this.pendingSyncInFlight.get(userId) ===
+        trackedOperation
+      ) {
+        this.pendingSyncInFlight.delete(userId);
+      }
+    });
+
+    this.pendingSyncInFlight.set(userId, trackedOperation);
+    return trackedOperation;
+  }
+
+  private async performPendingSync(
     userId: string,
   ): Promise<ServiceResult<number>> {
     const pendingPackages =
@@ -203,12 +277,10 @@ export class PackageService {
 
     for (const pkg of pendingPackages) {
       const result = await this.syncPackage(pkg);
-
       if (result.success) {
         syncedCount += 1;
       }
     }
-
     return {
       success: true,
       data: syncedCount,
