@@ -10,11 +10,8 @@ export enum AuthErrorCode {
 }
 
 export class AuthError extends Error {
-  constructor(
-    public readonly code: AuthErrorCode,
-    message: string,
-  ) {
-    super(message);
+  constructor(public readonly code: AuthErrorCode) {
+    super(code);
 
     this.name = "AuthError";
   }

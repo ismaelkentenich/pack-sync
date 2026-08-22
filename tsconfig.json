@@ -15,6 +15,7 @@
       "@theme/*": ["./src/theme/*"],
       "@store/*": ["./src/store/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
+      "@i18n/*": ["./src/i18n/*"],
       "@types/*": ["./src/types/*"]
     }
   }

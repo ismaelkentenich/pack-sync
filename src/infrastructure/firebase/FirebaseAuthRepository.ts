@@ -29,61 +29,40 @@ function mapFirebaseUser(user: User): AuthUser {
 
 function mapFirebaseAuthError(error: unknown): AuthError {
   if (!(error instanceof FirebaseError)) {
-    return new AuthError(
-      AuthErrorCode.UNKNOWN,
-      "Ocorreu um erro inesperado.",
-    );
+    return new AuthError(AuthErrorCode.UNKNOWN);
   }
 
   switch (error.code) {
     case "auth/invalid-credential":
       return new AuthError(
         AuthErrorCode.INVALID_CREDENTIALS,
-        "E-mail ou senha incorretos.",
       );
 
     case "auth/user-not-found":
-      return new AuthError(
-        AuthErrorCode.USER_NOT_FOUND,
-        "Usuário não encontrado.",
-      );
+      return new AuthError(AuthErrorCode.USER_NOT_FOUND);
 
     case "auth/invalid-email":
-      return new AuthError(
-        AuthErrorCode.INVALID_EMAIL,
-        "E-mail inválido.",
-      );
+      return new AuthError(AuthErrorCode.INVALID_EMAIL);
 
     case "auth/user-disabled":
-      return new AuthError(
-        AuthErrorCode.USER_DISABLED,
-        "Conta desativada.",
-      );
+      return new AuthError(AuthErrorCode.USER_DISABLED);
 
     case "auth/email-already-exists":
     case "auth/email-already-in-use":
       return new AuthError(
         AuthErrorCode.EMAIL_ALREADY_IN_USE,
-        "Este e-mail já está em uso.",
       );
 
     case "auth/operation-not-allowed":
       return new AuthError(
         AuthErrorCode.OPERATION_NOT_ALLOWED,
-        "Cadastro desativado no momento.",
       );
 
     case "auth/weak-password":
-      return new AuthError(
-        AuthErrorCode.WEAK_PASSWORD,
-        "Senha muito fraca. Use pelo menos 6 caracteres.",
-      );
+      return new AuthError(AuthErrorCode.WEAK_PASSWORD);
 
     default:
-      return new AuthError(
-        AuthErrorCode.UNKNOWN,
-        error.message || "Ocorreu um erro inesperado.",
-      );
+      return new AuthError(AuthErrorCode.UNKNOWN);
   }
 }
 

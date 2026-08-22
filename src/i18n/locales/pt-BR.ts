@@ -128,11 +128,22 @@ export const ptBR = {
     feedback: {
       scannedSuccessfully:
         "Pacote {{code}} escaneado com sucesso!",
-      alreadyScanned: "Pacote já escaneado",
-      scanError: "Erro ao escanear pacote",
+      alreadyScanned: "Pacote já escaneado.",
+      scanError: "Erro ao escanear pacote.",
       allSentSuccessfully:
         "Todos os pacotes enviados com sucesso!",
       sendSomeFailed: "Falha ao enviar alguns pacotes.",
+    },
+
+    errors: {
+      receiverRequired:
+        "Nome do recebedor é obrigatório para pacotes entregues.",
+      invalidForSync: "Pacote inválido para sincronização.",
+      syncFailed: "Falha ao sincronizar o pacote {{code}}.",
+      multipleSyncFailed:
+        "{{count}} pacote(s) falharam ao enviar.",
+      updateStatusFailed: "Erro ao atualizar o status.",
+      unknown: "Ocorreu um erro inesperado.",
     },
   },
 
