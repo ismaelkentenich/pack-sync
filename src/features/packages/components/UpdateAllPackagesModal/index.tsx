@@ -191,7 +191,7 @@ export default forwardRef(function UpdateAllPackagesModal(
           <Button
             title={t("packages.actions.updateAndSync")}
             onPress={() => {
-              void handleApplyToAll();
+              handleApplyToAll();
             }}
             loading={isBusy}
             disabled={isBusy}
