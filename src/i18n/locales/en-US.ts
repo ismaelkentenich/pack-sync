@@ -32,14 +32,19 @@ export const enUS = {
     },
 
     signup: {
-      title: "Create Account",
+      title: "Create your account.",
+      description:
+        "Start organizing and tracking your deliveries in one place.",
       emailPlaceholder: "Enter your email",
-      passwordPlaceholder: "Enter your password",
-      confirmPassword: "Confirm Password",
-      confirmPasswordPlaceholder: "Confirm your password",
-      submit: "Sign up",
+      passwordPlaceholder: "Create a password",
+      confirmPassword: "Confirm password",
+      confirmPasswordPlaceholder:
+        "Enter your password again",
+      submit: "Create account",
       alreadyHaveAccount: "Already have an account?",
-      success: "Account created successfully!",
+      login: "Sign in",
+      backToLogin: "Back",
+      success: "Account created successfully.",
     },
 
     validation: {
