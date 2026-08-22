@@ -7,33 +7,49 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: Theme.spacing.md,
+    paddingVertical: Theme.spacing.xs,
+  },
+
+  userContainer: {
+    flexDirection: "row",
+    gap: Theme.spacing.sm,
+    alignItems: "center",
+  },
+
+  userAvatar: {
+    width: Theme.sizing.control.sm,
+    height: Theme.sizing.control.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: Theme.radius.pill,
+    borderWidth: 1,
+    borderColor: Theme.colors.neutral[200],
+    backgroundColor: Theme.colors.primary[800],
   },
 
   userContent: {
-    flex: 1,
-    gap: Theme.spacing.xxs,
+    flexDirection: "column",
+    gap: Theme.spacing.none,
   },
 
   greeting: {
-    color: Theme.colors.neutral[500],
+    color: Theme.colors.primary[400],
     fontSize: Theme.typography.size.sm,
     lineHeight: Theme.typography.lineHeight.sm,
     fontWeight: Theme.typography.weight.medium,
   },
 
   email: {
-    color: Theme.colors.neutral[900],
+    color: Theme.colors.primary[800],
     fontSize: Theme.typography.size.md,
     lineHeight: Theme.typography.lineHeight.md,
     fontWeight: Theme.typography.weight.semibold,
   },
 
   logoutButton: {
-    width: Theme.sizing.control.md,
-    height: Theme.sizing.control.md,
+    width: Theme.sizing.control.sm,
+    height: Theme.sizing.control.sm,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: Theme.radius.md,
-    backgroundColor: Theme.colors.neutral[100],
   },
 });

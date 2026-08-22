@@ -3,7 +3,9 @@ import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   heroCard: {
+    position: "relative",
     minHeight: 250,
+    overflow: "hidden",
     padding: Theme.spacing.lg,
     justifyContent: "space-between",
     gap: Theme.spacing.xl,
@@ -11,10 +13,52 @@ export const styles = StyleSheet.create({
     backgroundColor: Theme.colors.secondary[400],
   },
 
+  heroDecoration: {
+    ...StyleSheet.absoluteFill,
+  },
+
+  heroDecorationCircleLarge: {
+    position: "absolute",
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    top: -70,
+    right: -55,
+    backgroundColor: Theme.colors.secondary[200],
+    opacity: 0.4,
+  },
+
+  heroDecorationCircleSmall: {
+    position: "absolute",
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    right: Theme.spacing.md,
+    bottom: -35,
+    backgroundColor: Theme.colors.neutral[50],
+    opacity: 0.18,
+  },
+
+  heroPackageIllustration: {
+    position: "absolute",
+    right: Theme.spacing.lg,
+    top: "42%",
+    opacity: 0.12,
+    transform: [
+      {
+        rotate: "-8deg",
+      },
+      {
+        scale: 2.4,
+      },
+    ],
+  },
+
   heroTopRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
+    zIndex: 1,
   },
 
   heroIconContainer: {
@@ -23,11 +67,13 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: Theme.radius.md,
-    backgroundColor: Theme.colors.neutral[50],
+    backgroundColor: Theme.colors.primary[600],
   },
 
   heroContent: {
+    maxWidth: "75%",
     gap: Theme.spacing.xs,
+    zIndex: 1,
   },
 
   heroTitle: {
@@ -38,7 +84,6 @@ export const styles = StyleSheet.create({
   },
 
   heroDescription: {
-    maxWidth: 280,
     color: Theme.colors.neutral[800],
     fontSize: Theme.typography.size.md,
     lineHeight: Theme.typography.lineHeight.md,
@@ -52,21 +97,24 @@ export const styles = StyleSheet.create({
     paddingVertical: Theme.spacing.xs,
     paddingHorizontal: Theme.spacing.md,
     borderRadius: Theme.radius.md,
-    backgroundColor: Theme.colors.neutral[50],
+    backgroundColor: Theme.colors.primary[600],
+    zIndex: 1,
   },
 
   heroActionText: {
-    color: Theme.colors.neutral[900],
+    color: Theme.colors.neutral[50],
     fontSize: Theme.typography.size.sm,
     lineHeight: Theme.typography.lineHeight.sm,
     fontWeight: Theme.typography.weight.semibold,
   },
 
   secondaryCard: {
+    minHeight: Theme.sizing.control.lg,
     flexDirection: "row",
     alignItems: "center",
     gap: Theme.spacing.md,
     padding: Theme.spacing.md,
+    backgroundColor: Theme.colors.neutral[50],
   },
 
   secondaryIconContainer: {
@@ -94,5 +142,14 @@ export const styles = StyleSheet.create({
     color: Theme.colors.neutral[600],
     fontSize: Theme.typography.size.sm,
     lineHeight: Theme.typography.lineHeight.sm,
+  },
+
+  secondaryArrowContainer: {
+    width: Theme.sizing.control.sm,
+    height: Theme.sizing.control.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: Theme.radius.md,
+    backgroundColor: Theme.colors.primary[100],
   },
 });
