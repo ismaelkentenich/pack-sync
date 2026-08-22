@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.md,
   },
   buttonContainer: {
-    height: 48,
+    height: Theme.sizing.control.md,
     position: "absolute",
     left: 0,
     right: 0,

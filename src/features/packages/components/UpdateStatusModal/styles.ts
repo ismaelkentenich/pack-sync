@@ -30,11 +30,11 @@ export const styles = StyleSheet.create({
     color: Theme.colors.neutral[800],
     backgroundColor: Theme.colors.neutral[50],
     borderRadius: Theme.radius.sm,
-    height: 48,
+    height: Theme.sizing.control.md,
   },
   pickerItem: {
     flex: 1,
-    height: 48,
+    height: Theme.sizing.control.md,
   },
   pickerLabel: {
     fontSize: Theme.typography.size.md,

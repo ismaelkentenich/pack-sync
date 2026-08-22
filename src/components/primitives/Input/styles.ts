@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
   },
   label: {
     fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.sm,
     color: Theme.colors.neutral[700],
     marginBottom: Theme.spacing.xs,
   },
@@ -21,8 +22,10 @@ export const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 48,
+    height: Theme.sizing.control.md,
     color: Theme.colors.neutral[800],
+    fontSize: Theme.typography.size.md,
+    lineHeight: Theme.typography.lineHeight.md,
   },
   inputError: {
     borderColor: Theme.colors.error[500],
@@ -33,6 +36,7 @@ export const styles = StyleSheet.create({
   errorText: {
     color: Theme.colors.error[500],
     fontSize: Theme.typography.size.xs,
+    lineHeight: Theme.typography.lineHeight.xs,
     marginTop: Theme.spacing.xxs,
   },
 });

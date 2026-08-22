@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
   pickerWrapper: {
     backgroundColor: Theme.colors.neutral[50],
     borderRadius: Theme.radius.sm,
-    height: 48,
+    height: Theme.sizing.control.md,
     justifyContent: "center",
   },
 });

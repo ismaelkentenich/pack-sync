@@ -35,7 +35,7 @@ export default function Button({
   textStyle,
   ...rest
 }: ButtonProps) {
-  const { colors, typography, radius } = Theme;
+  const { colors, typography, radius, sizing } = Theme;
 
   const backgroundColor =
     variant === "primary"
@@ -57,7 +57,11 @@ export default function Button({
       : "transparent";
 
   const height =
-    size === "sm" ? 40 : size === "lg" ? 56 : 48;
+    size === "sm"
+      ? sizing.control.sm
+      : size === "lg"
+        ? sizing.control.lg
+        : sizing.control.md;
 
   const fontSize =
     size === "sm"

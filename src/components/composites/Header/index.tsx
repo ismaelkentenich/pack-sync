@@ -32,7 +32,7 @@ export default function Header({
           style={styles.backButton}
         >
           <ArrowLeft
-            size={24}
+            size={Theme.sizing.icon.md}
             color={Theme.colors.neutral[50]}
           />
         </TouchableOpacity>
@@ -46,7 +46,7 @@ export default function Header({
           style={styles.logoutButton}
         >
           <LogOut
-            size={22}
+            size={Theme.sizing.icon.md}
             color={Theme.colors.neutral[50]}
           />
         </TouchableOpacity>
