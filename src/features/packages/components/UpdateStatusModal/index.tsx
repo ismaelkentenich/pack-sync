@@ -16,7 +16,7 @@ import { Package } from "@features/packages/domain/package.types";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
 import { useShowAlert } from "@store/useAlertStore";
-import Theme from "@theme/theme";
+import Theme from "@theme/legacy/legacyTheme";
 import { styles } from "./styles";
 
 interface UpdateStatusModalProps {

@@ -24,7 +24,7 @@ import { Package } from "@features/packages/domain/package.types";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import Theme from "@theme/theme";
+import Theme from "@theme/legacy/legacyTheme";
 import { styles } from "./styles";
 
 export default function PackagesListScreen() {

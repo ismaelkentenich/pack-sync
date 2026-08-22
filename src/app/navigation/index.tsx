@@ -2,7 +2,7 @@ import { ActivityIndicator, View } from "react-native";
 import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
-import Theme from "@theme/theme";
+import Theme from "@theme/legacy/legacyTheme";
 import { AppStack } from "./AppStack";
 import { AuthStack } from "./AuthStack";
 

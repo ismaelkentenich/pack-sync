@@ -31,7 +31,7 @@ import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageFeedback } from "@features/packages/utils/getPackageErrorFeedback";
 import { useAppNavigation } from "@hooks/useAppNavigation";
 import { useShowAlert } from "@store/useAlertStore";
-import Theme from "@theme/theme";
+import Theme from "@theme/legacy/legacyTheme";
 import { styles } from "./styles";
 
 export default function ScanScreen() {
