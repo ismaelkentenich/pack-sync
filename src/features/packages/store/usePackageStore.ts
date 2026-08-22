@@ -79,6 +79,8 @@ type PackageState = {
   setFeedback: (feedback: Feedback) => void;
 
   clearFeedback: () => void;
+
+  clearUserState: () => void;
 };
 
 const initialFeedback: Feedback = {
@@ -474,6 +476,23 @@ export const usePackageStore = create<PackageState>(
     resetSession: () => {
       set({
         currentSessionPackages: [],
+      });
+    },
+
+    clearUserState: () => {
+      set({
+        packages: [],
+        currentSessionPackages: [],
+        pendingCount: 0,
+
+        syncingPackageIds: [],
+        isSyncingSession: false,
+        isSyncingPending: false,
+
+        searchTerm: "",
+        statusFilter: "",
+
+        feedback: initialFeedback,
       });
     },
 

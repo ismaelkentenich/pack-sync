@@ -718,4 +718,65 @@ describe("usePackageStore", () => {
       ).toEqual([second]);
     });
   });
+
+  describe("clearUserState", () => {
+    it("clears all user-scoped package state", () => {
+      const pkg = createPackage();
+
+      usePackageStore.setState({
+        packages: [pkg],
+        currentSessionPackages: [pkg],
+        pendingCount: 4,
+
+        syncingPackageIds: [1, 2],
+        isSyncingSession: true,
+        isSyncingPending: true,
+
+        searchTerm: "PKG",
+        statusFilter: PackageStatus.ENTREGUE,
+
+        feedback: {
+          loading: false,
+          error: {
+            key: "packages.errors.receiverRequired",
+          },
+        },
+      });
+
+      usePackageStore.getState().clearUserState();
+
+      const state = usePackageStore.getState();
+
+      expect(state.packages).toEqual([]);
+      expect(state.currentSessionPackages).toEqual([]);
+      expect(state.pendingCount).toBe(0);
+
+      expect(state.syncingPackageIds).toEqual([]);
+      expect(state.isSyncingSession).toBe(false);
+      expect(state.isSyncingPending).toBe(false);
+
+      expect(state.searchTerm).toBe("");
+      expect(state.statusFilter).toBe("");
+
+      expect(state.feedback).toEqual({
+        loading: false,
+      });
+    });
+
+    it("does not delete persisted packages when clearing user state", () => {
+      usePackageStore.setState({
+        packages: [createPackage()],
+      });
+
+      usePackageStore.getState().clearUserState();
+
+      expect(
+        packageServiceMock.getAllPackages,
+      ).not.toHaveBeenCalled();
+
+      expect(
+        packageServiceMock.getPendingCount,
+      ).not.toHaveBeenCalled();
+    });
+  });
 });
