@@ -1,21 +1,23 @@
-import Button from "@components/primitives/Button";
-import Card from "@components/primitives/Card";
-import Input from "@components/primitives/Input";
 import {
   ModalCloseIcon,
   ModalWrapper,
 } from "@components/composites/ModalWrapper";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Picker } from "@react-native-picker/picker";
+import Button from "@components/primitives/Button";
+import Card from "@components/primitives/Card";
+import Input from "@components/primitives/Input";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Picker } from "@react-native-picker/picker";
+import { useShowAlert } from "@store/useAlertStore";
 import Theme from "@theme/theme";
 import React, { forwardRef, Ref, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { useShowAlert } from "@store/useAlertStore";
 
 interface UpdateStatusModalProps {
   handleCloseModal: () => void;
@@ -31,13 +33,18 @@ export default forwardRef(function UpdateStatusModal(
   }: UpdateStatusModalProps,
   ref: Ref<BottomSheetModal>,
 ) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
+
   const { changeStatus, loadPackages, sendPackage } =
     usePackageStore();
+
   const showAlert = useShowAlert((state) => state.show);
 
   const [selectedStatus, setSelectedStatus] =
     useState<PackageStatus>(packageData.status);
+
   const [receiverName, setReceiverName] = useState("");
 
   const handleUpdate = () => {
@@ -45,7 +52,10 @@ export default forwardRef(function UpdateStatusModal(
       selectedStatus === PackageStatus.ENTREGUE &&
       !receiverName.trim()
     ) {
-      showAlert("Informe o nome do recebedor.", "error");
+      showAlert(
+        t("packages.updateStatus.receiverRequired"),
+        "error",
+      );
       return;
     }
 
@@ -59,6 +69,7 @@ export default forwardRef(function UpdateStatusModal(
     );
 
     loadPackages(userId);
+
     handleCloseModal();
   };
 
@@ -67,7 +78,10 @@ export default forwardRef(function UpdateStatusModal(
       selectedStatus === PackageStatus.ENTREGUE &&
       !receiverName.trim()
     ) {
-      showAlert("Informe o nome do recebedor.", "error");
+      showAlert(
+        t("packages.updateStatus.receiverRequired"),
+        "error",
+      );
       return;
     }
 
@@ -89,13 +103,15 @@ export default forwardRef(function UpdateStatusModal(
           status: selectedStatus,
         },
         userId,
-        receiverName,
+        selectedStatus === PackageStatus.ENTREGUE
+          ? receiverName
+          : undefined,
       );
-    } catch (error) {
-      console.error(error);
+    } finally {
+      handleCloseModal();
     }
-    handleCloseModal();
   };
+
   return (
     <ModalWrapper
       ref={ref}
@@ -103,22 +119,26 @@ export default forwardRef(function UpdateStatusModal(
       hasInputInsideModal
     >
       <ModalCloseIcon onPress={handleCloseModal} />
+
       <View
         style={[
           styles.container,
-          { paddingBottom: insets.bottom },
+          {
+            paddingBottom: insets.bottom,
+          },
         ]}
       >
         <Text style={styles.title}>
-          Alteração de status{" "}
+          {t("packages.updateStatus.title")}
         </Text>
 
         <Text style={styles.text}>
-          Selecione o novo status do pacote:
+          {t("packages.updateStatus.selectStatus")}
         </Text>
+
         <Card touchable={false}>
           <Text style={styles.text}>
-            Pacote: {packageData.code}
+            {t("common.package")}: {packageData.code}
           </Text>
         </Card>
 
@@ -136,7 +156,7 @@ export default forwardRef(function UpdateStatusModal(
             {Object.values(PackageStatus).map((status) => (
               <Picker.Item
                 key={status}
-                label={status}
+                label={translatePackageStatus(status, t)}
                 value={status}
                 style={styles.pickerLabel}
               />
@@ -144,30 +164,37 @@ export default forwardRef(function UpdateStatusModal(
           </Picker>
         </View>
 
-        {selectedStatus === PackageStatus.ENTREGUE && (
+        {selectedStatus === PackageStatus.ENTREGUE ? (
           <View>
             <Text style={styles.text}>
-              Nome do recebedor:
+              {t("packages.updateStatus.receiverName")}
             </Text>
+
             <Input
-              placeholder="Ex: João da Silva"
+              placeholder={t(
+                "packages.updateStatus.receiverPlaceholder",
+              )}
               value={receiverName}
               onChangeText={setReceiverName}
             />
           </View>
-        )}
+        ) : null}
+
         <View
           style={[
             styles.buttonContainer,
-            { paddingBottom: insets.bottom },
+            {
+              paddingBottom: insets.bottom,
+            },
           ]}
         >
           <Button
-            title="Atualizar"
+            title={t("common.update")}
             onPress={handleUpdate}
           />
+
           <Button
-            title="Sincronizar"
+            title={t("common.sync")}
             onPress={handleSendWebhook}
             variant="outline"
           />

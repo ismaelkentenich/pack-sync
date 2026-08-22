@@ -1,13 +1,11 @@
 import { PackageStatus } from "@features/packages/domain/package.enums";
-import { PackageError } from "@features/packages/domain/package.errors";
 import { Package } from "@features/packages/domain/package.types";
 import { packageService } from "@features/packages/package.dependencies";
+import {
+  FeedbackMessage,
+  getPackageErrorFeedback,
+} from "@features/packages/utils/getPackageErrorFeedback";
 import { create } from "zustand";
-
-type FeedbackMessage = {
-  key: string;
-  params?: Record<string, string | number | undefined>;
-};
 
 type Feedback = {
   loading: boolean;
@@ -44,6 +42,10 @@ type PackageState = {
 
   syncPendingPackages: (userId: string) => Promise<void>;
 
+  sendAllCurrentSessionPackages: (
+    userId: string,
+  ) => Promise<void>;
+
   searchTerm: string;
   statusFilter: string;
 
@@ -55,55 +57,12 @@ type PackageState = {
   feedback: Feedback;
 
   setFeedback: (feedback: Feedback) => void;
-
-  sendAllCurrentSessionPackages: (
-    userId: string,
-  ) => Promise<void>;
+  clearFeedback: () => void;
 };
 
-function getPackageErrorFeedback(
-  error: unknown,
-): FeedbackMessage {
-  if (!(error instanceof PackageError)) {
-    return {
-      key: "packages.errors.unknown",
-    };
-  }
-
-  switch (error.code) {
-    case "ALREADY_SCANNED":
-      return {
-        key: "packages.feedback.alreadyScanned",
-      };
-
-    case "RECEIVER_REQUIRED":
-      return {
-        key: "packages.errors.receiverRequired",
-      };
-
-    case "INVALID_FOR_SYNC":
-      return {
-        key: "packages.errors.invalidForSync",
-      };
-
-    case "SYNC_FAILED":
-      return {
-        key: "packages.errors.syncFailed",
-        params: error.params,
-      };
-
-    case "MULTIPLE_SYNC_FAILED":
-      return {
-        key: "packages.errors.multipleSyncFailed",
-        params: error.params,
-      };
-
-    default:
-      return {
-        key: "packages.errors.unknown",
-      };
-  }
-}
+const initialFeedback: Feedback = {
+  loading: false,
+};
 
 export const usePackageStore = create<PackageState>(
   (set, get) => ({
@@ -114,21 +73,31 @@ export const usePackageStore = create<PackageState>(
     searchTerm: "",
     statusFilter: "",
 
-    feedback: {
-      loading: false,
+    feedback: initialFeedback,
+
+    setFeedback: (feedback) => {
+      set({
+        feedback,
+      });
     },
 
-    setFeedback: (feedback) => set({ feedback }),
+    clearFeedback: () => {
+      set({
+        feedback: initialFeedback,
+      });
+    },
 
-    setSearchTerm: (term) =>
+    setSearchTerm: (term) => {
       set({
         searchTerm: term,
-      }),
+      });
+    },
 
-    setStatusFilter: (status) =>
+    setStatusFilter: (status) => {
       set({
         statusFilter: status,
-      }),
+      });
+    },
 
     loadPackages: (userId) => {
       const packages =
@@ -151,16 +120,16 @@ export const usePackageStore = create<PackageState>(
       });
 
       try {
-        const newPkg = await packageService.scanPackage(
+        const newPackage = await packageService.scanPackage(
           code,
           userId,
         );
 
         set((state) => ({
-          packages: [newPkg, ...state.packages],
+          packages: [newPackage, ...state.packages],
 
           currentSessionPackages: [
-            newPkg,
+            newPackage,
             ...state.currentSessionPackages,
           ],
 
@@ -172,8 +141,10 @@ export const usePackageStore = create<PackageState>(
         set({
           feedback: {
             loading: false,
+
             success: {
               key: "packages.feedback.scannedSuccessfully",
+
               params: {
                 code,
               },
@@ -213,6 +184,7 @@ export const usePackageStore = create<PackageState>(
           set({
             feedback: {
               loading: false,
+
               success: {
                 key: "packages.feedback.allSentSuccessfully",
               },
@@ -222,6 +194,7 @@ export const usePackageStore = create<PackageState>(
           set({
             feedback: {
               loading: false,
+
               error: result.error
                 ? getPackageErrorFeedback(result.error)
                 : {
@@ -238,6 +211,7 @@ export const usePackageStore = create<PackageState>(
         set({
           feedback: {
             loading: false,
+
             error: {
               key: "packages.feedback.sendSomeFailed",
             },
@@ -267,16 +241,18 @@ export const usePackageStore = create<PackageState>(
         set({
           feedback: {
             loading: false,
+
             error: getPackageErrorFeedback(error),
           },
         });
       }
     },
 
-    resetSession: () =>
+    resetSession: () => {
       set({
         currentSessionPackages: [],
-      }),
+      });
+    },
 
     sendPackage: async (pkg, userId, receiverName) => {
       const result = await packageService.syncPackage(
@@ -290,6 +266,7 @@ export const usePackageStore = create<PackageState>(
         set({
           feedback: {
             loading: false,
+
             error: getPackageErrorFeedback(result.error),
           },
         });
