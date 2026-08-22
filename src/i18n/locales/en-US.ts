@@ -63,8 +63,21 @@ export const enUS = {
 
   home: {
     greeting: "Hello,",
-    scanner: "Scanner",
-    packageList: "Package List",
+    headline: "Manage your deliveries with ease.",
+    description:
+      "Scan packages, track their status, and keep your deliveries organized.",
+    scanner: {
+      title: "Scan package",
+      description:
+        "Scan a QR Code or barcode to add a package.",
+      action: "Get started",
+    },
+    quickActions: "Quick access",
+    packageList: {
+      title: "All packages",
+      description: "View, track, and manage your packages.",
+      action: "View packages",
+    },
   },
 
   packages: {

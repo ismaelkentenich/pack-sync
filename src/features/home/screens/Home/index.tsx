@@ -1,69 +1,99 @@
-import { ScanQrCode, Scroll } from "lucide-react-native";
-import React from "react";
+import {
+  PackageSearch,
+  ScanQrCode,
+} from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import { Routes } from "@app/navigation/routes";
-import { Card } from "@components/primitives/Card";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { HomeActionCard } from "@features/home/components/HomeActionCard";
+import { HomeHeader } from "@features/home/components/HomeHeader";
 import { useAppNavigation } from "@hooks/useAppNavigation";
-import Theme from "@theme/theme";
 import { styles } from "./styles";
 
 export default function HomeScreen() {
   const { t } = useTranslation();
+  const navigation = useAppNavigation(Routes.Home);
 
   const user = useAuthStore((state) => state.user);
-  const navigation = useAppNavigation(Routes.Home);
+  const logout = useAuthStore((state) => state.logout);
+
+  const userEmail = user?.email ?? undefined;
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
+  const handleOpenScanner = () => {
+    navigation.navigate("Scan");
+  };
+
+  const handleOpenPackages = () => {
+    navigation.navigate("PackagesList");
+  };
 
   return (
     <ScreenContainer
-      withHeader
-      headerTitle={t("navigation.home")}
-      showBackButton={false}
-      showLogout
-      withGradientBackground
+      testID="homeScreen"
+      withHeader={false}
+      scrollable
+      backgroundColorVariant="neutral50"
+      contentContainerStyle={styles.screenContent}
     >
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>
-            {t("home.greeting")}
-          </Text>
+      <HomeHeader
+        greeting={t("home.greeting")}
+        email={userEmail}
+        logoutAccessibilityLabel={t(
+          "accessibility.header.logout",
+        )}
+        onLogout={handleLogout}
+      />
 
-          <Text style={styles.userInfoText}>
-            {user?.email}
-          </Text>
-        </View>
+      <View
+        testID="homeIntroduction"
+        style={styles.introduction}
+      >
+        <Text testID="homeHeadline" style={styles.headline}>
+          {t("home.headline")}
+        </Text>
 
-        <Card
-          style={styles.card}
-          onPress={() => navigation.navigate("Scan")}
+        <Text
+          testID="homeDescription"
+          style={styles.description}
         >
-          <ScanQrCode
-            size={32}
-            color={Theme.colors.neutral[700]}
-          />
+          {t("home.description")}
+        </Text>
+      </View>
 
-          <Text style={styles.cardText}>
-            {t("home.scanner")}
-          </Text>
-        </Card>
+      <HomeActionCard
+        testID="homeScannerCard"
+        icon={ScanQrCode}
+        variant="hero"
+        title={t("home.scanner.title")}
+        description={t("home.scanner.description")}
+        actionLabel={t("home.scanner.action")}
+        onPress={handleOpenScanner}
+      />
 
-        <Card
-          style={styles.card}
-          onPress={() =>
-            navigation.navigate("PackagesList")
-          }
+      <View
+        testID="homeQuickActions"
+        style={styles.quickActions}
+      >
+        <Text
+          testID="homeQuickActionsTitle"
+          style={styles.sectionTitle}
         >
-          <Scroll
-            size={32}
-            color={Theme.colors.neutral[700]}
-          />
+          {t("home.quickActions")}
+        </Text>
 
-          <Text style={styles.cardText}>
-            {t("home.packageList")}
-          </Text>
-        </Card>
+        <HomeActionCard
+          testID="homePackagesCard"
+          icon={PackageSearch}
+          title={t("home.packageList.title")}
+          description={t("home.packageList.description")}
+          onPress={handleOpenPackages}
+        />
       </View>
     </ScreenContainer>
   );
