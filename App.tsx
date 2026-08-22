@@ -1,13 +1,13 @@
-import { NavigationStack } from "@app/navigation";
-import GlobalAlert from "@components/composites/CustomAlert";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
 import { NavigationContainer } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { setupAllDatabases } from "@infrastructure/database/setup";
+import { NavigationStack } from "@app/navigation";
+import GlobalAlert from "@components/composites/CustomAlert";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
+import { setupAllDatabases } from "@infrastructure/database/setup";
 
 export default function App() {
   const userId = useAuthStore((state) => state.user?.id);

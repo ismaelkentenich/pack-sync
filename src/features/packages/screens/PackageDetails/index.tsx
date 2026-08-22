@@ -1,8 +1,17 @@
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import {
+  RouteProp,
+  useRoute,
+} from "@react-navigation/native";
+import React, { useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
 import { RootStackParamList } from "@app/navigation/types";
 import Badge from "@components/primitives/Badge";
 import Button from "@components/primitives/Button";
 import Card from "@components/primitives/Card";
 import ScreenContainer from "@components/primitives/ScreenContainer";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
@@ -10,16 +19,7 @@ import {
   translateDeliveryStatus,
   translatePackageStatus,
 } from "@features/packages/utils/packageTranslations";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import {
-  RouteProp,
-  useRoute,
-} from "@react-navigation/native";
 import { formatDate } from "@utils/date";
-import React, { useRef } from "react";
-import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
 import { styles } from "./styles";
 
 type PackageDetailsRouteProp = RouteProp<

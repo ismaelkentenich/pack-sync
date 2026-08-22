@@ -1,5 +1,3 @@
-import Header from "@components/composites/Header";
-import Theme from "@theme/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
@@ -12,6 +10,8 @@ import {
   ViewStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "@components/composites/Header";
+import Theme from "@theme/theme";
 import { styles } from "./styles";
 
 type ScreenContainerProps = {
@@ -47,25 +47,48 @@ export default function ScreenContainer({
   withGradientBackground = false,
 }: ScreenContainerProps) {
   const backgroundColor =
-    backgroundColorVariant === "neutral100" ? Theme.colors.neutral[100] : Theme.colors.neutral[50];
+    backgroundColorVariant === "neutral100"
+      ? Theme.colors.neutral[100]
+      : Theme.colors.neutral[50];
 
   return (
     <View style={{ flex: 1 }}>
-      <StatusBar backgroundColor={statusBarColor} barStyle="dark-content" translucent={false} />
+      <StatusBar
+        backgroundColor={statusBarColor}
+        barStyle="dark-content"
+        translucent={false}
+      />
 
-      <SafeAreaView style={[styles.container, { backgroundColor }, style]}>
+      <SafeAreaView
+        style={[
+          styles.container,
+          { backgroundColor },
+          style,
+        ]}
+      >
         <KeyboardAvoidingView
           style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={
+            Platform.OS === "ios" ? "padding" : "height"
+          }
           enabled={withKeyboardAvoiding}
         >
           {withHeader && (
-            <Header title={headerTitle} showBack={showBackButton} showLogout={showLogout} />
+            <Header
+              title={headerTitle}
+              showBack={showBackButton}
+              showLogout={showLogout}
+            />
           )}
           {scrollable ? (
             <ScrollView
-              contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
-              showsVerticalScrollIndicator={showVerticalScroll}
+              contentContainerStyle={[
+                styles.scrollContent,
+                contentContainerStyle,
+              ]}
+              showsVerticalScrollIndicator={
+                showVerticalScroll
+              }
               keyboardShouldPersistTaps="handled"
             >
               {children}
@@ -75,8 +98,14 @@ export default function ScreenContainer({
           )}
           {withGradientBackground && (
             <LinearGradient
-              colors={[Theme.colors.primary[600], "transparent"]}
-              style={[styles.background, { top: withHeader ? 56 : 0 }]}
+              colors={[
+                Theme.colors.primary[600],
+                "transparent",
+              ]}
+              style={[
+                styles.background,
+                { top: withHeader ? 56 : 0 },
+              ]}
             />
           )}
         </KeyboardAvoidingView>

@@ -1,3 +1,6 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
 import Badge from "@components/primitives/Badge";
 import Button from "@components/primitives/Button";
 import Card from "@components/primitives/Card";
@@ -7,9 +10,6 @@ import {
   translatePackageStatus,
 } from "@features/packages/utils/packageTranslations";
 import { formatDate } from "@utils/date";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
 import { styles } from "./styles";
 
 type PackageCards = {

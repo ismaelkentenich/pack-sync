@@ -1,14 +1,12 @@
-import { PackageStatus } from "@features/packages/domain/package.enums";
+import { WEBSOCKET_URL } from "@env";
 import {
   PackageSyncGateway,
   PackageSyncResult,
 } from "@features/packages/domain/package-sync.gateway";
+import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
-import { WEBSOCKET_URL } from "@env";
 
-export class WebhookPackageSyncGateway
-  implements PackageSyncGateway
-{
+export class WebhookPackageSyncGateway implements PackageSyncGateway {
   async send(
     pkg: Package,
     receiverName?: string,

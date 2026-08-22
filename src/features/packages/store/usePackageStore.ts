@@ -1,3 +1,4 @@
+import { create } from "zustand";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { packageService } from "@features/packages/package.dependencies";
@@ -5,7 +6,6 @@ import {
   getPackageErrorFeedback,
   PackageFeedbackMessage,
 } from "@features/packages/utils/getPackageErrorFeedback";
-import { create } from "zustand";
 
 type Feedback = {
   loading: boolean;

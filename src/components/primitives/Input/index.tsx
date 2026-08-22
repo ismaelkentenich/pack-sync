@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   TextInput,
@@ -8,9 +9,8 @@ import {
   ViewStyle,
   TouchableOpacity,
 } from "react-native";
-import { Eye, EyeOff } from "lucide-react-native";
-import { styles } from "./styles";
 import Theme from "@theme/theme";
+import { styles } from "./styles";
 
 type InputProps = TextInputProps & {
   label?: string;
@@ -27,7 +27,8 @@ export default function Input({
   secure = false,
   ...rest
 }: InputProps) {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] =
+    useState(false);
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -36,26 +37,40 @@ export default function Input({
       <View style={styles.inputWrapper}>
         <TextInput
           placeholderTextColor={Theme.colors.neutral[400]}
-          style={[styles.input, style, error && styles.inputError]}
+          style={[
+            styles.input,
+            style,
+            error && styles.inputError,
+          ]}
           secureTextEntry={secure && !isPasswordVisible}
           {...rest}
         />
 
         {secure && (
           <TouchableOpacity
-            onPress={() => setIsPasswordVisible((prev) => !prev)}
+            onPress={() =>
+              setIsPasswordVisible((prev) => !prev)
+            }
             style={styles.iconButton}
           >
             {isPasswordVisible ? (
-              <EyeOff size={20} color={Theme.colors.neutral[500]} />
+              <EyeOff
+                size={20}
+                color={Theme.colors.neutral[500]}
+              />
             ) : (
-              <Eye size={20} color={Theme.colors.neutral[500]} />
+              <Eye
+                size={20}
+                color={Theme.colors.neutral[500]}
+              />
             )}
           </TouchableOpacity>
         )}
       </View>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && (
+        <Text style={styles.errorText}>{error}</Text>
+      )}
     </View>
   );
 }

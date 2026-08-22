@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { authService } from "@features/auth/auth.dependencies";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
-import { useEffect, useState } from "react";
 
 export function usePersistedAuth() {
   const setUser = useAuthStore((state) => state.setUser);

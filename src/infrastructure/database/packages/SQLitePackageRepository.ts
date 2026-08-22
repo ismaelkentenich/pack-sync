@@ -6,9 +6,7 @@ import { PackageRepository } from "@features/packages/domain/package.repository"
 import { Package } from "@features/packages/domain/package.types";
 import { packagesDb } from "./index";
 
-export class SQLitePackageRepository
-  implements PackageRepository
-{
+export class SQLitePackageRepository implements PackageRepository {
   findByCode(code: string, userId: string): Package | null {
     const result = packagesDb.getFirstSync<Package>(
       `

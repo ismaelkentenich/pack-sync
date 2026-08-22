@@ -1,3 +1,9 @@
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Picker } from "@react-native-picker/picker";
+import React, { forwardRef, Ref, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   ModalCloseIcon,
   ModalWrapper,
@@ -9,14 +15,8 @@ import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Picker } from "@react-native-picker/picker";
 import { useShowAlert } from "@store/useAlertStore";
 import Theme from "@theme/theme";
-import React, { forwardRef, Ref, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
 
 interface UpdateStatusModalProps {
