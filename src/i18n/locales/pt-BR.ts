@@ -156,4 +156,11 @@ export const ptBR = {
     grantPermission: "Conceder permissão",
     empty: "Nenhum pacote escaneado ainda",
   },
+
+  accessibility: {
+    input: {
+      showPassword: "Mostrar senha",
+      hidePassword: "Ocultar senha",
+    },
+  },
 } as const;

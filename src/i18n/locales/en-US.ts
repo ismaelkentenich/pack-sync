@@ -156,4 +156,11 @@ export const enUS = {
     grantPermission: "Grant permission",
     empty: "No packages scanned yet",
   },
+
+  accessibility: {
+    input: {
+      showPassword: "Show password",
+      hidePassword: "Hide password",
+    },
+  },
 } as const;
