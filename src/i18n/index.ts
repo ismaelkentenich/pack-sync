@@ -15,6 +15,7 @@ void i18n.use(initReactI18next).init({
     "pt-BR": {
       translation: ptBR,
     },
+
     "en-US": {
       translation: enUS,
     },
