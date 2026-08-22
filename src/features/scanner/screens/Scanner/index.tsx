@@ -159,7 +159,7 @@ export default function ScanScreen() {
 
               <View style={styles.infoHeaderItem}>
                 <Button
-                  title="Enviar para webhook"
+                  title="Sincronizar"
                   onPress={sendAllCurrentSessionPackages}
                 />
               </View>
