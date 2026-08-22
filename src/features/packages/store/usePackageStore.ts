@@ -19,6 +19,10 @@ type BatchUpdateResult = {
   failed: number;
 };
 
+type MutationResult = {
+  success: boolean;
+};
+
 type PackageState = {
   packages: Package[];
   currentSessionPackages: Package[];
@@ -45,15 +49,14 @@ type PackageState = {
     userId: string,
     status: PackageStatus,
     receiverName?: string,
-  ) => void;
+  ) => MutationResult;
 
   resetSession: () => void;
 
   sendPackage: (
     pkg: Package,
     userId: string,
-    receiverName?: string,
-  ) => Promise<void>;
+  ) => Promise<MutationResult>;
 
   syncPendingPackages: (userId: string) => Promise<void>;
 
@@ -193,15 +196,20 @@ export const usePackageStore = create<PackageState>(
           receiverName,
         );
 
-        get().loadPackages(userId);
+        return {
+          success: true,
+        };
       } catch (error) {
         set({
           feedback: {
             loading: false,
-
             error: getPackageErrorFeedback(error),
           },
         });
+
+        return {
+          success: false,
+        };
       }
     },
 
@@ -212,7 +220,9 @@ export const usePackageStore = create<PackageState>(
         packageId !== undefined &&
         get().syncingPackageIds.includes(packageId)
       ) {
-        return;
+        return {
+          success: false,
+        };
       }
 
       if (packageId !== undefined) {
@@ -228,14 +238,26 @@ export const usePackageStore = create<PackageState>(
         const result =
           await packageService.syncPackage(pkg);
 
-        if (!result.success && result.error) {
-          set({
-            feedback: {
-              loading: false,
-              error: getPackageErrorFeedback(result.error),
-            },
-          });
+        if (!result.success) {
+          if (result.error) {
+            set({
+              feedback: {
+                loading: false,
+                error: getPackageErrorFeedback(
+                  result.error,
+                ),
+              },
+            });
+          }
+
+          return {
+            success: false,
+          };
         }
+
+        return {
+          success: true,
+        };
       } finally {
         if (packageId !== undefined) {
           set((state) => ({
@@ -319,9 +341,13 @@ export const usePackageStore = create<PackageState>(
       status,
       receiverName,
     ) => {
-      const { currentSessionPackages } = get();
+      const { currentSessionPackages, isSyncingSession } =
+        get();
 
-      if (currentSessionPackages.length === 0) {
+      if (
+        currentSessionPackages.length === 0 ||
+        isSyncingSession
+      ) {
         return {
           success: false,
           sent: 0,
@@ -330,6 +356,7 @@ export const usePackageStore = create<PackageState>(
       }
 
       set({
+        isSyncingSession: true,
         feedback: {
           loading: true,
         },
@@ -346,7 +373,9 @@ export const usePackageStore = create<PackageState>(
 
         get().loadPackages(userId);
 
-        get().resetSession();
+        if (result.success) {
+          get().resetSession();
+        }
 
         set({
           feedback: {
@@ -360,10 +389,6 @@ export const usePackageStore = create<PackageState>(
           failed: result.data?.failed ?? 0,
         };
       } catch {
-        get().loadPackages(userId);
-
-        get().resetSession();
-
         set({
           feedback: {
             loading: false,
@@ -375,6 +400,10 @@ export const usePackageStore = create<PackageState>(
           sent: 0,
           failed: currentSessionPackages.length,
         };
+      } finally {
+        set({
+          isSyncingSession: false,
+        });
       }
     },
 
