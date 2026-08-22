@@ -32,14 +32,19 @@ export const ptBR = {
     },
 
     signup: {
-      title: "Criar Conta",
-      emailPlaceholder: "Digite seu e-mail",
-      passwordPlaceholder: "Digite sua senha",
-      confirmPassword: "Confirmar Senha",
-      confirmPasswordPlaceholder: "Confirme sua senha",
-      submit: "Cadastrar",
-      alreadyHaveAccount: "Já tem conta?",
-      success: "Conta criada com sucesso!",
+      title: "Crie sua conta.",
+      description:
+        "Comece a organizar e acompanhar suas entregas em um só lugar.",
+      emailPlaceholder: "Digite seu email",
+      passwordPlaceholder: "Crie uma senha",
+      confirmPassword: "Confirmar senha",
+      confirmPasswordPlaceholder:
+        "Digite sua senha novamente",
+      submit: "Criar conta",
+      alreadyHaveAccount: "Já possui uma conta?",
+      login: "Entrar",
+      backToLogin: "Voltar",
+      success: "Conta criada com sucesso.",
     },
 
     validation: {
