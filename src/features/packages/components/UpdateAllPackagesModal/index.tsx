@@ -57,12 +57,13 @@ export default forwardRef(function UpdateAllPackagesModal(
   const handleApplyToAll = async () => {
     if (isBusy) {
       return;
-    } else if (currentSessionPackages.length === 0) {
+    }
+
+    if (currentSessionPackages.length === 0) {
       showAlert(
         t("packages.updateAll.emptySession"),
         "error",
       );
-
       return;
     }
 
@@ -74,7 +75,6 @@ export default forwardRef(function UpdateAllPackagesModal(
         t("packages.updateStatus.receiverRequired"),
         "error",
       );
-
       return;
     }
 
@@ -90,20 +90,14 @@ export default forwardRef(function UpdateAllPackagesModal(
             : undefined,
         );
 
-      handleCloseModal();
-
-      if (result.success) {
-        showAlert(
-          t("packages.updateAll.success"),
-          "success",
-        );
-
-        onSuccessNavigate?.();
-
+      if (!result.success) {
+        showAlert(t("packages.updateAll.error"), "error");
         return;
       }
 
-      showAlert(t("packages.updateAll.error"), "error");
+      handleCloseModal();
+      showAlert(t("packages.updateAll.success"), "success");
+      onSuccessNavigate?.();
     } finally {
       setIsSubmitting(false);
     }

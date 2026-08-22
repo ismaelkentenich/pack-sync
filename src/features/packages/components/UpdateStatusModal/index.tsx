@@ -64,24 +64,33 @@ export default forwardRef(function UpdateStatusModal(
       return;
     }
 
-    changeStatus(
-      packageData.id!,
+    if (packageData.id === undefined) {
+      return;
+    }
+
+    const result = changeStatus(
+      packageData.id,
       userId,
       selectedStatus,
       selectedStatus === PackageStatus.ENTREGUE
-        ? receiverName
+        ? receiverName.trim()
         : undefined,
     );
 
-    loadPackages(userId);
+    if (!result.success) {
+      return;
+    }
 
+    loadPackages(userId);
     handleCloseModal();
   };
 
   const handleSendWebhook = async () => {
     if (isSyncing) {
       return;
-    } else if (
+    }
+
+    if (
       selectedStatus === PackageStatus.ENTREGUE &&
       !receiverName.trim()
     ) {
@@ -92,22 +101,33 @@ export default forwardRef(function UpdateStatusModal(
       return;
     }
 
-    try {
-      changeStatus(
-        packageData.id!,
-        userId,
-        selectedStatus,
-        selectedStatus === PackageStatus.ENTREGUE
-          ? receiverName
-          : undefined,
-      );
-
-      loadPackages(userId);
-
-      await sendPackage(packageData, userId);
-    } finally {
-      handleCloseModal();
+    if (packageData.id === undefined) {
+      return;
     }
+
+    const mutationResult = changeStatus(
+      packageData.id,
+      userId,
+      selectedStatus,
+      selectedStatus === PackageStatus.ENTREGUE
+        ? receiverName.trim()
+        : undefined,
+    );
+
+    if (!mutationResult.success) {
+      return;
+    }
+
+    const syncResult = await sendPackage(
+      packageData,
+      userId,
+    );
+
+    if (!syncResult.success) {
+      return;
+    }
+
+    handleCloseModal();
   };
 
   return (
