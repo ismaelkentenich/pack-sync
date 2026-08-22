@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 import { Routes } from "@app/navigation/routes";
 import { Button } from "@components/primitives/Button";
 import { Input } from "@components/primitives/Input";
-import ScreenContainer from "@components/primitives/ScreenContainer";
+import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { getAuthErrorMessage } from "@features/auth/utils/getAuthErrorMessage";
 import { useAppNavigation } from "@hooks/useAppNavigation";

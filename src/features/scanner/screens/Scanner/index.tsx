@@ -22,7 +22,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Routes } from "@app/navigation/routes";
 import { Button } from "@components/primitives/Button";
-import ScreenContainer from "@components/primitives/ScreenContainer";
+import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import PackageCard from "@features/packages/components/PackageCard";
 import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";

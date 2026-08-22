@@ -15,7 +15,7 @@ import {
   View,
 } from "react-native";
 import { Input } from "@components/primitives/Input";
-import ScreenContainer from "@components/primitives/ScreenContainer";
+import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import PackageCard from "@features/packages/components/PackageCard";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
