@@ -17,7 +17,7 @@ import {
 import { Input } from "@components/primitives/Input";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
-import PackageCard from "@features/packages/components/PackageCard";
+import { PackageCard } from "@features/packages/components/PackageCard";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
