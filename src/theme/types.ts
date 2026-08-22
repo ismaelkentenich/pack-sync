@@ -1,3 +1,4 @@
+import { typography } from "./foundations/typography";
 import type { radius } from "./foundations/radius";
 import type { sizing } from "./foundations/sizing";
 import type { spacing } from "./foundations/spacing";
@@ -96,4 +97,5 @@ export type AppTheme = {
   spacing: typeof spacing;
   radius: typeof radius;
   sizing: typeof sizing;
+  typography: typeof typography;
 };
