@@ -162,5 +162,9 @@ export const enUS = {
       showPassword: "Show password",
       hidePassword: "Hide password",
     },
+    header: {
+      back: "Go back",
+      logout: "Log out",
+    },
   },
 } as const;

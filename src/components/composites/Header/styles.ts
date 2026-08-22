@@ -10,19 +10,21 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: Theme.spacing.xs,
   },
+
   backButton: {
     position: "absolute",
     left: Theme.spacing.sm,
     padding: Theme.spacing.xs,
   },
-  placeholder: {
-    width: Theme.sizing.icon.lg,
-  },
+
   title: {
     color: Theme.colors.neutral[50],
     fontSize: Theme.typography.size.lg,
+    lineHeight: Theme.typography.lineHeight.lg,
     fontWeight: Theme.typography.weight.semibold,
+    textAlign: "center",
   },
+
   logoutButton: {
     position: "absolute",
     right: Theme.spacing.sm,
