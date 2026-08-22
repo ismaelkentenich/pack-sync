@@ -128,11 +128,23 @@ export const enUS = {
     feedback: {
       scannedSuccessfully:
         "Package {{code}} scanned successfully!",
-      alreadyScanned: "Package already scanned",
-      scanError: "Failed to scan package",
+      alreadyScanned: "Package already scanned.",
+      scanError: "Failed to scan package.",
       allSentSuccessfully:
         "All packages sent successfully!",
       sendSomeFailed: "Failed to send some packages.",
+    },
+
+    errors: {
+      receiverRequired:
+        "Receiver name is required for delivered packages.",
+      invalidForSync:
+        "Package is invalid for synchronization.",
+      syncFailed: "Failed to synchronize package {{code}}.",
+      multipleSyncFailed:
+        "{{count}} package(s) failed to send.",
+      updateStatusFailed: "Failed to update status.",
+      unknown: "An unexpected error occurred.",
     },
   },
 
