@@ -5,7 +5,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import Theme from "@theme/theme";
+import Theme from "@theme/legacy/legacyTheme";
 import { styles } from "./styles";
 
 type BadgeVariant = "status" | "delivery";
