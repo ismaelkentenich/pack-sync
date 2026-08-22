@@ -1,28 +1,16 @@
-export function formatDate(date: string | Date): string {
-  const d = new Date(date);
+export function formatDate(
+  date: string | Date,
+  locale = "pt-BR",
+): string {
+  const value =
+    date instanceof Date ? date : new Date(date);
 
-  const day = d.getDate().toString().padStart(2, "0");
+  if (Number.isNaN(value.getTime())) {
+    return "";
+  }
 
-  const monthNames = [
-    "janeiro",
-    "fevereiro",
-    "março",
-    "abril",
-    "maio",
-    "junho",
-    "julho",
-    "agosto",
-    "setembro",
-    "outubro",
-    "novembro",
-    "dezembro",
-  ];
-
-  const month = monthNames[d.getMonth()];
-  const year = d.getFullYear();
-
-  const hours = d.getHours().toString().padStart(2, "0");
-  const minutes = d.getMinutes().toString().padStart(2, "0");
-
-  return `${day} de ${month} de ${year} às ${hours}:${minutes}`;
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(value);
 }

@@ -1,0 +1,147 @@
+export const enUS = {
+  common: {
+    ok: "OK",
+    email: "Email",
+    password: "Password",
+    update: "Update",
+    sync: "Sync",
+    scanner: "Scanner",
+    package: "Package",
+    packages: "Packages",
+    status: "Status",
+    delivery: "Delivery",
+  },
+
+  navigation: {
+    home: "Home",
+    scanner: "Scanner",
+    packages: "Package List",
+    packageDetails: "Package Details",
+  },
+
+  auth: {
+    login: {
+      title: "Login",
+      emailPlaceholder: "Enter your email",
+      passwordPlaceholder: "Enter your password",
+      submit: "Login",
+      signup: "Sign up",
+    },
+
+    signup: {
+      title: "Create Account",
+      emailPlaceholder: "Enter your email",
+      passwordPlaceholder: "Enter your password",
+      confirmPassword: "Confirm Password",
+      confirmPasswordPlaceholder: "Confirm your password",
+      submit: "Sign up",
+      alreadyHaveAccount: "Already have an account?",
+      success: "Account created successfully!",
+    },
+
+    validation: {
+      requiredFields: "Please fill in all fields.",
+      invalidEmail: "Enter a valid email address.",
+      invalidPassword:
+        "Password must be at least 6 characters long.",
+      passwordsDoNotMatch: "Passwords do not match.",
+    },
+
+    errors: {
+      invalidCredentials: "Incorrect email or password.",
+      userNotFound: "User not found.",
+      invalidEmail: "Invalid email address.",
+      userDisabled: "Account disabled.",
+      emailAlreadyInUse: "This email is already in use.",
+      operationNotAllowed:
+        "Account creation is currently disabled.",
+      weakPassword:
+        "Password is too weak. Use at least 6 characters.",
+      unknown: "An unexpected error occurred.",
+    },
+  },
+
+  home: {
+    greeting: "Hello,",
+    scanner: "Scanner",
+    packageList: "Package List",
+  },
+
+  packages: {
+    code: "Code",
+    packageStatus: "Package status",
+    deliveryStatusLabel: "Delivery status",
+    scannedAt: "Scanned",
+
+    details: {
+      title: "Package Details",
+      changeStatus: "Change status",
+      receiver: "Receiver",
+    },
+
+    list: {
+      title: "Package List",
+      searchPlaceholder: "Search by code...",
+      all: "All",
+      empty: "No packages found",
+    },
+
+    actions: {
+      viewDetails: "View details",
+      changeStatus: "Change status",
+      updateAll: "Update all",
+      syncPackages: "Sync packages",
+      viewAll: "View all packages",
+      updateAndSync: "Update and sync",
+    },
+
+    status: {
+      collected: "Collected",
+      outForDelivery: "Out for delivery",
+      delivered: "Delivered",
+    },
+
+    deliveryStatus: {
+      pending: "Pending",
+      sent: "Sent",
+    },
+
+    updateStatus: {
+      title: "Change status",
+      selectStatus: "Select the new package status:",
+      receiverName: "Receiver name:",
+      receiverPlaceholder: "E.g. John Smith",
+      receiverRequired: "Enter the receiver's name.",
+    },
+
+    updateAll: {
+      title: "Change status for all packages",
+      packagesInSession:
+        "Packages scanned in this session: {{count}}",
+      selectStatus: "Select the new status:",
+      emptySession: "No packages scanned in this session.",
+      success:
+        "Status updated and packages sent to the webhook!",
+      error: "Failed to update packages.",
+    },
+
+    feedback: {
+      scannedSuccessfully:
+        "Package {{code}} scanned successfully!",
+      alreadyScanned: "Package already scanned",
+      scanError: "Failed to scan package",
+      allSentSuccessfully:
+        "All packages sent successfully!",
+      sendSomeFailed: "Failed to send some packages.",
+    },
+  },
+
+  scanner: {
+    title: "Scanner",
+    requestingPermission: "Requesting camera permission...",
+    permissionRequired:
+      "Enable camera permission to scan packages.",
+    grantPermission: "Grant permission",
+    empty: "No packages scanned yet",
+  },
+} as const;
