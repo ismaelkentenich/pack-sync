@@ -399,6 +399,7 @@ describe("PackageService", () => {
         data: {
           sent: 2,
           failed: 0,
+          failedPackages: [],
         },
         error: undefined,
       });
@@ -597,6 +598,7 @@ describe("PackageService", () => {
       expect(result.data).toEqual({
         sent: 2,
         failed: 1,
+        failedPackages: [second],
       });
 
       expect(result.error?.code).toBe(
@@ -703,6 +705,7 @@ describe("PackageService", () => {
       expect(result.data).toEqual({
         sent: 2,
         failed: 0,
+        failedPackages: [],
       });
     });
 
