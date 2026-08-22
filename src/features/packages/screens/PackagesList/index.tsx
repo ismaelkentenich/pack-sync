@@ -1,5 +1,16 @@
-import Card from "@components/primitives/Card";
+import Input from "@components/primitives/Input";
 import ScreenContainer from "@components/primitives/ScreenContainer";
+import PackageCard from "@features/packages/components/PackageCard";
+import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
+import { PackageStatus } from "@features/packages/domain/package.enums";
+import { Package } from "@features/packages/domain/package.types";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useAppNavigation } from "@hooks/useAppNavigation";
+import { Picker } from "@react-native-picker/picker";
+import Theme from "@theme/theme";
 import React, {
   useCallback,
   useEffect,
@@ -7,6 +18,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FlatList,
   RefreshControl,
@@ -14,25 +26,17 @@ import {
   View,
 } from "react-native";
 import { styles } from "./styles";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
-import Input from "@components/primitives/Input";
-import Theme from "@theme/theme";
-import { useAppNavigation } from "@hooks/useAppNavigation";
-import PackageCard from "@features/packages/components/PackageCard";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Package } from "@features/packages/domain/package.types";
-import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
-import { Picker } from "@react-native-picker/picker";
-import { PackageStatus } from "@features/packages/domain/package.enums";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
 
 export default function PackagesListScreen() {
+  const { t } = useTranslation();
+
   const navigation = useAppNavigation("PackagesList");
 
   const userId = useAuthStore((state) => state.user?.id);
 
   const updateStatusModalRef =
     useRef<BottomSheetModal>(null);
+
   const {
     packages,
     searchTerm,
@@ -42,21 +46,26 @@ export default function PackagesListScreen() {
     statusFilter,
     setStatusFilter,
   } = usePackageStore();
+
   const [refreshing, setRefreshing] = useState(false);
-  const filteredData = useMemo(
-    () => filteredPackages(),
-    [packages, searchTerm, statusFilter],
-  );
 
   const [selectedPackage, setSelectedPackage] =
     useState<Package | null>(null);
+
+  const filteredData = useMemo(
+    () => filteredPackages(),
+    [filteredPackages, packages, searchTerm, statusFilter],
+  );
 
   const handleRefresh = useCallback(async () => {
     if (!userId) {
       return;
     }
+
     setRefreshing(true);
+
     loadPackages(userId);
+
     setRefreshing(false);
   }, [loadPackages, userId]);
 
@@ -64,13 +73,18 @@ export default function PackagesListScreen() {
     if (!userId) {
       return;
     }
+
     loadPackages(userId);
   }, [loadPackages, userId]);
 
-  const handleOpenUpdateModal = (pkg: Package) => {
-    setSelectedPackage(pkg);
-    updateStatusModalRef.current?.present();
-  };
+  const handleOpenUpdateModal = useCallback(
+    (pkg: Package) => {
+      setSelectedPackage(pkg);
+
+      updateStatusModalRef.current?.present();
+    },
+    [],
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: Package }) => (
@@ -85,7 +99,7 @@ export default function PackagesListScreen() {
         showButtons={false}
       />
     ),
-    [navigation, handleOpenUpdateModal],
+    [handleOpenUpdateModal, navigation],
   );
 
   const keyExtractor = useCallback(
@@ -97,12 +111,13 @@ export default function PackagesListScreen() {
     () => (
       <View style={styles.headerContainer}>
         <Input
-          placeholder="Buscar por código..."
+          placeholder={t("packages.list.searchPlaceholder")}
           value={searchTerm}
           onChangeText={setSearchTerm}
           autoCapitalize="none"
           autoCorrect={false}
         />
+
         <View style={styles.pickerWrapper}>
           <Picker
             selectedValue={statusFilter}
@@ -112,14 +127,15 @@ export default function PackagesListScreen() {
             mode="dropdown"
           >
             <Picker.Item
-              label="Todos"
+              label={t("packages.list.all")}
               value=""
               style={styles.pickerLabel}
             />
+
             {Object.values(PackageStatus).map((status) => (
               <Picker.Item
                 key={status}
-                label={status}
+                label={translatePackageStatus(status, t)}
                 value={status}
                 style={styles.pickerLabel}
               />
@@ -131,21 +147,22 @@ export default function PackagesListScreen() {
     [
       searchTerm,
       setSearchTerm,
-      statusFilter,
       setStatusFilter,
+      statusFilter,
+      t,
     ],
   );
 
   return (
     <ScreenContainer
-      headerTitle="Lista de Pacotes"
+      headerTitle={t("packages.list.title")}
       withGradientBackground
     >
       <View style={styles.container}>
         {packages.length === 0 ? (
           <View style={styles.emptyScreenContainer}>
             <Text style={styles.emptyScreenText}>
-              Nenhum pacote encontrado
+              {t("packages.list.empty")}
             </Text>
           </View>
         ) : (

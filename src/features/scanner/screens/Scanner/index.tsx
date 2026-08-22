@@ -1,21 +1,28 @@
 import { Routes } from "@app/navigation/routes";
 import Button from "@components/primitives/Button";
-import PackageCard from "@features/packages/components/PackageCard";
 import ScreenContainer from "@components/primitives/ScreenContainer";
-import { useAppNavigation } from "@hooks/useAppNavigation";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
+import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
+import PackageCard from "@features/packages/components/PackageCard";
+import { Package } from "@features/packages/domain/package.types";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useAppNavigation } from "@hooks/useAppNavigation";
+import { useFocusEffect } from "@react-navigation/native";
+import { useShowAlert } from "@store/useAlertStore";
 import Theme from "@theme/theme";
 import {
   BarcodeScanningResult,
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
+import { LinearGradient } from "expo-linear-gradient";
 import React, {
   useCallback,
   useEffect,
   useRef,
 } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   FlatList,
@@ -25,31 +32,34 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
-import { useFocusEffect } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Package } from "@features/packages/domain/package.types";
 
 export default function ScanScreen() {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
+
   const navigation = useAppNavigation(Routes.Scan);
+
   const updateAllModalRef = useRef<BottomSheetModal>(null);
 
+  const scannedCodesRef = useRef<Set<string>>(new Set());
+
   const userId = useAuthStore((state) => state.user?.id);
+
+  const showAlert = useShowAlert((state) => state.show);
 
   const [permission, requestPermission] =
     useCameraPermissions();
 
   const {
     currentSessionPackages,
+    feedback,
     scanPackage,
     loadPackages,
     resetSession,
+    clearFeedback,
     sendAllCurrentSessionPackages,
   } = usePackageStore();
-
-  const scannedCodesRef = useRef<Set<string>>(new Set());
 
   const openUpdateAllModal = useCallback(() => {
     updateAllModalRef.current?.present();
@@ -64,12 +74,16 @@ export default function ScanScreen() {
       if (!userId) {
         return;
       }
+
       const data = result.data.trim();
+
       if (!data || scannedCodesRef.current.has(data)) {
         return;
       }
+
       scannedCodesRef.current.add(data);
-      scanPackage(data, userId);
+
+      void scanPackage(data, userId);
     },
     [scanPackage, userId],
   );
@@ -85,22 +99,54 @@ export default function ScanScreen() {
     if (!userId) {
       return;
     }
+
     loadPackages(userId);
   }, [loadPackages, userId]);
+
+  useEffect(() => {
+    if (feedback.success) {
+      showAlert(
+        t(feedback.success.key, feedback.success.params),
+        "success",
+      );
+
+      clearFeedback();
+
+      return;
+    }
+
+    if (feedback.error) {
+      showAlert(
+        t(feedback.error.key, feedback.error.params),
+        "error",
+      );
+
+      clearFeedback();
+    }
+  }, [
+    clearFeedback,
+    feedback.error,
+    feedback.success,
+    showAlert,
+    t,
+  ]);
 
   useFocusEffect(
     useCallback(() => {
       resetSession();
+
+      clearFeedback();
+
       scannedCodesRef.current.clear();
-    }, [resetSession]),
+    }, [clearFeedback, resetSession]),
   );
 
   if (!permission) {
     return (
-      <ScreenContainer>
+      <ScreenContainer headerTitle={t("scanner.title")}>
         <View style={styles.noPermissionContainer}>
           <Text style={styles.noPermissionTitle}>
-            Solicitando permissão de câmera...
+            {t("scanner.requestingPermission")}
           </Text>
 
           <ActivityIndicator
@@ -114,16 +160,15 @@ export default function ScanScreen() {
 
   if (!permission.granted) {
     return (
-      <ScreenContainer>
+      <ScreenContainer headerTitle={t("scanner.title")}>
         <View style={styles.noPermissionContainer}>
           <Text style={styles.noPermissionTitle}>
-            Para escanear os pacotes, ative a permissão da
-            câmera.
+            {t("scanner.permissionRequired")}
           </Text>
 
           <View style={styles.noPermissionButton}>
             <Button
-              title="Conceder permissão"
+              title={t("scanner.grantPermission")}
               onPress={requestPermission}
             />
           </View>
@@ -133,7 +178,7 @@ export default function ScanScreen() {
   }
 
   return (
-    <ScreenContainer headerTitle="Scanner">
+    <ScreenContainer headerTitle={t("scanner.title")}>
       <View style={styles.container}>
         <View style={styles.cameraWrapper}>
           <CameraView
@@ -149,7 +194,7 @@ export default function ScanScreen() {
         {currentSessionPackages.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyText}>
-              Nenhum pacote escaneado ainda
+              {t("scanner.empty")}
             </Text>
           </View>
         ) : (
@@ -160,18 +205,21 @@ export default function ScanScreen() {
                 style={styles.infoHeaderItem}
               >
                 <Text style={styles.infoTouchableText}>
-                  Atualizar todos
+                  {t("packages.actions.updateAll")}
                 </Text>
               </TouchableOpacity>
 
               <View style={styles.infoHeaderItem}>
                 <Button
-                  title="Sincronizar pacotes"
+                  title={t("packages.actions.syncPackages")}
                   onPress={() => {
                     if (!userId) {
                       return;
                     }
-                    sendAllCurrentSessionPackages(userId);
+
+                    void sendAllCurrentSessionPackages(
+                      userId,
+                    );
                   }}
                 />
               </View>
@@ -180,7 +228,9 @@ export default function ScanScreen() {
             <View style={styles.infoWrapper}>
               <FlatList
                 data={currentSessionPackages}
-                keyExtractor={(item) => item.code}
+                keyExtractor={(item) =>
+                  String(item.id ?? item.code)
+                }
                 contentContainerStyle={[
                   styles.flatlistContainer,
                   {
@@ -201,7 +251,7 @@ export default function ScanScreen() {
                 ]}
               >
                 <Button
-                  title="Ver todos os pacotes"
+                  title={t("packages.actions.viewAll")}
                   onPress={() =>
                     navigation.navigate("PackagesList")
                   }

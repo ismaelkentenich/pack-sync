@@ -1,19 +1,20 @@
 import { useShowAlert } from "@store/useAlertStore";
-import { styles } from "./styles";
-import React, { useEffect } from "react";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Modal,
-  View,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
+import { styles } from "./styles";
 
 type CustomAlertProps = {
   visible: boolean;
   title?: string;
   message: string;
   onClose: () => void;
-  confirmText?: string;
+  confirmText: string;
 };
 
 function CustomAlert({
@@ -21,25 +22,21 @@ function CustomAlert({
   title,
   message,
   onClose,
-  confirmText = "OK",
+  confirmText,
 }: CustomAlertProps) {
-  useEffect(() => {
-    if (visible) {
-      // você pode adicionar animação ou som aqui
-    }
-  }, [visible]);
-
   return (
     <Modal
       transparent
       animationType="fade"
       visible={visible}
+      onRequestClose={onClose}
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
-          {title && (
+          {title ? (
             <Text style={styles.title}>{title}</Text>
-          )}
+          ) : null}
+
           <Text style={styles.message}>{message}</Text>
 
           <TouchableOpacity
@@ -57,14 +54,16 @@ function CustomAlert({
 }
 
 export default function GlobalAlert() {
-  const { visible, message, type, hide } = useShowAlert();
+  const { t } = useTranslation();
+
+  const { visible, message, hide } = useShowAlert();
 
   return (
     <CustomAlert
       visible={visible}
       message={message}
       onClose={hide}
-      confirmText="OK"
+      confirmText={t("common.ok")}
     />
   );
 }
