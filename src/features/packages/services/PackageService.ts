@@ -2,14 +2,18 @@ import {
   DeliveryStatus,
   PackageStatus,
 } from "@features/packages/domain/package.enums";
+import {
+  PackageError,
+  PackageErrorCode,
+} from "@features/packages/domain/package.errors";
 import { PackageRepository } from "@features/packages/domain/package.repository";
-import { Package } from "@features/packages/domain/package.types";
 import { PackageSyncGateway } from "@features/packages/domain/package-sync.gateway";
+import { Package } from "@features/packages/domain/package.types";
 
 export type ServiceResult<T = void> = {
   success: boolean;
   data?: T;
-  error?: string;
+  error?: PackageError;
 };
 
 export class PackageService {
@@ -28,7 +32,9 @@ export class PackageService {
     );
 
     if (existing) {
-      throw new Error("Pacote já escaneado");
+      throw new PackageError(
+        PackageErrorCode.ALREADY_SCANNED,
+      );
     }
 
     const pkgToInsert: Package = {
@@ -52,8 +58,8 @@ export class PackageService {
       status === PackageStatus.ENTREGUE &&
       !receiverName?.trim()
     ) {
-      throw new Error(
-        "Nome do recebedor é obrigatório para pacotes entregues",
+      throw new PackageError(
+        PackageErrorCode.RECEIVER_REQUIRED,
       );
     }
 
@@ -72,7 +78,9 @@ export class PackageService {
     if (pkg.id === undefined) {
       return {
         success: false,
-        error: "Pacote inválido para sincronização",
+        error: new PackageError(
+          PackageErrorCode.INVALID_FOR_SYNC,
+        ),
       };
     }
 
@@ -85,7 +93,12 @@ export class PackageService {
       if (!result.success) {
         return {
           success: false,
-          error: `Falha ao sincronizar pacote ${pkg.code}`,
+          error: new PackageError(
+            PackageErrorCode.SYNC_FAILED,
+            {
+              code: pkg.code,
+            },
+          ),
         };
       }
 
@@ -97,15 +110,15 @@ export class PackageService {
       return {
         success: true,
       };
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Erro desconhecido";
-
+    } catch {
       return {
         success: false,
-        error: `Erro ao sincronizar pacote: ${message}`,
+        error: new PackageError(
+          PackageErrorCode.SYNC_FAILED,
+          {
+            code: pkg.code,
+          },
+        ),
       };
     }
   }
@@ -143,7 +156,12 @@ export class PackageService {
       },
       error:
         failed > 0
-          ? `${failed} pacote(s) falharam ao enviar`
+          ? new PackageError(
+              PackageErrorCode.MULTIPLE_SYNC_FAILED,
+              {
+                count: failed,
+              },
+            )
           : undefined,
     };
   }
@@ -229,8 +247,9 @@ export class PackageService {
     ) {
       return {
         success: false,
-        error:
-          "Nome do recebedor é obrigatório para pacotes entregues",
+        error: new PackageError(
+          PackageErrorCode.RECEIVER_REQUIRED,
+        ),
       };
     }
 
@@ -256,15 +275,10 @@ export class PackageService {
         updatedPackages,
         receiverName,
       );
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Erro desconhecido";
-
+    } catch {
       return {
         success: false,
-        error: message,
+        error: new PackageError(PackageErrorCode.UNKNOWN),
       };
     }
   }

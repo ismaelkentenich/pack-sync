@@ -1,73 +1,145 @@
 import { PackageStatus } from "@features/packages/domain/package.enums";
+import { PackageError } from "@features/packages/domain/package.errors";
 import { Package } from "@features/packages/domain/package.types";
-import { create } from "zustand";
 import { packageService } from "@features/packages/package.dependencies";
+import { create } from "zustand";
+
+type FeedbackMessage = {
+  key: string;
+  params?: Record<string, string | number | undefined>;
+};
 
 type Feedback = {
   loading: boolean;
-  success?: string;
-  error?: string;
+  success?: FeedbackMessage;
+  error?: FeedbackMessage;
 };
 
 type PackageState = {
   packages: Package[];
   currentSessionPackages: Package[];
   pendingCount: number;
+
   loadPackages: (userId: string) => void;
+
   scanPackage: (
     code: string,
     userId: string,
   ) => Promise<void>;
+
   changeStatus: (
     id: number,
     userId: string,
     status: PackageStatus,
     receiverName?: string,
   ) => void;
+
   resetSession: () => void;
+
   sendPackage: (
     pkg: Package,
     userId: string,
     receiverName?: string,
   ) => Promise<void>;
+
   syncPendingPackages: (userId: string) => Promise<void>;
+
   searchTerm: string;
   statusFilter: string;
+
   setSearchTerm: (term: string) => void;
   setStatusFilter: (status: string) => void;
+
   filteredPackages: () => Package[];
+
   feedback: Feedback;
+
   setFeedback: (feedback: Feedback) => void;
+
   sendAllCurrentSessionPackages: (
     userId: string,
   ) => Promise<void>;
 };
+
+function getPackageErrorFeedback(
+  error: unknown,
+): FeedbackMessage {
+  if (!(error instanceof PackageError)) {
+    return {
+      key: "packages.errors.unknown",
+    };
+  }
+
+  switch (error.code) {
+    case "ALREADY_SCANNED":
+      return {
+        key: "packages.feedback.alreadyScanned",
+      };
+
+    case "RECEIVER_REQUIRED":
+      return {
+        key: "packages.errors.receiverRequired",
+      };
+
+    case "INVALID_FOR_SYNC":
+      return {
+        key: "packages.errors.invalidForSync",
+      };
+
+    case "SYNC_FAILED":
+      return {
+        key: "packages.errors.syncFailed",
+        params: error.params,
+      };
+
+    case "MULTIPLE_SYNC_FAILED":
+      return {
+        key: "packages.errors.multipleSyncFailed",
+        params: error.params,
+      };
+
+    default:
+      return {
+        key: "packages.errors.unknown",
+      };
+  }
+}
 
 export const usePackageStore = create<PackageState>(
   (set, get) => ({
     packages: [],
     currentSessionPackages: [],
     pendingCount: 0,
+
     searchTerm: "",
     statusFilter: "",
-    feedback: { loading: false },
+
+    feedback: {
+      loading: false,
+    },
 
     setFeedback: (feedback) => set({ feedback }),
 
-    setSearchTerm: (term: string) =>
-      set({ searchTerm: term }),
-    setStatusFilter: (status: string) =>
-      set({ statusFilter: status }),
+    setSearchTerm: (term) =>
+      set({
+        searchTerm: term,
+      }),
+
+    setStatusFilter: (status) =>
+      set({
+        statusFilter: status,
+      }),
 
     loadPackages: (userId) => {
-      const pkgs = packageService.getAllPackages(userId);
+      const packages =
+        packageService.getAllPackages(userId);
 
-      const pending =
+      const pendingCount =
         packageService.getPendingCount(userId);
 
       set({
-        packages: pkgs,
-        pendingCount: pending,
+        packages,
+        pendingCount,
       });
     },
 
@@ -100,21 +172,19 @@ export const usePackageStore = create<PackageState>(
         set({
           feedback: {
             loading: false,
-            success: `Pacote ${code} escaneado com sucesso!`,
+            success: {
+              key: "packages.feedback.scannedSuccessfully",
+              params: {
+                code,
+              },
+            },
           },
         });
       } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "Erro ao escanear pacote";
-
-        console.warn(message);
-
         set({
           feedback: {
             loading: false,
-            error: message,
+            error: getPackageErrorFeedback(error),
           },
         });
       }
@@ -143,17 +213,20 @@ export const usePackageStore = create<PackageState>(
           set({
             feedback: {
               loading: false,
-              success:
-                "Todos os pacotes enviados com sucesso!",
+              success: {
+                key: "packages.feedback.allSentSuccessfully",
+              },
             },
           });
         } else {
           set({
             feedback: {
               loading: false,
-              error:
-                result.error ??
-                "Falha ao enviar alguns pacotes.",
+              error: result.error
+                ? getPackageErrorFeedback(result.error)
+                : {
+                    key: "packages.feedback.sendSomeFailed",
+                  },
             },
           });
         }
@@ -161,37 +234,26 @@ export const usePackageStore = create<PackageState>(
         get().resetSession();
 
         get().loadPackages(userId);
-      } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "Erro ao enviar pacotes";
-
-        console.warn(message);
-
+      } catch {
         set({
           feedback: {
             loading: false,
-            error: "Falha ao enviar alguns pacotes.",
+            error: {
+              key: "packages.feedback.sendSomeFailed",
+            },
           },
         });
       }
     },
 
-    filteredPackages: () => {
-      return packageService.filterPackages(
+    filteredPackages: () =>
+      packageService.filterPackages(
         get().packages,
         get().searchTerm,
         get().statusFilter,
-      );
-    },
+      ),
 
-    changeStatus: (
-      id,
-      userId,
-      status,
-      receiverName?: string,
-    ) => {
+    changeStatus: (id, userId, status, receiverName) => {
       try {
         packageService.changePackageStatus(
           id,
@@ -202,29 +264,21 @@ export const usePackageStore = create<PackageState>(
 
         get().loadPackages(userId);
       } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "Erro ao atualizar status";
-
-        console.warn(message);
-
         set({
           feedback: {
             loading: false,
-            error: message,
+            error: getPackageErrorFeedback(error),
           },
         });
       }
     },
 
-    resetSession: () => set({ currentSessionPackages: [] }),
+    resetSession: () =>
+      set({
+        currentSessionPackages: [],
+      }),
 
-    sendPackage: async (
-      pkg,
-      userId,
-      receiverName?: string,
-    ) => {
+    sendPackage: async (pkg, userId, receiverName) => {
       const result = await packageService.syncPackage(
         pkg,
         receiverName,
@@ -232,30 +286,18 @@ export const usePackageStore = create<PackageState>(
 
       get().loadPackages(userId);
 
-      if (!result.success) {
-        console.warn(
-          `Falha ao sincronizar pacote ${pkg.code}, mantido como pendente.`,
-        );
+      if (!result.success && result.error) {
+        set({
+          feedback: {
+            loading: false,
+            error: getPackageErrorFeedback(result.error),
+          },
+        });
       }
     },
 
     syncPendingPackages: async (userId) => {
-      console.log(
-        "Iniciando sincronização de pacotes pendentes...",
-      );
-
-      const result =
-        await packageService.syncPendingPackages(userId);
-
-      if (result.data === 0) {
-        console.log(
-          "Nenhum pacote pendente para sincronizar.",
-        );
-      } else {
-        console.log(
-          `${result.data} pacote(s) sincronizado(s) com sucesso.`,
-        );
-      }
+      await packageService.syncPendingPackages(userId);
 
       get().loadPackages(userId);
     },
