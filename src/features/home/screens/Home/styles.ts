@@ -7,14 +7,16 @@ export const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.md,
     paddingTop: Theme.spacing.md,
     paddingBottom: Theme.spacing.xxxl,
-    gap: Theme.spacing.xl,
+    gap: Theme.spacing.lg,
   },
 
   introduction: {
-    gap: Theme.spacing.sm,
+    gap: Theme.spacing.xs,
+    marginBottom: Theme.spacing.xs,
   },
 
   headline: {
+    maxWidth: 320,
     color: Theme.colors.neutral[900],
     fontSize: Theme.typography.size.xxxl,
     lineHeight: Theme.typography.lineHeight.xxxl,
@@ -31,6 +33,7 @@ export const styles = StyleSheet.create({
 
   quickActions: {
     gap: Theme.spacing.sm,
+    marginTop: Theme.spacing.xs,
   },
 
   sectionTitle: {

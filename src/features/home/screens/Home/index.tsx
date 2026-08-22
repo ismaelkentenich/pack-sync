@@ -38,7 +38,7 @@ export default function HomeScreen() {
       testID="homeScreen"
       withHeader={false}
       scrollable
-      backgroundColorVariant="neutral50"
+      backgroundColorVariant="neutral100"
       contentContainerStyle={styles.screenContent}
     >
       <HomeHeader

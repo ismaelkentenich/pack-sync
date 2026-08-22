@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react-native";
+import { ArrowRight, Package } from "lucide-react-native";
 import { Text, View } from "react-native";
 import { Card } from "@components/primitives/Card";
 import Theme from "@theme/theme";
@@ -22,6 +22,24 @@ export function HomeActionCard({
         style={styles.heroCard}
       >
         <View
+          pointerEvents="none"
+          testID={`${testID}Decoration`}
+          style={styles.heroDecoration}
+        >
+          <View style={styles.heroDecorationCircleLarge} />
+
+          <View style={styles.heroDecorationCircleSmall} />
+
+          <View style={styles.heroPackageIllustration}>
+            <Package
+              testID={`${testID}PackageIllustration`}
+              size={Theme.sizing.icon.lg}
+              color={Theme.colors.neutral[900]}
+            />
+          </View>
+        </View>
+
+        <View
           testID={`${testID}TopRow`}
           style={styles.heroTopRow}
         >
@@ -32,15 +50,9 @@ export function HomeActionCard({
             <Icon
               testID={`${testID}Icon`}
               size={Theme.sizing.icon.lg}
-              color={Theme.colors.neutral[900]}
+              color={Theme.colors.neutral[50]}
             />
           </View>
-
-          <ArrowRight
-            testID={`${testID}Arrow`}
-            size={Theme.sizing.icon.md}
-            color={Theme.colors.neutral[900]}
-          />
         </View>
 
         <View
@@ -77,7 +89,7 @@ export function HomeActionCard({
             <ArrowRight
               testID={`${testID}ActionArrow`}
               size={Theme.sizing.icon.sm}
-              color={Theme.colors.neutral[900]}
+              color={Theme.colors.neutral[50]}
             />
           </View>
         ) : null}
@@ -121,11 +133,13 @@ export function HomeActionCard({
         </Text>
       </View>
 
-      <ArrowRight
-        testID={`${testID}Arrow`}
-        size={Theme.sizing.icon.md}
-        color={Theme.colors.neutral[500]}
-      />
+      <View style={styles.secondaryArrowContainer}>
+        <ArrowRight
+          testID={`${testID}Arrow`}
+          size={Theme.sizing.icon.sm}
+          color={Theme.colors.primary[600]}
+        />
+      </View>
     </Card>
   );
 }
