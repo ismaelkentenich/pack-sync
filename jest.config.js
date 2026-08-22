@@ -7,6 +7,8 @@ module.exports = {
 
   moduleNameMapper: {
     "^@env$": "<rootDir>/src/test/mocks/env.mock.ts",
+    "^react-i18next$":
+      "<rootDir>/src/test/mocks/react-i18next.mock.ts",
 
     "^@app/(.*)$": "<rootDir>/src/app/$1",
     "^@assets/(.*)$": "<rootDir>/src/assets/$1",

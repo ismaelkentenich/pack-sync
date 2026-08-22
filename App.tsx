@@ -5,15 +5,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationStack } from "@app/navigation";
 import GlobalAlert from "@components/composites/CustomAlert";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
-import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
 import { setupAllDatabases } from "@infrastructure/database/setup";
 
 export default function App() {
-  const userId = useAuthStore((state) => state.user?.id);
-
-  useNetworkSync(userId);
-
   useEffect(() => {
     async function prepareDatabases() {
       try {
@@ -22,6 +16,7 @@ export default function App() {
         console.error("Erro ao inicializar bancos:", error);
       }
     }
+
     prepareDatabases();
   }, []);
 
