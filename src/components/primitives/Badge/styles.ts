@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontSize: Theme.typography.size.sm,
-    fontWeight: "600",
+    fontWeight: Theme.typography.weight.semibold,
     textTransform: "uppercase",
   },
 });

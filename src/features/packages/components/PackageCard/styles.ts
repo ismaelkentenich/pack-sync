@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     color: Theme.colors.neutral[700],
     fontSize: Theme.typography.size.sm,
     lineHeight: Theme.typography.lineHeight.md,
-    fontWeight: "600",
+    fontWeight: Theme.typography.weight.semibold,
   },
   buttonContainer: {
     flexDirection: "column",

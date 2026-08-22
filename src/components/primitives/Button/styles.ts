@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   button: {
@@ -7,6 +8,6 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
   },
   text: {
-    fontWeight: "600",
+    fontWeight: Theme.typography.weight.semibold,
   },
 });

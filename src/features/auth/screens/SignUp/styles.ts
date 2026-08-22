@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontSize: Theme.typography.size.xxl,
-    fontWeight: "bold",
+    fontWeight: Theme.typography.weight.semibold,
     textAlign: "center",
   },
   buttonContainer: {

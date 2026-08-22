@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: Theme.typography.weight.semibold,
     marginBottom: 10,
     color: Theme.colors.neutral[900],
   },
@@ -36,6 +36,6 @@ export const styles = StyleSheet.create({
   buttonText: {
     color: Theme.colors.neutral[50],
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: Theme.typography.weight.semibold,
   },
 });
