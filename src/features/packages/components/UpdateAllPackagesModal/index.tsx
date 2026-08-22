@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   ModalCloseIcon,
   ModalWrapper,
-} from "@components/composites/ModalWrapper";
+} from "@components/composites/ModalWrapper/ModalWrapper";
 import { Button } from "@components/primitives/Button";
 import { Input } from "@components/primitives/Input";
 import { PackageStatus } from "@features/packages/domain/package.enums";
