@@ -4,9 +4,9 @@ import Theme from "@theme/theme";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: Theme.spacing.md,
     justifyContent: "center",
-    gap: 24,
+    gap: Theme.spacing.xl,
   },
   text: {
     fontSize: Theme.typography.size.xxl,
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: "100%",
-    gap: 8,
-    marginTop: 24,
+    gap: Theme.spacing.xs,
+    marginTop: Theme.spacing.xl,
   },
 });

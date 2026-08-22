@@ -8,12 +8,12 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 8,
+    paddingHorizontal: Theme.spacing.xs,
   },
   backButton: {
     position: "absolute",
     left: 12,
-    padding: 8,
+    padding: Theme.spacing.xs,
   },
   placeholder: {
     width: 32,
@@ -26,6 +26,6 @@ export const styles = StyleSheet.create({
   logoutButton: {
     position: "absolute",
     right: 12,
-    padding: 8,
+    padding: Theme.spacing.xs,
   },
 });

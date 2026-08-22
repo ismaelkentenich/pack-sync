@@ -4,7 +4,7 @@ import Theme from "@theme/theme";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 8,
+    gap: Theme.spacing.xs,
     width: "100%",
   },
   camera: {
@@ -18,15 +18,15 @@ export const styles = StyleSheet.create({
   infoWrapper: {
     flex: 1,
     width: "100%",
-    paddingHorizontal: 16,
+    paddingHorizontal: Theme.spacing.md,
   },
   headerContainer: {
     flexDirection: "column",
-    gap: 8,
+    gap: Theme.spacing.xs,
   },
   infoHeader: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingHorizontal: Theme.spacing.md,
+    paddingBottom: Theme.spacing.xs,
     flexDirection: "row",
     justifyContent: "space-between",
     alignContent: "center",
@@ -55,8 +55,8 @@ export const styles = StyleSheet.create({
     color: Theme.colors.neutral[700],
   },
   flatlistContainer: {
-    paddingBottom: 24,
-    gap: 8,
+    paddingBottom: Theme.spacing.xl,
+    gap: Theme.spacing.xs,
     flexGrow: 1,
     width: "100%",
     alignSelf: "center",
@@ -65,8 +65,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 24,
-    paddingHorizontal: 16,
+    gap: Theme.spacing.xl,
+    paddingHorizontal: Theme.spacing.md,
   },
   noPermissionTitle: {
     fontSize: Theme.typography.size.lg,
@@ -81,8 +81,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 24,
-    paddingHorizontal: 16,
+    gap: Theme.spacing.xl,
+    paddingHorizontal: Theme.spacing.md,
   },
   buttonContainer: {
     height: 48,
@@ -92,7 +92,7 @@ export const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 10,
     alignSelf: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: Theme.spacing.md,
   },
   background: {
     position: "absolute",
@@ -105,8 +105,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 24,
-    paddingHorizontal: 16,
+    gap: Theme.spacing.xl,
+    paddingHorizontal: Theme.spacing.md,
   },
   emptyText: {
     fontSize: Theme.typography.size.lg,
