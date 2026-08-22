@@ -2,35 +2,41 @@ import { StyleSheet } from "react-native";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  screenContent: {
+    flexGrow: 1,
     paddingHorizontal: Theme.spacing.md,
+    paddingTop: Theme.spacing.md,
+    paddingBottom: Theme.spacing.xxxl,
     gap: Theme.spacing.xl,
   },
-  userInfoText: {
-    fontSize: Theme.typography.size.lg,
-    textAlign: "center",
-    color: Theme.colors.neutral[50],
-    fontWeight: Theme.typography.weight.semibold,
+
+  introduction: {
+    gap: Theme.spacing.sm,
   },
-  headerContainer: {
-    paddingVertical: Theme.spacing.xl,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    gap: Theme.spacing.xxs,
-  },
-  headerText: {
+
+  headline: {
+    color: Theme.colors.neutral[900],
     fontSize: Theme.typography.size.xxxl,
-    textAlign: "center",
-    color: Theme.colors.neutral[50],
+    lineHeight: Theme.typography.lineHeight.xxxl,
     fontWeight: Theme.typography.weight.bold,
+    letterSpacing: -0.8,
   },
-  card: {
-    justifyContent: "center",
-    alignItems: "center",
-    gap: Theme.spacing.xs,
+
+  description: {
+    maxWidth: 340,
+    color: Theme.colors.neutral[600],
+    fontSize: Theme.typography.size.md,
+    lineHeight: Theme.typography.lineHeight.md,
   },
-  cardText: {
-    color: Theme.colors.neutral[700],
+
+  quickActions: {
+    gap: Theme.spacing.sm,
+  },
+
+  sectionTitle: {
+    color: Theme.colors.neutral[900],
+    fontSize: Theme.typography.size.lg,
+    lineHeight: Theme.typography.lineHeight.lg,
+    fontWeight: Theme.typography.weight.semibold,
   },
 });

@@ -63,8 +63,22 @@ export const ptBR = {
 
   home: {
     greeting: "Olá,",
-    scanner: "Scanner",
-    packageList: "Lista de Pacotes",
+    headline: "Gerencie suas entregas com rapidez.",
+    description:
+      "Escaneie pacotes, acompanhe o status e mantenha suas entregas organizadas.",
+    scanner: {
+      title: "Escanear pacote",
+      description:
+        "Leia QR Code ou código de barras para adicionar um pacote.",
+      action: "Começar",
+    },
+    quickActions: "Acesso rápido",
+    packageList: {
+      title: "Todos os pacotes",
+      description:
+        "Consulte, acompanhe e gerencie seus pacotes.",
+      action: "Ver pacotes",
+    },
   },
 
   packages: {
