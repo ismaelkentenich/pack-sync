@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import Theme from "@theme/legacy/legacyTheme";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   container: {
@@ -49,7 +49,7 @@ export const styles = StyleSheet.create({
   },
   pickerWrapper: {
     backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.sm,
+    borderRadius: Theme.radius.sm,
     height: 48,
     justifyContent: "center",
   },

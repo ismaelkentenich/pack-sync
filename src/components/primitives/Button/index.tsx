@@ -8,7 +8,7 @@ import {
   TextStyle,
   StyleProp,
 } from "react-native";
-import Theme from "@theme/legacy/legacyTheme";
+import Theme from "@theme/theme";
 import { styles } from "./styles";
 
 type ButtonVariant =
@@ -35,7 +35,7 @@ export default function Button({
   textStyle,
   ...rest
 }: ButtonProps) {
-  const { colors, fontSizes, borderRadius } = Theme;
+  const { colors, fontSizes, radius } = Theme;
 
   const backgroundColor =
     variant === "primary"
@@ -43,7 +43,7 @@ export default function Button({
       : variant === "secondary"
         ? colors.secondary[600]
         : variant === "danger"
-          ? colors.attention[500]
+          ? colors.error[500]
           : "transparent";
 
   const textColor =
@@ -76,7 +76,7 @@ export default function Button({
             ? colors.neutral[300]
             : backgroundColor,
           borderColor,
-          borderRadius: borderRadius.md,
+          borderRadius: radius.md,
           height,
           opacity: loading ? 0.8 : 1,
         },
