@@ -296,7 +296,11 @@ export const usePackageStore = create<PackageState>(
             currentSessionPackages,
           );
 
+        get().loadPackages(userId);
+
         if (result.success) {
+          get().resetSession();
+
           set({
             feedback: {
               loading: false,
@@ -305,21 +309,41 @@ export const usePackageStore = create<PackageState>(
               },
             },
           });
-        } else {
-          set({
-            feedback: {
-              loading: false,
-              error: result.error
-                ? getPackageErrorFeedback(result.error)
-                : {
-                    key: "packages.feedback.sendSomeFailed",
-                  },
-            },
-          });
+
+          return;
         }
 
-        get().resetSession();
-        get().loadPackages(userId);
+        const failedPackages =
+          result.data?.failedPackages ?? [];
+
+        const failedPackageIds = new Set(
+          failedPackages.flatMap((pkg) =>
+            pkg.id !== undefined ? [pkg.id] : [],
+          ),
+        );
+
+        const persistedFailedPackages =
+          get().packages.filter(
+            (pkg) =>
+              pkg.id !== undefined &&
+              failedPackageIds.has(pkg.id),
+          );
+
+        set({
+          currentSessionPackages:
+            persistedFailedPackages.length > 0
+              ? persistedFailedPackages
+              : failedPackages,
+
+          feedback: {
+            loading: false,
+            error: result.error
+              ? getPackageErrorFeedback(result.error)
+              : {
+                  key: "packages.feedback.sendSomeFailed",
+                },
+          },
+        });
       } catch {
         set({
           feedback: {
@@ -375,6 +399,26 @@ export const usePackageStore = create<PackageState>(
 
         if (result.success) {
           get().resetSession();
+        } else if (result.data) {
+          const failedPackageIds = new Set(
+            result.data.failedPackages.flatMap((pkg) =>
+              pkg.id !== undefined ? [pkg.id] : [],
+            ),
+          );
+
+          const persistedFailedPackages =
+            get().packages.filter(
+              (pkg) =>
+                pkg.id !== undefined &&
+                failedPackageIds.has(pkg.id),
+            );
+
+          set({
+            currentSessionPackages:
+              persistedFailedPackages.length > 0
+                ? persistedFailedPackages
+                : result.data.failedPackages,
+          });
         }
 
         set({
