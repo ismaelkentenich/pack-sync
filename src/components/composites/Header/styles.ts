@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     color: Theme.colors.neutral[50],
-    fontSize: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.lg,
     fontWeight: "600",
   },
   logoutButton: {

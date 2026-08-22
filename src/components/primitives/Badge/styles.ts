@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
   text: {
-    fontSize: Theme.fontSizes.sm,
+    fontSize: Theme.typography.size.sm,
     fontWeight: "600",
     textTransform: "uppercase",
   },

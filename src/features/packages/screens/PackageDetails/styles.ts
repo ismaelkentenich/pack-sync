@@ -11,14 +11,14 @@ export const styles = StyleSheet.create({
   },
   detailTitle: {
     color: Theme.colors.neutral[700],
-    fontSize: Theme.fontSizes.xl,
-    lineHeight: Theme.fontSizes.xl,
+    fontSize: Theme.typography.size.xl,
+    lineHeight: Theme.typography.lineHeight.xl,
     fontWeight: "600",
   },
   detailText: {
     color: Theme.colors.neutral[700],
-    fontSize: Theme.fontSizes.md,
-    lineHeight: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.md,
+    lineHeight: Theme.typography.lineHeight.md,
     paddingVertical: 4,
   },
   detailHeader: {
