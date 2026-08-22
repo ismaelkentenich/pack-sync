@@ -4,10 +4,10 @@ import Theme from "@theme/theme";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: Theme.spacing.md,
   },
   cardContainer: {
-    gap: 24,
+    gap: Theme.spacing.xl,
   },
   detailTitle: {
     color: Theme.colors.neutral[700],
@@ -19,24 +19,24 @@ export const styles = StyleSheet.create({
     color: Theme.colors.neutral[700],
     fontSize: Theme.typography.size.md,
     lineHeight: Theme.typography.lineHeight.md,
-    paddingVertical: 4,
+    paddingVertical: Theme.spacing.xxs,
   },
   detailHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 16,
+    gap: Theme.spacing.md,
     alignContent: "center",
     alignItems: "center",
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    gap: 8,
+    gap: Theme.spacing.xs,
     alignContent: "center",
     alignItems: "center",
   },
   button: {
     height: 30,
-    paddingHorizontal: 12,
+    paddingHorizontal: Theme.spacing.sm,
   },
 });

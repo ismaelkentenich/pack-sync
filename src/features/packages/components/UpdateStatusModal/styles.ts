@@ -8,8 +8,8 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    gap: 16,
-    padding: 16,
+    gap: Theme.spacing.md,
+    padding: Theme.spacing.md,
   },
   title: {
     fontSize: Theme.typography.size.lg,
@@ -23,13 +23,13 @@ export const styles = StyleSheet.create({
   pickerWrapper: {
     borderWidth: 1,
     borderColor: Theme.colors.neutral[300],
-    borderRadius: 4,
+    borderRadius: Theme.radius.xxs,
     overflow: "hidden",
   },
   pickerContainer: {
     color: Theme.colors.neutral[800],
     backgroundColor: Theme.colors.neutral[50],
-    borderRadius: 8,
+    borderRadius: Theme.radius.sm,
     height: 48,
   },
   pickerItem: {
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
     color: Theme.colors.neutral[800],
   },
   buttonContainer: {
-    gap: 16,
-    paddingVertical: 16,
+    gap: Theme.spacing.md,
+    paddingVertical: Theme.spacing.md,
   },
 });

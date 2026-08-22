@@ -107,14 +107,17 @@ export const ModalWrapper = forwardRef<
               Platform.OS === "ios" ? "padding" : "height"
             }
             style={{ flex: 1 }}
-            keyboardVerticalOffset={insets.bottom + 24}
+            keyboardVerticalOffset={
+              insets.bottom + Theme.spacing.xl
+            }
           >
             <BottomSheetView
               style={[
                 styles.container,
                 style,
                 {
-                  paddingBottom: insets.bottom + 24,
+                  paddingBottom:
+                    insets.bottom + Theme.spacing.xl,
                 },
               ]}
             >

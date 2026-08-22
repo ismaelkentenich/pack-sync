@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   container: {
@@ -6,7 +7,7 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 16,
+    paddingBottom: Theme.spacing.md,
   },
   background: {
     position: "absolute",

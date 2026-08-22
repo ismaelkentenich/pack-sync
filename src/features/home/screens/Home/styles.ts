@@ -4,8 +4,8 @@ import Theme from "@theme/theme";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    gap: 24,
+    paddingHorizontal: Theme.spacing.md,
+    gap: Theme.spacing.xl,
   },
   userInfoText: {
     fontSize: Theme.typography.size.lg,
@@ -14,10 +14,10 @@ export const styles = StyleSheet.create({
     fontWeight: Theme.typography.weight.semibold,
   },
   headerContainer: {
-    paddingVertical: 24,
+    paddingVertical: Theme.spacing.xl,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    gap: 4,
+    gap: Theme.spacing.xxs,
   },
   headerText: {
     fontSize: Theme.typography.size.xxxl,
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   card: {
     justifyContent: "center",
     alignItems: "center",
-    gap: 8,
+    gap: Theme.spacing.xs,
   },
   cardText: {
     color: Theme.colors.neutral[700],

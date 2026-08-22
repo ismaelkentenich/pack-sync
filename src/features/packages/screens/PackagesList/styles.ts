@@ -4,8 +4,8 @@ import Theme from "@theme/theme";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    gap: 24,
+    paddingHorizontal: Theme.spacing.md,
+    gap: Theme.spacing.xl,
   },
   emptyScreenContainer: {
     flex: 1,
@@ -27,19 +27,19 @@ export const styles = StyleSheet.create({
   },
 
   flatlistContainer: {
-    paddingBottom: 24,
-    paddingTop: 16,
-    gap: 8,
+    paddingBottom: Theme.spacing.xl,
+    paddingTop: Theme.spacing.md,
+    gap: Theme.spacing.xs,
     flexGrow: 1,
     width: "100%",
     alignSelf: "center",
   },
   headerContainer: {
-    gap: 4,
+    gap: Theme.spacing.xxs,
   },
   pickerContainer: {
     color: Theme.colors.neutral[700],
-    borderRadius: 8,
+    borderRadius: Theme.radius.sm,
   },
 
   pickerLabel: {

@@ -247,7 +247,8 @@ export default function ScanScreen() {
                 contentContainerStyle={[
                   styles.flatlistContainer,
                   {
-                    paddingBottom: insets.bottom + 64,
+                    paddingBottom:
+                      insets.bottom + Theme.spacing.xxxxxl,
                   },
                 ]}
                 renderItem={renderItem}

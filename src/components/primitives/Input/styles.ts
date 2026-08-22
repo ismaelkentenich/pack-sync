@@ -6,9 +6,9 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
   label: {
-    fontSize: 14,
+    fontSize: Theme.typography.size.sm,
     color: Theme.colors.neutral[700],
-    marginBottom: 6,
+    marginBottom: Theme.spacing.xs,
   },
   inputWrapper: {
     flexDirection: "row",
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     borderColor: Theme.colors.neutral[300],
     borderRadius: Theme.radius.sm,
     backgroundColor: Theme.colors.neutral[50],
-    paddingHorizontal: 12,
+    paddingHorizontal: Theme.spacing.sm,
   },
   input: {
     flex: 1,
@@ -28,11 +28,11 @@ export const styles = StyleSheet.create({
     borderColor: Theme.colors.error[500],
   },
   iconButton: {
-    paddingHorizontal: 4,
+    paddingHorizontal: Theme.spacing.xxs,
   },
   errorText: {
     color: Theme.colors.error[500],
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: Theme.typography.size.xs,
+    marginTop: Theme.spacing.xxs,
   },
 });

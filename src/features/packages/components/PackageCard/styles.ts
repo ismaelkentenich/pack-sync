@@ -6,19 +6,19 @@ export const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     flexDirection: "row",
-    gap: 8,
+    gap: Theme.spacing.xs,
   },
   infoContainer: {
     flexDirection: "column",
     flex: 1,
-    gap: 8,
+    gap: Theme.spacing.xs,
     width: "100%",
   },
   infoRow: {
     flexWrap: "wrap",
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Theme.spacing.xs,
     width: "100%",
   },
   text: {
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "column",
-    gap: 8,
+    gap: Theme.spacing.xs,
     alignItems: "flex-end",
     justifyContent: "center",
     minWidth: 100,
