@@ -757,5 +757,40 @@ describe("PackageService", () => {
 
       expect(syncGateway.send).not.toHaveBeenCalled();
     });
+
+    it("does not synchronize packages when persistence fails", async () => {
+      const packages = [
+        createPackage({
+          id: 1,
+          code: "PKG-001",
+        }),
+        createPackage({
+          id: 2,
+          code: "PKG-002",
+        }),
+      ];
+
+      repository.batchUpdateStatus.mockImplementation(
+        () => {
+          throw new Error("SQLite write failed");
+        },
+      );
+
+      const result = await service.updateAndSendMultiple(
+        packages,
+        "user-1",
+        PackageStatus.EM_ROTA_DE_ENTREGA,
+      );
+
+      expect(result.success).toBe(false);
+
+      expect(result.error?.code).toBe(
+        PackageErrorCode.UNKNOWN,
+      );
+
+      expect(syncGateway.send).not.toHaveBeenCalled();
+
+      expect(repository.markAsSent).not.toHaveBeenCalled();
+    });
   });
 });
