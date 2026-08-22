@@ -312,6 +312,7 @@ describe("usePackageStore", () => {
           data: {
             sent: 1,
             failed: 0,
+            failedPackages: [],
           },
         },
       );
@@ -347,6 +348,7 @@ describe("usePackageStore", () => {
           data: {
             sent: 0,
             failed: 1,
+            failedPackages: [pkg],
           },
           error: new PackageError(
             PackageErrorCode.MULTIPLE_SYNC_FAILED,
@@ -417,6 +419,7 @@ describe("usePackageStore", () => {
           data: {
             sent: 1,
             failed: 0,
+            failedPackages: [],
           },
         },
       );
@@ -496,6 +499,7 @@ describe("usePackageStore", () => {
           data: {
             sent: 1,
             failed: 0,
+            failedPackages: [],
           },
         },
       );
@@ -533,6 +537,185 @@ describe("usePackageStore", () => {
       expect(
         usePackageStore.getState().isSyncingSession,
       ).toBe(false);
+    });
+
+    it("keeps only failed packages in the current session after a partial batch", async () => {
+      const packages = Array.from(
+        {
+          length: 10,
+        },
+        (_, index) =>
+          createPackage({
+            id: index + 1,
+            code: `PKG-${String(index + 1).padStart(
+              3,
+              "0",
+            )}`,
+          }),
+      );
+
+      const failedFirst = packages[3];
+      const failedSecond = packages[7];
+
+      usePackageStore.setState({
+        currentSessionPackages: packages,
+      });
+
+      packageServiceMock.updateAndSendMultiple.mockResolvedValue(
+        {
+          success: false,
+          data: {
+            sent: 8,
+            failed: 2,
+            failedPackages: [failedFirst, failedSecond],
+          },
+          error: new PackageError(
+            PackageErrorCode.MULTIPLE_SYNC_FAILED,
+            {
+              count: 2,
+            },
+          ),
+        },
+      );
+
+      packageServiceMock.getAllPackages.mockReturnValue(
+        packages,
+      );
+
+      packageServiceMock.getPendingCount.mockReturnValue(2);
+
+      const result = await usePackageStore
+        .getState()
+        .updateAndSendCurrentSessionPackages(
+          "user-1",
+          PackageStatus.EM_ROTA_DE_ENTREGA,
+        );
+
+      expect(result).toEqual({
+        success: false,
+        sent: 8,
+        failed: 2,
+      });
+
+      expect(
+        usePackageStore.getState().currentSessionPackages,
+      ).toEqual([failedFirst, failedSecond]);
+    });
+
+    it("keeps the persisted snapshots of failed packages after a partial batch", async () => {
+      const first = createPackage({
+        id: 1,
+        code: "PKG-001",
+      });
+
+      const failed = createPackage({
+        id: 2,
+        code: "PKG-002",
+        status: PackageStatus.COLETADO,
+      });
+
+      const persistedFailed = createPackage({
+        id: 2,
+        code: "PKG-002",
+        status: PackageStatus.ENTREGUE,
+        receiverName: "Maria",
+      });
+
+      usePackageStore.setState({
+        currentSessionPackages: [first, failed],
+      });
+
+      packageServiceMock.updateAndSendMultiple.mockResolvedValue(
+        {
+          success: false,
+          data: {
+            sent: 1,
+            failed: 1,
+            failedPackages: [failed],
+          },
+          error: new PackageError(
+            PackageErrorCode.MULTIPLE_SYNC_FAILED,
+            {
+              count: 1,
+            },
+          ),
+        },
+      );
+
+      packageServiceMock.getAllPackages.mockReturnValue([
+        first,
+        persistedFailed,
+      ]);
+
+      packageServiceMock.getPendingCount.mockReturnValue(1);
+
+      await usePackageStore
+        .getState()
+        .updateAndSendCurrentSessionPackages(
+          "user-1",
+          PackageStatus.ENTREGUE,
+          "Maria",
+        );
+
+      expect(
+        usePackageStore.getState().currentSessionPackages,
+      ).toEqual([persistedFailed]);
+    });
+  });
+
+  describe("sendAllCurrentSessionPackages", () => {
+    it("keeps only failed packages after a partial synchronization", async () => {
+      const first = createPackage({
+        id: 1,
+        code: "PKG-001",
+      });
+
+      const second = createPackage({
+        id: 2,
+        code: "PKG-002",
+      });
+
+      const third = createPackage({
+        id: 3,
+        code: "PKG-003",
+      });
+
+      usePackageStore.setState({
+        currentSessionPackages: [first, second, third],
+      });
+
+      packageServiceMock.sendMultiplePackages.mockResolvedValue(
+        {
+          success: false,
+          data: {
+            sent: 2,
+            failed: 1,
+            failedPackages: [second],
+          },
+          error: new PackageError(
+            PackageErrorCode.MULTIPLE_SYNC_FAILED,
+            {
+              count: 1,
+            },
+          ),
+        },
+      );
+
+      packageServiceMock.getAllPackages.mockReturnValue([
+        first,
+        second,
+        third,
+      ]);
+
+      packageServiceMock.getPendingCount.mockReturnValue(1);
+
+      await usePackageStore
+        .getState()
+        .sendAllCurrentSessionPackages("user-1");
+
+      expect(
+        usePackageStore.getState().currentSessionPackages,
+      ).toEqual([second]);
     });
   });
 });

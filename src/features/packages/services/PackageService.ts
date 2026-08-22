@@ -16,6 +16,12 @@ export type ServiceResult<T = void> = {
   error?: PackageError;
 };
 
+export type BatchSyncResult = {
+  sent: number;
+  failed: number;
+  failedPackages: Package[];
+};
+
 export class PackageService {
   private readonly packageSyncInFlight = new Map<
     string,
@@ -197,23 +203,24 @@ export class PackageService {
     }
   }
 
-  async sendMultiplePackages(packages: Package[]): Promise<
-    ServiceResult<{
-      sent: number;
-      failed: number;
-    }>
-  > {
+  async sendMultiplePackages(
+    packages: Package[],
+  ): Promise<ServiceResult<BatchSyncResult>> {
     let sent = 0;
     let failed = 0;
+
+    const failedPackages: Package[] = [];
 
     for (const pkg of packages) {
       const result = await this.syncPackage(pkg);
 
       if (result.success) {
         sent += 1;
-      } else {
-        failed += 1;
+        continue;
       }
+
+      failed += 1;
+      failedPackages.push(pkg);
     }
 
     return {
@@ -221,6 +228,7 @@ export class PackageService {
       data: {
         sent,
         failed,
+        failedPackages,
       },
       error:
         failed > 0
@@ -324,12 +332,7 @@ export class PackageService {
     userId: string,
     status: PackageStatus,
     receiverName?: string,
-  ): Promise<
-    ServiceResult<{
-      sent: number;
-      failed: number;
-    }>
-  > {
+  ): Promise<ServiceResult<BatchSyncResult>> {
     if (
       status === PackageStatus.ENTREGUE &&
       !receiverName?.trim()
