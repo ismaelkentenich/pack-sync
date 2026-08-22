@@ -15,6 +15,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:related": "jest --findRelatedTests --passWithNoTests",
+    "lint:staged": "lint-staged",
+    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run test",
+    "validate:commit": "npm run typecheck && npm run test",
+    "prepare": "husky",
     "storybook:ios": "cross-env STORYBOOK_ENABLED=true expo run:ios",
     "storybook:android": "cross-env STORYBOOK_ENABLED=true expo run:android",
     "storybook:web": "storybook dev -p 6006",
@@ -89,13 +94,19 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-storybook": "10.5.10",
     "playwright": "1.58.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.6.2",
-    "react-native-web": "0.21.2",
-    "react-test-renderer": "19.2.3",
-    "storybook": "10.5.10",
-    "typescript": "~6.0.3",
-    "vite": "7.3.1",
-    "vitest": "4.0.18"
+    "typescript": "~6.0.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,jsx,json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "private": true
 }
