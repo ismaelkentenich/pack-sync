@@ -1,6 +1,7 @@
 import { ActivityIndicator, View } from "react-native";
 import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
 import Theme from "@theme/theme";
 import { AppStack } from "./AppStack";
 import { AuthStack } from "./AuthStack";
@@ -10,7 +11,10 @@ export function NavigationStack() {
     (state) => state.isAuthenticated,
   );
 
+  const userId = useAuthStore((state) => state.user?.id);
+
   const { isRestoring } = usePersistedAuth();
+  useNetworkSync(isRestoring ? undefined : userId);
 
   if (isRestoring) {
     return (
