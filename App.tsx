@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationStack } from "@app/navigation";
-import GlobalAlert from "@components/composites/CustomAlert";
+import { GlobalAlert } from "@components/composites/CustomAlert";
 import { setupAllDatabases } from "@infrastructure/database/setup";
 import { ThemeProvider } from "@theme/ThemeProvider";
 

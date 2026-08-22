@@ -7,35 +7,38 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
+    padding: Theme.spacing.md,
   },
+
   container: {
-    width: "80%",
+    width: "100%",
+    maxWidth: 420,
     backgroundColor: Theme.colors.neutral[50],
     borderRadius: Theme.radius.md,
     padding: Theme.spacing.lg,
-    alignItems: "center",
+    gap: Theme.spacing.md,
   },
+
+  content: {
+    gap: Theme.spacing.xs,
+  },
+
   title: {
-    fontSize: Theme.typography.size.lg,
-    fontWeight: Theme.typography.weight.semibold,
-    marginBottom: Theme.spacing.sm,
     color: Theme.colors.neutral[900],
-  },
-  message: {
-    fontSize: Theme.typography.size.md,
-    textAlign: "center",
-    marginBottom: Theme.spacing.lg,
-    color: Theme.colors.neutral[700],
-  },
-  button: {
-    backgroundColor: Theme.colors.primary[600],
-    paddingHorizontal: Theme.spacing.lg,
-    paddingVertical: Theme.spacing.sm,
-    borderRadius: Theme.radius.sm,
-  },
-  buttonText: {
-    color: Theme.colors.neutral[50],
-    fontSize: Theme.typography.size.md,
+    fontSize: Theme.typography.size.lg,
+    lineHeight: Theme.typography.lineHeight.lg,
     fontWeight: Theme.typography.weight.semibold,
+    textAlign: "center",
+  },
+
+  message: {
+    color: Theme.colors.neutral[700],
+    fontSize: Theme.typography.size.md,
+    lineHeight: Theme.typography.lineHeight.md,
+    textAlign: "center",
+  },
+
+  actions: {
+    marginTop: Theme.spacing.xs,
   },
 });
