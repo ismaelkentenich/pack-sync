@@ -170,4 +170,33 @@ describe("SQLitePackageRepository", () => {
       );
     });
   });
+
+  describe("findById", () => {
+    it("finds the package by id and user", () => {
+      const persistedPackage = {
+        id: 10,
+        code: "PKG-010",
+        status: PackageStatus.ENTREGUE,
+        deliveryStatus: DeliveryStatus.PENDING,
+        clientCode: "user-1",
+        scanned_at: "2026-08-22T12:00:00.000Z",
+        receiverName: "João",
+      };
+
+      const getFirstSyncMock = jest.mocked(
+        packagesDb.getFirstSync,
+      );
+
+      getFirstSyncMock.mockReturnValue(persistedPackage);
+
+      const result = repository.findById(10, "user-1");
+
+      expect(getFirstSyncMock).toHaveBeenCalledWith(
+        expect.stringContaining("WHERE id = ?"),
+        [10, "user-1"],
+      );
+
+      expect(result).toEqual(persistedPackage);
+    });
+  });
 });

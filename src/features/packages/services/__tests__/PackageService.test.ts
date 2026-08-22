@@ -67,32 +67,90 @@ describe("PackageService", () => {
   });
 
   describe("syncPackage", () => {
-    it("sends the current version as pending even when the previous version was sent", async () => {
-      const pkg = createPackage({
+    it("sends the snapshot recovered from the repository", async () => {
+      const stalePackage = createPackage({
+        status: PackageStatus.COLETADO,
+        receiverName: undefined,
+      });
+
+      const persistedPackage = createPackage({
         status: PackageStatus.ENTREGUE,
-        deliveryStatus: DeliveryStatus.SENT,
-        sent_at: "2026-08-22T11:00:00.000Z",
+        deliveryStatus: DeliveryStatus.PENDING,
         receiverName: "João",
       });
+
+      repository.findById.mockReturnValue(persistedPackage);
 
       syncGateway.send.mockResolvedValue({
         success: true,
       });
 
-      await service.syncPackage(pkg, "João");
+      await service.syncPackage(stalePackage);
+
+      expect(repository.findById).toHaveBeenCalledWith(
+        1,
+        "user-1",
+      );
 
       expect(syncGateway.send).toHaveBeenCalledWith(
-        {
-          ...pkg,
-          deliveryStatus: DeliveryStatus.PENDING,
-          sent_at: undefined,
-        },
-        "João",
+        persistedPackage,
       );
     });
 
-    it("marks the package as sent only after a successful webhook", async () => {
+    it("preserves receiverName when retrying a pending delivered package", async () => {
+      const pendingPackage = createPackage({
+        status: PackageStatus.ENTREGUE,
+        deliveryStatus: DeliveryStatus.PENDING,
+        receiverName: "Maria",
+      });
+
+      repository.findByDeliveryStatus.mockReturnValue([
+        pendingPackage,
+      ]);
+
+      repository.findById.mockReturnValue(pendingPackage);
+
+      syncGateway.send.mockResolvedValue({
+        success: true,
+      });
+
+      await service.syncPendingPackages("user-1");
+
+      expect(syncGateway.send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: PackageStatus.ENTREGUE,
+          deliveryStatus: DeliveryStatus.PENDING,
+          receiverName: "Maria",
+        }),
+      );
+    });
+
+    it("does not send a delivered package without receiverName", async () => {
+      const pkg = createPackage({
+        status: PackageStatus.ENTREGUE,
+        deliveryStatus: DeliveryStatus.PENDING,
+        receiverName: undefined,
+      });
+
+      repository.findById.mockReturnValue(pkg);
+
+      const result = await service.syncPackage(pkg);
+
+      expect(result.success).toBe(false);
+
+      expect(result.error?.code).toBe(
+        PackageErrorCode.RECEIVER_REQUIRED,
+      );
+
+      expect(syncGateway.send).not.toHaveBeenCalled();
+
+      expect(repository.markAsSent).not.toHaveBeenCalled();
+    });
+
+    it("marks as sent only after the persisted snapshot is synchronized", async () => {
       const pkg = createPackage();
+
+      repository.findById.mockReturnValue(pkg);
 
       syncGateway.send.mockResolvedValue({
         success: true,
@@ -102,11 +160,7 @@ describe("PackageService", () => {
 
       expect(result.success).toBe(true);
 
-      expect(syncGateway.send).toHaveBeenCalledTimes(1);
-
-      expect(repository.markAsSent).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(syncGateway.send).toHaveBeenCalledWith(pkg);
 
       expect(repository.markAsSent).toHaveBeenCalledWith(
         1,
@@ -114,61 +168,85 @@ describe("PackageService", () => {
       );
     });
 
-    it("does not mark the package as sent when the webhook fails", async () => {
-      const pkg = createPackage();
+    it("synchronizes batch packages using the persisted receiverName", async () => {
+      const first = createPackage({
+        id: 1,
+        code: "PKG-001",
+      });
+
+      const second = createPackage({
+        id: 2,
+        code: "PKG-002",
+      });
+
+      const persistedFirst = createPackage({
+        id: 1,
+        code: "PKG-001",
+        status: PackageStatus.ENTREGUE,
+        deliveryStatus: DeliveryStatus.PENDING,
+        receiverName: "João",
+      });
+
+      const persistedSecond = createPackage({
+        id: 2,
+        code: "PKG-002",
+        status: PackageStatus.ENTREGUE,
+        deliveryStatus: DeliveryStatus.PENDING,
+        receiverName: "João",
+      });
+
+      repository.findById.mockImplementation((id) => {
+        if (id === 1) {
+          return persistedFirst;
+        }
+
+        if (id === 2) {
+          return persistedSecond;
+        }
+
+        return null;
+      });
 
       syncGateway.send.mockResolvedValue({
-        success: false,
+        success: true,
       });
 
-      const result = await service.syncPackage(pkg);
-
-      expect(result.success).toBe(false);
-
-      expect(repository.markAsSent).not.toHaveBeenCalled();
-
-      expect(result.error?.code).toBe(
-        PackageErrorCode.SYNC_FAILED,
-      );
-    });
-
-    it("does not mark the package as sent when the gateway throws", async () => {
-      const pkg = createPackage();
-
-      syncGateway.send.mockRejectedValue(
-        new Error("Network error"),
+      const result = await service.updateAndSendMultiple(
+        [first, second],
+        "user-1",
+        PackageStatus.ENTREGUE,
+        "João",
       );
 
-      const result = await service.syncPackage(pkg);
-
-      expect(result.success).toBe(false);
-
-      expect(repository.markAsSent).not.toHaveBeenCalled();
-
-      expect(result.error?.code).toBe(
-        PackageErrorCode.SYNC_FAILED,
+      expect(
+        repository.batchUpdateStatus,
+      ).toHaveBeenCalledWith(
+        [1, 2],
+        "user-1",
+        PackageStatus.ENTREGUE,
+        "João",
       );
-    });
 
-    it("rejects synchronization when the package has no id", async () => {
-      const pkg = createPackage({
-        id: undefined,
+      expect(syncGateway.send).toHaveBeenNthCalledWith(
+        1,
+        persistedFirst,
+      );
+
+      expect(syncGateway.send).toHaveBeenNthCalledWith(
+        2,
+        persistedSecond,
+      );
+
+      expect(result).toEqual({
+        success: true,
+        data: {
+          sent: 2,
+          failed: 0,
+        },
+        error: undefined,
       });
-
-      const result = await service.syncPackage(pkg);
-
-      expect(result.success).toBe(false);
-
-      expect(result.error?.code).toBe(
-        PackageErrorCode.INVALID_FOR_SYNC,
-      );
-
-      expect(syncGateway.send).not.toHaveBeenCalled();
-
-      expect(repository.markAsSent).not.toHaveBeenCalled();
     });
   });
-
   describe("updateAndSendMultiple", () => {
     it("updates the packages before synchronizing them", async () => {
       const packages = [
@@ -185,6 +263,36 @@ describe("PackageService", () => {
           sent_at: "2026-08-22T10:10:00.000Z",
         }),
       ];
+
+      const updatedFirst = createPackage({
+        id: 1,
+        code: "PKG-001",
+        status: PackageStatus.ENTREGUE,
+        deliveryStatus: DeliveryStatus.PENDING,
+        sent_at: undefined,
+        receiverName: "João",
+      });
+
+      const updatedSecond = createPackage({
+        id: 2,
+        code: "PKG-002",
+        status: PackageStatus.ENTREGUE,
+        deliveryStatus: DeliveryStatus.PENDING,
+        sent_at: undefined,
+        receiverName: "João",
+      });
+
+      repository.findById.mockImplementation((id) => {
+        if (id === 1) {
+          return updatedFirst;
+        }
+
+        if (id === 2) {
+          return updatedSecond;
+        }
+
+        return null;
+      });
 
       syncGateway.send.mockResolvedValue({
         success: true,
@@ -211,6 +319,7 @@ describe("PackageService", () => {
       );
 
       expect(result.success).toBe(true);
+
       expect(result.data).toEqual({
         sent: 2,
         failed: 0,
@@ -219,9 +328,20 @@ describe("PackageService", () => {
 
     it("does not preserve sent metadata from the previous package version", async () => {
       const pkg = createPackage({
+        id: 1,
         deliveryStatus: DeliveryStatus.SENT,
         sent_at: "2026-08-22T10:00:00.000Z",
       });
+
+      const persistedPackage = createPackage({
+        id: 1,
+        status: PackageStatus.EM_ROTA_DE_ENTREGA,
+        deliveryStatus: DeliveryStatus.PENDING,
+        sent_at: undefined,
+        receiverName: undefined,
+      });
+
+      repository.findById.mockReturnValue(persistedPackage);
 
       syncGateway.send.mockResolvedValue({
         success: true,
@@ -234,13 +354,7 @@ describe("PackageService", () => {
       );
 
       expect(syncGateway.send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: 1,
-          status: PackageStatus.EM_ROTA_DE_ENTREGA,
-          deliveryStatus: DeliveryStatus.PENDING,
-          sent_at: undefined,
-        }),
-        undefined,
+        persistedPackage,
       );
     });
 

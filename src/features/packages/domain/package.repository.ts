@@ -5,6 +5,8 @@ import {
 import { Package } from "./package.types";
 
 export interface PackageRepository {
+  findById(id: number, userId: string): Package | null;
+
   findByCode(code: string, userId: string): Package | null;
 
   findAllByUser(userId: string): Package[];

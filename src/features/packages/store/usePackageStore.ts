@@ -197,11 +197,8 @@ export const usePackageStore = create<PackageState>(
       }
     },
 
-    sendPackage: async (pkg, userId, receiverName) => {
-      const result = await packageService.syncPackage(
-        pkg,
-        receiverName,
-      );
+    sendPackage: async (pkg, userId) => {
+      const result = await packageService.syncPackage(pkg);
 
       get().loadPackages(userId);
 

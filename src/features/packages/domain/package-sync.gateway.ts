@@ -5,8 +5,5 @@ export type PackageSyncResult = {
 };
 
 export interface PackageSyncGateway {
-  send(
-    pkg: Package,
-    receiverName?: string,
-  ): Promise<PackageSyncResult>;
+  send(pkg: Package): Promise<PackageSyncResult>;
 }
