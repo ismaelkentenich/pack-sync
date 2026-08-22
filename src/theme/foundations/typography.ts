@@ -5,9 +5,9 @@ export const typography = {
     md: 16,
     lg: 18,
     xl: 20,
-    "2xl": 24,
-    "3xl": 32,
-    "4xl": 40,
+    xxl: 24,
+    xxxl: 32,
+    xxxxl: 40,
   },
 
   lineHeight: {
@@ -16,9 +16,9 @@ export const typography = {
     md: 24,
     lg: 28,
     xl: 32,
-    "2xl": 36,
-    "3xl": 40,
-    "4xl": 48,
+    xxl: 36,
+    xxxl: 40,
+    xxxxl: 48,
   },
 
   weight: {

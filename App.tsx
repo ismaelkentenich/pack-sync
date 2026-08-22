@@ -6,6 +6,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationStack } from "@app/navigation";
 import GlobalAlert from "@components/composites/CustomAlert";
 import { setupAllDatabases } from "@infrastructure/database/setup";
+import { ThemeProvider } from "@theme/ThemeProvider";
 
 export default function App() {
   useEffect(() => {
@@ -24,10 +25,12 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <BottomSheetModalProvider>
-          <NavigationContainer>
-            <NavigationStack />
-            <GlobalAlert />
-          </NavigationContainer>
+          <ThemeProvider>
+            <NavigationContainer>
+              <NavigationStack />
+              <GlobalAlert />
+            </NavigationContainer>
+          </ThemeProvider>
         </BottomSheetModalProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
