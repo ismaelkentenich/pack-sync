@@ -8,10 +8,11 @@ import {
   TextStyle,
   StyleProp,
 } from "react-native";
-import { styles } from "./styles";
 import Theme from "@theme/theme";
+import { styles } from "./styles";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "danger";
+type ButtonVariant =
+  "primary" | "secondary" | "outline" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 type ButtonProps = TouchableOpacityProps & {
@@ -45,13 +46,25 @@ export default function Button({
           ? colors.attention[500]
           : "transparent";
 
-  const textColor = variant === "outline" ? colors.primary[600] : colors.neutral[50];
+  const textColor =
+    variant === "outline"
+      ? colors.primary[600]
+      : colors.neutral[50];
 
-  const borderColor = variant === "outline" ? colors.primary[600] : "transparent";
+  const borderColor =
+    variant === "outline"
+      ? colors.primary[600]
+      : "transparent";
 
-  const height = size === "sm" ? 40 : size === "lg" ? 56 : 48;
+  const height =
+    size === "sm" ? 40 : size === "lg" ? 56 : 48;
 
-  const fontSize = size === "sm" ? fontSizes.sm : size === "lg" ? fontSizes.lg : fontSizes.md;
+  const fontSize =
+    size === "sm"
+      ? fontSizes.sm
+      : size === "lg"
+        ? fontSizes.lg
+        : fontSizes.md;
 
   return (
     <TouchableOpacity
@@ -59,7 +72,9 @@ export default function Button({
       style={[
         styles.button,
         {
-          backgroundColor: disabled ? colors.neutral[300] : backgroundColor,
+          backgroundColor: disabled
+            ? colors.neutral[300]
+            : backgroundColor,
           borderColor,
           borderRadius: borderRadius.md,
           height,
@@ -73,7 +88,15 @@ export default function Button({
       {loading ? (
         <ActivityIndicator color={textColor} />
       ) : (
-        <Text style={[styles.text, { color: textColor, fontSize }, textStyle]}>{title}</Text>
+        <Text
+          style={[
+            styles.text,
+            { color: textColor, fontSize },
+            textStyle,
+          ]}
+        >
+          {title}
+        </Text>
       )}
     </TouchableOpacity>
   );

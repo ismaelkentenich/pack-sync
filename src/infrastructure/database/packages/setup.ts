@@ -1,10 +1,10 @@
-import { packagesDb } from "./index";
+import { migrateToMultiUserIdentity } from "./migrations/migrateToMultiUserIdentity";
 import {
   createPackagesIndexes,
   createPackagesTable,
   PACKAGES_SCHEMA_VERSION,
 } from "./schema";
-import { migrateToMultiUserIdentity } from "./migrations/migrateToMultiUserIdentity";
+import { packagesDb } from "./index";
 
 type TableExistsResult = {
   name: string;

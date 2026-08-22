@@ -1,3 +1,6 @@
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
 import { Routes } from "@app/navigation/routes";
 import Button from "@components/primitives/Button";
 import Input from "@components/primitives/Input";
@@ -10,9 +13,6 @@ import {
   isEmailValid,
   isPasswordValid,
 } from "@utils/validators";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
 import { styles } from "./styles";
 
 export default function SignupScreen() {

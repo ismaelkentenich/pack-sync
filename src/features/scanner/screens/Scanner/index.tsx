@@ -1,17 +1,5 @@
-import { Routes } from "@app/navigation/routes";
-import Button from "@components/primitives/Button";
-import ScreenContainer from "@components/primitives/ScreenContainer";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
-import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
-import PackageCard from "@features/packages/components/PackageCard";
-import { Package } from "@features/packages/domain/package.types";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
-import { translatePackageFeedback } from "@features/packages/utils/getPackageErrorFeedback";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useAppNavigation } from "@hooks/useAppNavigation";
 import { useFocusEffect } from "@react-navigation/native";
-import { useShowAlert } from "@store/useAlertStore";
-import Theme from "@theme/theme";
 import {
   BarcodeScanningResult,
   CameraView,
@@ -32,6 +20,18 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Routes } from "@app/navigation/routes";
+import Button from "@components/primitives/Button";
+import ScreenContainer from "@components/primitives/ScreenContainer";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
+import PackageCard from "@features/packages/components/PackageCard";
+import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
+import { Package } from "@features/packages/domain/package.types";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { translatePackageFeedback } from "@features/packages/utils/getPackageErrorFeedback";
+import { useAppNavigation } from "@hooks/useAppNavigation";
+import { useShowAlert } from "@store/useAlertStore";
+import Theme from "@theme/theme";
 import { styles } from "./styles";
 
 export default function ScanScreen() {

@@ -1,8 +1,8 @@
+import { TFunction } from "i18next";
 import {
   AuthError,
   AuthErrorCode,
 } from "@features/auth/domain/auth.errors";
-import { TFunction } from "i18next";
 
 export function getAuthErrorMessage(
   error: unknown,

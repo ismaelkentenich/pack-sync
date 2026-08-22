@@ -1,3 +1,12 @@
+import { FirebaseError } from "firebase/app";
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+} from "firebase/auth";
 import {
   AuthError,
   AuthErrorCode,
@@ -9,15 +18,6 @@ import {
   AuthUnsubscribe,
 } from "@features/auth/domain/auth.repository";
 import { AuthUser } from "@features/auth/domain/auth.types";
-import { FirebaseError } from "firebase/app";
-import {
-  Auth,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  User,
-} from "firebase/auth";
 
 function mapFirebaseUser(user: User): AuthUser {
   return {
@@ -66,9 +66,7 @@ function mapFirebaseAuthError(error: unknown): AuthError {
   }
 }
 
-export class FirebaseAuthRepository
-  implements AuthRepository
-{
+export class FirebaseAuthRepository implements AuthRepository {
   constructor(private readonly auth: Auth) {}
 
   async signIn(

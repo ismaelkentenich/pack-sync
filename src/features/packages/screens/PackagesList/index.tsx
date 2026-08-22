@@ -1,16 +1,5 @@
-import Input from "@components/primitives/Input";
-import ScreenContainer from "@components/primitives/ScreenContainer";
-import PackageCard from "@features/packages/components/PackageCard";
-import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
-import { PackageStatus } from "@features/packages/domain/package.enums";
-import { Package } from "@features/packages/domain/package.types";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
-import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useAppNavigation } from "@hooks/useAppNavigation";
 import { Picker } from "@react-native-picker/picker";
-import Theme from "@theme/theme";
 import React, {
   useCallback,
   useEffect,
@@ -25,6 +14,17 @@ import {
   Text,
   View,
 } from "react-native";
+import Input from "@components/primitives/Input";
+import ScreenContainer from "@components/primitives/ScreenContainer";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
+import PackageCard from "@features/packages/components/PackageCard";
+import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
+import { PackageStatus } from "@features/packages/domain/package.enums";
+import { Package } from "@features/packages/domain/package.types";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
+import { useAppNavigation } from "@hooks/useAppNavigation";
+import Theme from "@theme/theme";
 import { styles } from "./styles";
 
 export default function PackagesListScreen() {
@@ -52,10 +52,7 @@ export default function PackagesListScreen() {
   const [selectedPackage, setSelectedPackage] =
     useState<Package | null>(null);
 
-  const filteredData = useMemo(
-    () => filteredPackages(),
-    [filteredPackages, packages, searchTerm, statusFilter],
-  );
+  const filteredData = filteredPackages();
 
   const handleRefresh = useCallback(async () => {
     if (!userId) {

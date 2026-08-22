@@ -1,6 +1,6 @@
+import { create } from "zustand";
 import { authService } from "@features/auth/auth.dependencies";
 import { AuthUser } from "@features/auth/domain/auth.types";
-import { create } from "zustand";
 
 type AuthState = {
   user: AuthUser | null;

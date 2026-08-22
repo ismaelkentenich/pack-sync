@@ -1,6 +1,6 @@
-import { usePackageStore } from "@features/packages/store/usePackageStore";
 import NetInfo from "@react-native-community/netinfo";
 import { useEffect } from "react";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
 
 export function useNetworkSync(userId?: string) {
   const syncPendingPackages = usePackageStore(
