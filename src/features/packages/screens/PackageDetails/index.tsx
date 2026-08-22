@@ -1,21 +1,26 @@
+import { RootStackParamList } from "@app/navigation/types";
+import Badge from "@components/primitives/Badge";
+import Button from "@components/primitives/Button";
+import Card from "@components/primitives/Card";
 import ScreenContainer from "@components/primitives/ScreenContainer";
-import React, { useRef } from "react";
-import { View, Text } from "react-native";
-import { styles } from "./styles";
+import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
+import { PackageStatus } from "@features/packages/domain/package.enums";
+import { usePackageStore } from "@features/packages/store/usePackageStore";
+import {
+  translateDeliveryStatus,
+  translatePackageStatus,
+} from "@features/packages/utils/packageTranslations";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
   RouteProp,
   useRoute,
 } from "@react-navigation/native";
-import { RootStackParamList } from "@app/navigation/types";
-import Button from "@components/primitives/Button";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
-import Card from "@components/primitives/Card";
-import Badge from "@components/primitives/Badge";
-import { PackageStatus } from "@features/packages/domain/package.enums";
 import { formatDate } from "@utils/date";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
+import React, { useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
+import { styles } from "./styles";
 
 type PackageDetailsRouteProp = RouteProp<
   RootStackParamList,
@@ -23,22 +28,28 @@ type PackageDetailsRouteProp = RouteProp<
 >;
 
 export default function PackageDetailsScreen() {
+  const { t, i18n } = useTranslation();
+
   const userId = useAuthStore((state) => state.user?.id);
 
   const updateStatusModalRef =
     useRef<BottomSheetModal>(null);
+
   const { params } = useRoute<PackageDetailsRouteProp>();
+
   const { pkg } = params;
 
   const currentPackage = usePackageStore((state) =>
-    state.packages.find((p) => p.id === pkg.id),
+    state.packages.find((item) => item.id === pkg.id),
   );
 
-  const packageData = currentPackage || pkg;
+  const packageData = currentPackage ?? pkg;
+
+  const locale = i18n.resolvedLanguage ?? i18n.language;
 
   return (
     <ScreenContainer
-      headerTitle="Detalhes do Pacote"
+      headerTitle={t("packages.details.title")}
       withGradientBackground
     >
       <View style={styles.container}>
@@ -48,10 +59,11 @@ export default function PackageDetailsScreen() {
         >
           <View style={styles.detailHeader}>
             <Text style={styles.detailTitle}>
-              Código: {packageData.code}
+              {t("packages.code")}: {packageData.code}
             </Text>
+
             <Button
-              title="Alterar status"
+              title={t("packages.details.changeStatus")}
               onPress={() =>
                 updateStatusModalRef.current?.present()
               }
@@ -59,29 +71,46 @@ export default function PackageDetailsScreen() {
               style={styles.button}
             />
           </View>
+
           <View style={styles.detailRow}>
-            <Text style={styles.detailText}>Status:</Text>
+            <Text style={styles.detailText}>
+              {t("common.status")}:
+            </Text>
+
             <Badge
-              label={packageData.status}
+              label={translatePackageStatus(
+                packageData.status,
+                t,
+              )}
               variant="status"
             />
           </View>
+
           <View style={styles.detailRow}>
-            <Text style={styles.detailText}>Delivery:</Text>
+            <Text style={styles.detailText}>
+              {t("common.delivery")}:
+            </Text>
+
             <Badge
-              label={packageData.deliveryStatus}
+              label={translateDeliveryStatus(
+                packageData.deliveryStatus,
+                t,
+              )}
               variant="delivery"
             />
           </View>
+
           {packageData.status === PackageStatus.ENTREGUE &&
-            packageData.receiverName && (
-              <Text style={styles.detailText}>
-                Recebedor: {packageData.receiverName}
-              </Text>
-            )}
+          packageData.receiverName ? (
+            <Text style={styles.detailText}>
+              {t("packages.details.receiver")}:{" "}
+              {packageData.receiverName}
+            </Text>
+          ) : null}
 
           <Text style={styles.detailText}>
-            Escaneado: {formatDate(packageData.scanned_at)}
+            {t("packages.scannedAt")}:{" "}
+            {formatDate(packageData.scanned_at, locale)}
           </Text>
         </Card>
       </View>

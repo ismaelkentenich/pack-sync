@@ -1,19 +1,21 @@
-import Button from "@components/primitives/Button";
-import Input from "@components/primitives/Input";
 import {
   ModalCloseIcon,
   ModalWrapper,
 } from "@components/composites/ModalWrapper";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Picker } from "@react-native-picker/picker";
+import Button from "@components/primitives/Button";
+import Input from "@components/primitives/Input";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Picker } from "@react-native-picker/picker";
+import { useShowAlert } from "@store/useAlertStore";
 import Theme from "@theme/theme";
 import React, { forwardRef, Ref, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
-import { useShowAlert } from "@store/useAlertStore";
 
 interface UpdateAllPackagesModalProps {
   handleCloseModal: () => void;
@@ -29,8 +31,12 @@ export default forwardRef(function UpdateAllPackagesModal(
   }: UpdateAllPackagesModalProps,
   ref: Ref<BottomSheetModal>,
 ) {
+  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
+
   const showAlert = useShowAlert((state) => state.show);
+
   const {
     currentSessionPackages,
     changeStatus,
@@ -41,12 +47,13 @@ export default forwardRef(function UpdateAllPackagesModal(
 
   const [selectedStatus, setSelectedStatus] =
     useState<PackageStatus>(PackageStatus.COLETADO);
+
   const [receiverName, setReceiverName] = useState("");
 
   const handleApplyToAll = async () => {
     if (currentSessionPackages.length === 0) {
       showAlert(
-        "Nenhum pacote bipado nesta sessão.",
+        t("packages.updateAll.emptySession"),
         "error",
       );
       return;
@@ -56,7 +63,10 @@ export default forwardRef(function UpdateAllPackagesModal(
       selectedStatus === PackageStatus.ENTREGUE &&
       !receiverName.trim()
     ) {
-      showAlert("Informe o nome do recebedor.", "error");
+      showAlert(
+        t("packages.updateStatus.receiverRequired"),
+        "error",
+      );
       return;
     }
 
@@ -84,16 +94,16 @@ export default forwardRef(function UpdateAllPackagesModal(
       }
 
       resetSession();
+
       loadPackages(userId);
 
       handleCloseModal();
-      showAlert(
-        "Status atualizado e pacotes enviados ao webhook!",
-        "success",
-      );
+
+      showAlert(t("packages.updateAll.success"), "success");
+
       onSuccessNavigate?.();
-    } catch (error) {
-      showAlert("Falha ao atualizar os pacotes.", "error");
+    } catch {
+      showAlert(t("packages.updateAll.error"), "error");
     }
   };
 
@@ -105,24 +115,30 @@ export default forwardRef(function UpdateAllPackagesModal(
       hasInputInsideModal
     >
       <ModalCloseIcon onPress={handleCloseModal} />
+
       <View
         style={[
           styles.container,
-          { paddingBottom: insets.bottom },
+          {
+            paddingBottom: insets.bottom,
+          },
         ]}
       >
         <Text style={styles.title}>
-          Alterar status de todos os pacotes
+          {t("packages.updateAll.title")}
         </Text>
+
         <Text style={styles.text}>
-          Pacotes bipados nesta sessão:{" "}
-          {currentSessionPackages.length}
+          {t("packages.updateAll.packagesInSession", {
+            count: currentSessionPackages.length,
+          })}
         </Text>
 
         <View style={styles.innerContainer}>
           <Text style={styles.text}>
-            Selecione o novo status:
+            {t("packages.updateAll.selectStatus")}
           </Text>
+
           <View style={styles.pickerWrapper}>
             <Picker
               selectedValue={selectedStatus}
@@ -138,7 +154,10 @@ export default forwardRef(function UpdateAllPackagesModal(
                 (status) => (
                   <Picker.Item
                     key={status}
-                    label={status}
+                    label={translatePackageStatus(
+                      status,
+                      t,
+                    )}
                     value={status}
                     style={styles.pickerLabel}
                   />
@@ -147,22 +166,26 @@ export default forwardRef(function UpdateAllPackagesModal(
             </Picker>
           </View>
         </View>
-        {selectedStatus === PackageStatus.ENTREGUE && (
+
+        {selectedStatus === PackageStatus.ENTREGUE ? (
           <View style={styles.innerContainer}>
             <Text style={styles.text}>
-              Nome do recebedor:
+              {t("packages.updateStatus.receiverName")}
             </Text>
+
             <Input
-              placeholder="Ex: João da Silva"
+              placeholder={t(
+                "packages.updateStatus.receiverPlaceholder",
+              )}
               value={receiverName}
               onChangeText={setReceiverName}
             />
           </View>
-        )}
+        ) : null}
 
         <View style={styles.buttonContainer}>
           <Button
-            title="Atualizar e sincronizar"
+            title={t("packages.actions.updateAndSync")}
             onPress={handleApplyToAll}
           />
         </View>
