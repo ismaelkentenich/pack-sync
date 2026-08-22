@@ -3,7 +3,7 @@ import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   container: {
-    height: 56,
+    height: Theme.sizing.control.lg,
     backgroundColor: Theme.colors.primary[600],
     flexDirection: "row",
     alignItems: "center",
@@ -12,11 +12,11 @@ export const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    left: 12,
+    left: Theme.spacing.sm,
     padding: Theme.spacing.xs,
   },
   placeholder: {
-    width: 32,
+    width: Theme.sizing.icon.lg,
   },
   title: {
     color: Theme.colors.neutral[50],
@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
   },
   logoutButton: {
     position: "absolute",
-    right: 12,
+    right: Theme.spacing.sm,
     padding: Theme.spacing.xs,
   },
 });

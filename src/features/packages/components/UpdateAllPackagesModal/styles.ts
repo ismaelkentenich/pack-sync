@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     borderColor: Theme.colors.neutral[300],
     borderRadius: Theme.radius.xxs,
     overflow: "hidden",
-    height: 48,
+    height: Theme.sizing.control.md,
   },
   pickerContainer: {
     color: Theme.colors.neutral[800],
