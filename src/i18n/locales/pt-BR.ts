@@ -21,11 +21,14 @@ export const ptBR = {
 
   auth: {
     login: {
-      title: "Login",
-      emailPlaceholder: "Digite seu e-mail",
+      title: "Bem-vindo de volta.",
+      description:
+        "Entre para continuar gerenciando suas entregas.",
+      emailPlaceholder: "Digite seu email",
       passwordPlaceholder: "Digite sua senha",
-      submit: "Login",
-      signup: "Cadastrar",
+      submit: "Entrar",
+      signup: "Criar conta",
+      noAccount: "Ainda não possui uma conta?",
     },
 
     signup: {

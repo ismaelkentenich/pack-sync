@@ -21,11 +21,14 @@ export const enUS = {
 
   auth: {
     login: {
-      title: "Login",
+      title: "Welcome back.",
+      description:
+        "Sign in to continue managing your deliveries.",
       emailPlaceholder: "Enter your email",
       passwordPlaceholder: "Enter your password",
-      submit: "Login",
-      signup: "Sign up",
+      submit: "Sign in",
+      signup: "Create account",
+      noAccount: "Don't have an account yet?",
     },
 
     signup: {
