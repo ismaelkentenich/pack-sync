@@ -95,7 +95,7 @@ export default function ScanScreen() {
 
       scannedCodesRef.current.add(data);
 
-      void scanPackage(data, userId);
+      scanPackage(data, userId);
     },
     [scanPackage, userId],
   );
@@ -232,9 +232,7 @@ export default function ScanScreen() {
                       return;
                     }
 
-                    void sendAllCurrentSessionPackages(
-                      userId,
-                    );
+                    sendAllCurrentSessionPackages(userId);
                   }}
                 />
               </View>
