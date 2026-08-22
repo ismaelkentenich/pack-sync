@@ -41,6 +41,8 @@ export function ScreenContainer({
   withStatusBar = true,
   statusBarColor = Theme.colors.primary[600],
   statusBarStyle = "dark-content",
+  withSafeArea = true,
+  safeAreaEdges = ["top", "bottom"],
   backgroundColorVariant = "neutral50",
   withGradientBackground = false,
   style,
@@ -76,10 +78,53 @@ export function ScreenContainer({
     </View>
   );
 
+  const screenContent = (
+    <KeyboardAvoidingView
+      testID="screenContainerKeyboardAvoiding"
+      style={styles.keyboardAvoiding}
+      behavior={
+        Platform.OS === "ios" ? "padding" : "height"
+      }
+      enabled={withKeyboardAvoiding}
+    >
+      {withHeader ? (
+        <Header
+          title={headerTitle}
+          showBack={showBackButton}
+          showLogout={showLogout}
+        />
+      ) : null}
+
+      {content}
+
+      {withGradientBackground ? (
+        <LinearGradient
+          testID="screenContainerGradient"
+          pointerEvents="none"
+          colors={[
+            Theme.colors.primary[600],
+            "transparent",
+          ]}
+          style={[
+            styles.background,
+            {
+              top: gradientTop,
+            },
+          ]}
+        />
+      ) : null}
+    </KeyboardAvoidingView>
+  );
+
   return (
     <View
       testID={testID ?? "screenContainerRoot"}
-      style={styles.root}
+      style={[
+        styles.root,
+        {
+          backgroundColor,
+        },
+      ]}
     >
       {withStatusBar ? (
         <StatusBar
@@ -89,52 +134,34 @@ export function ScreenContainer({
         />
       ) : null}
 
-      <SafeAreaView
-        testID="screenContainerSafeArea"
-        style={[
-          styles.container,
-          {
-            backgroundColor,
-          },
-          style,
-        ]}
-      >
-        <KeyboardAvoidingView
-          testID="screenContainerKeyboardAvoiding"
-          style={styles.keyboardAvoiding}
-          behavior={
-            Platform.OS === "ios" ? "padding" : "height"
-          }
-          enabled={withKeyboardAvoiding}
+      {withSafeArea ? (
+        <SafeAreaView
+          testID="screenContainerSafeArea"
+          style={[
+            styles.safeArea,
+            {
+              backgroundColor,
+            },
+            style,
+          ]}
+          edges={safeAreaEdges}
         >
-          {withHeader ? (
-            <Header
-              title={headerTitle}
-              showBack={showBackButton}
-              showLogout={showLogout}
-            />
-          ) : null}
-
-          {content}
-
-          {withGradientBackground ? (
-            <LinearGradient
-              testID="screenContainerGradient"
-              pointerEvents="none"
-              colors={[
-                Theme.colors.primary[600],
-                "transparent",
-              ]}
-              style={[
-                styles.background,
-                {
-                  top: gradientTop,
-                },
-              ]}
-            />
-          ) : null}
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+          {screenContent}
+        </SafeAreaView>
+      ) : (
+        <View
+          testID="screenContainerUnsafeArea"
+          style={[
+            styles.unsafeArea,
+            {
+              backgroundColor,
+            },
+            style,
+          ]}
+        >
+          {screenContent}
+        </View>
+      )}
     </View>
   );
 }

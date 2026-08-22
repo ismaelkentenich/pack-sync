@@ -6,7 +6,11 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
-  container: {
+  safeArea: {
+    flex: 1,
+  },
+
+  unsafeArea: {
     flex: 1,
   },
 

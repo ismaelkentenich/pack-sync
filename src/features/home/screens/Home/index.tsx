@@ -40,6 +40,7 @@ export default function HomeScreen() {
       scrollable
       backgroundColorVariant="neutral100"
       contentContainerStyle={styles.screenContent}
+      safeAreaEdges={["top"]}
     >
       <HomeHeader
         greeting={t("home.greeting")}
