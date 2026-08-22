@@ -191,18 +191,20 @@ export const usePackageStore = create<PackageState>(
     resetSession: () => set({ currentSessionPackages: [] }),
 
     sendPackage: async (pkg, receiverName?: string) => {
-      const result =
-        await packageService.sendPackageToWebhook(
-          pkg,
-          receiverName,
-        );
+      const result = await packageService.syncPackage(
+        pkg,
+        receiverName,
+      );
+
       const { user } = useAuthStore.getState();
+
       if (user?.id) {
         get().loadPackages();
       }
+
       if (!result.success) {
         console.warn(
-          `Falha ao enviar pacote ${pkg.code}, mantido como pendente.`,
+          `Falha ao sincronizar pacote ${pkg.code}, mantido como pendente.`,
         );
       }
     },

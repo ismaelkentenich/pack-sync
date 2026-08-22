@@ -14,7 +14,6 @@ O Pack Sync é uma solução completa de gerenciamento de pacotes desenvolvida p
 - **🔐 Autenticação Firebase** - Autenticação segura de usuários e gerenciamento de sessão
 - **📊 Rastreamento de Pacotes** - Rastreamento completo do ciclo de vida da entrega, da coleta à entrega
 
-
 ## ⚙️ Instruções de Instalação
 
 ### Pré-requisitos
@@ -28,12 +27,14 @@ O Pack Sync é uma solução completa de gerenciamento de pacotes desenvolvida p
 ### Configuração
 
 1. **Clone o repositório**
+
    ```bash
    git clone https://github.com/ismaelkentenich/pack-sync.git
    cd pack-sync
    ```
 
 2. **Instale as dependências**
+
    ```bash
    npm install
    ```
@@ -80,6 +81,7 @@ FIREBASE_APP_ID=1:000000000000:web:0000000000000000000000
 ### Inicialização do Banco de Dados
 
 O banco de dados SQLite é automaticamente inicializado no primeiro lançamento da aplicação. A configuração cria:
+
 - Tabela **packages** para dados de pacotes
 - Tabela **user_sessions** para estado de autenticação
 - Migrações automáticas e atualizações de schema
@@ -90,7 +92,7 @@ O banco de dados SQLite é automaticamente inicializado no primeiro lançamento 
 2. Copie sua URL única do webhook
 3. Atualize `WEBSOCKET_URL` no seu arquivo `.env`
 4. Reinicie o servidor de desenvolvimento
-5. Teste a entrega do webhook através da funcionalidade "Enviar para Webhook" da aplicação
+5. Teste a entrega do webhook através da funcionalidade "Sincronizar" da aplicação
 
 ## 🧱 Estrutura do Projeto
 
@@ -152,22 +154,26 @@ src/
 ### Principais Escolhas Tecnológicas
 
 **SQLite para Persistência Offline**
+
 - Escolhido para armazenamento confiável de dados offline-first
 - Permite funcionalidade completa da aplicação sem conectividade com internet
 
 **Zustand para Gerenciamento de Estado**
+
 - Alternativa leve ao Redux com boilerplate mínimo
 - Design TypeScript-first com excelente inferência de tipos
 - API simples adequada para desenvolvimento React Native
 - Re-renderização eficiente com subscrições baseadas em seletores
 
 **Expo Camera para Escaneamento**
+
 - Escaneamento cross-platform de códigos de barras e QR
 - Performance otimizada para escaneamento em tempo real
 - Tratamento integrado de permissões de câmera
 - Suporte para múltiplos formatos de código de barras
 
 **Arquitetura Offline-First**
+
 - Banco de dados SQLite local como única fonte da verdade
 - Fila de sincronização em background para entrega de webhook
 - Tratamento elegante de problemas de conectividade de rede
@@ -179,7 +185,7 @@ Durante o desenvolvimento, busquei expandir minhas experiências técnicas e exp
 
 Escolhi SQLite e Zustand para sair da zona de conforto e experimentar ferramentas diferentes do Redux, que é o gerenciador de estado que mais utilizo atualmente.
 
- Essa escolha me permitiu entender melhor os conceitos de persistência offline, arquitetura reativa leve e sincronização de dados, além de aprimorar minha visão sobre performance e simplicidade de estado em projetos React Native.
+Essa escolha me permitiu entender melhor os conceitos de persistência offline, arquitetura reativa leve e sincronização de dados, além de aprimorar minha visão sobre performance e simplicidade de estado em projetos React Native.
 
 ## 🔗 Configuração do Webhook
 
@@ -196,7 +202,7 @@ Escolhi SQLite e Zustand para sair da zona de conforto e experimentar ferramenta
 3. **Testar entrega do webhook**
    - Escaneie um pacote na aplicação
    - Mude seu status para "Entregue" e insira o nome do destinatário
-   - Toque no botão "Enviar para Webhook"
+   - Toque no botão "Sincronizar"
    - Observe o payload no webhook.site
 
 ### Estrutura do Payload do Webhook
@@ -214,6 +220,7 @@ A aplicação envia a seguinte estrutura de payload JSON:
 ```
 
 **Descrição dos Campos:**
+
 - `code`: Identificador do código de barras/QR do pacote
 - `clientName`: Nome do destinatário (incluído apenas quando status é "Entregue")
 - `status`: Status atual do pacote (veja definições de status abaixo)
@@ -225,16 +232,19 @@ A aplicação envia a seguinte estrutura de payload JSON:
 ### Fluxo de Status do Pacote
 
 **Coletado**
+
 - O pacote foi coletado do remetente
 - Status inicial quando o pacote entra no sistema
 - Pronto para processamento de trânsito
 
 **Em rota de entrega**
+
 - O pacote está em trânsito para o destino final
 - Atribuído ao veículo/entregador de entrega
 - Entrega esperada dentro do prazo/dia atual
 
 **Entregue**
+
 - Pacote entregue com sucesso ao destinatário
 - Requer confirmação do nome do destinatário
 - Status final no ciclo de vida da entrega
@@ -242,11 +252,13 @@ A aplicação envia a seguinte estrutura de payload JSON:
 ### Estados de Status de Entrega
 
 **pending**
+
 - Dados do pacote ainda não enviados para webhook
 - Enfileirado para próxima operação de sincronização
 - Exibido com indicador pendente na UI
 
 **sent**
+
 - Dados do pacote transmitidos com sucesso para webhook
 - Notificação de entrega confirmada enviada
 - Marcado com indicador de sucesso na aplicação
@@ -288,7 +300,7 @@ A aplicação envia a seguinte estrutura de payload JSON:
 6. **Integração com Webhook**
    - Sincronização de pacote individual:
      - Abra detalhes do pacote
-     - Toque no botão "Enviar para Webhook"
+     - Toque no botão "Sincronizar"
      - Observe mudança de status de "pending" para "sent"
    - Sincronização em lote:
      - Use função "Enviar Todos" para pacotes da sessão atual
@@ -298,7 +310,6 @@ A aplicação envia a seguinte estrutura de payload JSON:
    - Reinicie a sessão atual para limpar lista temporária de pacotes
    - Mantenha histórico persistente de pacotes através das sessões
    - Revise performance de entrega e estatísticas
-
 
 ## 🧭 Próximos Passos
 
@@ -315,5 +326,3 @@ A aplicação envia a seguinte estrutura de payload JSON:
 ## 📄 Licença
 
 Este projeto é privado e proprietário. Todos os direitos reservados.
-
-

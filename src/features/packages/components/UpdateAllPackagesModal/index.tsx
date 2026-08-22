@@ -154,7 +154,7 @@ export default forwardRef(function UpdateAllPackagesModal(
 
         <View style={styles.buttonContainer}>
           <Button
-            title="Aplicar e Enviar ao Webhook"
+            title="Atualizar e sincronizar"
             onPress={handleApplyToAll}
           />
         </View>

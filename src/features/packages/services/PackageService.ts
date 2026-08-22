@@ -4,7 +4,7 @@ import {
 } from "@features/packages/domain/package.enums";
 import { PackageRepository } from "@features/packages/domain/package.repository";
 import { Package } from "@features/packages/domain/package.types";
-import { sendToWebhook } from "@infrastructure/webhook/sendToWebhook";
+import { PackageSyncGateway } from "@features/packages/domain/package-sync.gateway";
 
 export type ServiceResult<T = void> = {
   success: boolean;
@@ -15,6 +15,7 @@ export type ServiceResult<T = void> = {
 export class PackageService {
   constructor(
     private readonly packageRepository: PackageRepository,
+    private readonly packageSyncGateway: PackageSyncGateway,
   ) {}
 
   async scanPackage(
@@ -64,7 +65,7 @@ export class PackageService {
     );
   }
 
-  async sendPackageToWebhook(
+  async syncPackage(
     pkg: Package,
     receiverName?: string,
   ): Promise<ServiceResult> {
@@ -76,12 +77,15 @@ export class PackageService {
     }
 
     try {
-      const result = await sendToWebhook(pkg, receiverName);
+      const result = await this.packageSyncGateway.send(
+        pkg,
+        receiverName,
+      );
 
       if (!result.success) {
         return {
           success: false,
-          error: `Falha ao enviar pacote ${pkg.code}`,
+          error: `Falha ao sincronizar pacote ${pkg.code}`,
         };
       }
 
@@ -101,7 +105,7 @@ export class PackageService {
 
       return {
         success: false,
-        error: `Erro ao enviar pacote: ${message}`,
+        error: `Erro ao sincronizar pacote: ${message}`,
       };
     }
   }
@@ -119,7 +123,7 @@ export class PackageService {
     let failed = 0;
 
     for (const pkg of packages) {
-      const result = await this.sendPackageToWebhook(
+      const result = await this.syncPackage(
         pkg,
         receiverName,
       );
@@ -163,7 +167,7 @@ export class PackageService {
     let syncedCount = 0;
 
     for (const pkg of pendingPackages) {
-      const result = await this.sendPackageToWebhook(pkg);
+      const result = await this.syncPackage(pkg);
 
       if (result.success) {
         syncedCount += 1;

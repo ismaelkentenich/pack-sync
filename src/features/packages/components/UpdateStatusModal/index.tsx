@@ -156,7 +156,7 @@ export default forwardRef(function UpdateStatusModal(
             onPress={handleUpdate}
           />
           <Button
-            title="Enviar para Webhook"
+            title="Sincronizar"
             onPress={handleSendWebhook}
             variant="outline"
           />
