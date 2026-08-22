@@ -35,7 +35,7 @@ export default function Button({
   textStyle,
   ...rest
 }: ButtonProps) {
-  const { colors, fontSizes, radius } = Theme;
+  const { colors, typography, radius } = Theme;
 
   const backgroundColor =
     variant === "primary"
@@ -61,10 +61,10 @@ export default function Button({
 
   const fontSize =
     size === "sm"
-      ? fontSizes.sm
+      ? typography.size.sm
       : size === "lg"
-        ? fontSizes.lg
-        : fontSizes.md;
+        ? typography.size.lg
+        : typography.size.md;
 
   return (
     <TouchableOpacity

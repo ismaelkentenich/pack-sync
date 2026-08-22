@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import Theme from "@theme/legacy/legacyTheme";
+import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   container: {
@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     gap: 24,
   },
   userInfoText: {
-    fontSize: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.lg,
     textAlign: "center",
     color: Theme.colors.neutral[50],
     fontWeight: "600",
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   headerText: {
-    fontSize: Theme.fontSizes.xxxl,
+    fontSize: Theme.typography.size.xxxl,
     textAlign: "center",
     color: Theme.colors.neutral[50],
     fontWeight: "700",

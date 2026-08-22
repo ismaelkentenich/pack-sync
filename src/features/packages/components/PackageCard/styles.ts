@@ -23,13 +23,13 @@ export const styles = StyleSheet.create({
   },
   text: {
     color: Theme.colors.neutral[700],
-    fontSize: Theme.fontSizes.sm,
-    lineHeight: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.md,
   },
   codeText: {
     color: Theme.colors.neutral[700],
-    fontSize: Theme.fontSizes.sm,
-    lineHeight: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.md,
     fontWeight: "600",
   },
   buttonContainer: {

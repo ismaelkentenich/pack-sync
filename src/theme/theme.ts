@@ -14,9 +14,7 @@ const Theme = {
     error: palette.red,
   },
 
-  fontSizes: typography.size,
-  fontWeights: typography.weight,
-
+  typography,
   spacing,
   radius,
   sizing,

@@ -12,13 +12,13 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.lg,
     fontWeight: "bold",
     color: Theme.colors.neutral[800],
   },
   text: {
     color: Theme.colors.neutral[800],
-    fontSize: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.md,
   },
   pickerWrapper: {
     borderWidth: 1,
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     height: 48,
   },
   pickerLabel: {
-    fontSize: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.md,
     color: Theme.colors.neutral[800],
   },
   buttonContainer: {

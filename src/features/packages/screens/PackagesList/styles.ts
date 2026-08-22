@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   emptyScreenText: {
     textAlign: "center",
     color: Theme.colors.neutral[700],
-    fontSize: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.md,
   },
   card: {
     flex: 1,
@@ -22,8 +22,8 @@ export const styles = StyleSheet.create({
   },
   cardText: {
     color: Theme.colors.neutral[700],
-    fontSize: Theme.fontSizes.sm,
-    lineHeight: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.md,
   },
 
   flatlistContainer: {
@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
   },
 
   pickerLabel: {
-    fontSize: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.md,
     color: Theme.colors.neutral[700],
     height: "100%",
   },

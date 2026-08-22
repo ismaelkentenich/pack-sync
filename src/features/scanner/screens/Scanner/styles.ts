@@ -37,12 +37,12 @@ export const styles = StyleSheet.create({
   },
   infoText: {
     fontWeight: "600",
-    fontSize: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.lg,
     color: Theme.colors.neutral[900],
   },
   infoTouchableText: {
     fontWeight: "400",
-    fontSize: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.md,
     color: Theme.colors.primary[600],
   },
   scannedItemContainer: {
@@ -50,8 +50,8 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
   scannedItemText: {
-    fontSize: Theme.fontSizes.sm,
-    lineHeight: Theme.fontSizes.md,
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.md,
     color: Theme.colors.neutral[700],
   },
   flatlistContainer: {
@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   noPermissionTitle: {
-    fontSize: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.lg,
     fontWeight: "500",
     color: Theme.colors.neutral[900],
     textAlign: "center",
@@ -109,7 +109,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   emptyText: {
-    fontSize: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.lg,
     fontWeight: "500",
     color: Theme.colors.neutral[900],
     textAlign: "center",

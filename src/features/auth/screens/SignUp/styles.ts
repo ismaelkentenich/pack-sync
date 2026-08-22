@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     gap: 24,
   },
   text: {
-    fontSize: Theme.fontSizes.xxl,
+    fontSize: Theme.typography.size.xxl,
     fontWeight: "bold",
     textAlign: "center",
   },

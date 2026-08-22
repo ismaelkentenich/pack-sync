@@ -12,15 +12,15 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.lg,
     fontWeight: "bold",
     color: Theme.colors.neutral[800],
-    lineHeight: Theme.fontSizes.xl,
+    lineHeight: Theme.typography.lineHeight.xl,
   },
   text: {
     color: Theme.colors.neutral[800],
-    fontSize: Theme.fontSizes.md,
-    lineHeight: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.md,
+    lineHeight: Theme.typography.lineHeight.lg,
   },
   pickerWrapper: {
     borderWidth: 1,
@@ -38,8 +38,8 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   pickerLabel: {
-    fontSize: Theme.fontSizes.md,
-    lineHeight: Theme.fontSizes.lg,
+    fontSize: Theme.typography.size.md,
+    lineHeight: Theme.typography.lineHeight.lg,
     color: Theme.colors.neutral[800],
     alignItems: "center",
     justifyContent: "center",
