@@ -162,5 +162,9 @@ export const ptBR = {
       showPassword: "Mostrar senha",
       hidePassword: "Ocultar senha",
     },
+    header: {
+      back: "Voltar",
+      logout: "Sair",
+    },
   },
 } as const;

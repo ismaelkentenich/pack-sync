@@ -6,7 +6,7 @@ import { ScreenContainer } from "../ScreenContainer";
 jest.mock("@components/composites/Header", () => {
   const { Text } = jest.requireActual("react-native");
 
-  return function MockHeader({
+  function MockHeader({
     title,
     showBack,
     showLogout,
@@ -27,6 +27,10 @@ jest.mock("@components/composites/Header", () => {
         {title}
       </Text>
     );
+  }
+
+  return {
+    Header: MockHeader,
   };
 });
 

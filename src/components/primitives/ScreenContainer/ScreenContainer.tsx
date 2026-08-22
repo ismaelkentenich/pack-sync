@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "@components/composites/Header";
+import { Header } from "@components/composites/Header";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
 import type {
