@@ -83,6 +83,7 @@ export default function LoginScreen() {
       scrollable
       backgroundColorVariant="neutral100"
       contentContainerStyle={styles.screenContent}
+      withSafeArea={false}
     >
       <View
         testID="loginDecoration"

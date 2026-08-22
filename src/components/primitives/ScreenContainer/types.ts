@@ -4,6 +4,7 @@ import type {
   StyleProp,
   ViewStyle,
 } from "react-native";
+import type { Edge } from "react-native-safe-area-context";
 
 export type ScreenBackgroundVariant =
   "neutral50" | "neutral100";
@@ -24,6 +25,9 @@ export type ScreenContainerProps = {
   withStatusBar?: boolean;
   statusBarColor?: string;
   statusBarStyle?: StatusBarStyle;
+
+  withSafeArea?: boolean;
+  safeAreaEdges?: Edge[];
 
   backgroundColorVariant?: ScreenBackgroundVariant;
 

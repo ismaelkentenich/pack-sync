@@ -96,6 +96,7 @@ export default function SignupScreen() {
       withKeyboardAvoiding
       backgroundColorVariant="neutral100"
       contentContainerStyle={styles.screenContent}
+      withSafeArea={false}
     >
       <View
         testID="signupDecoration"

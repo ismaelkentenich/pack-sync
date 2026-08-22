@@ -307,6 +307,57 @@ describe("ScreenContainer", () => {
         paddingHorizontal: 24,
       });
     });
+
+    it("applies custom container styles without safe area", () => {
+      const { getByTestId } = render(
+        <ScreenContainer
+          withSafeArea={false}
+          style={{
+            paddingTop: 20,
+          }}
+        >
+          <Text>Content</Text>
+        </ScreenContainer>,
+      );
+
+      expect(
+        getByTestId("screenContainerUnsafeArea"),
+      ).toHaveStyle({
+        paddingTop: 20,
+      });
+    });
+
+    it("uses safe area by default", () => {
+      const { getByTestId, queryByTestId } = render(
+        <ScreenContainer>
+          <Text>Content</Text>
+        </ScreenContainer>,
+      );
+
+      expect(
+        getByTestId("screenContainerSafeArea"),
+      ).toBeTruthy();
+
+      expect(
+        queryByTestId("screenContainerUnsafeArea"),
+      ).toBeNull();
+    });
+
+    it("can disable safe area", () => {
+      const { getByTestId, queryByTestId } = render(
+        <ScreenContainer withSafeArea={false}>
+          <Text>Content</Text>
+        </ScreenContainer>,
+      );
+
+      expect(
+        getByTestId("screenContainerUnsafeArea"),
+      ).toBeTruthy();
+
+      expect(
+        queryByTestId("screenContainerSafeArea"),
+      ).toBeNull();
+    });
   });
 
   describe("keyboard", () => {
