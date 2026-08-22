@@ -10,7 +10,7 @@ import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import Theme from "@theme/theme";
 import React, { forwardRef, Ref, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import { useShowAlert } from "@store/useAlertStore";
@@ -70,12 +70,16 @@ export default forwardRef(function UpdateAllPackagesModal(
             ? receiverName
             : undefined,
         );
+
         await sendPackage(
           {
             ...pkg,
             status: selectedStatus,
           },
-          receiverName,
+          userId,
+          selectedStatus === PackageStatus.ENTREGUE
+            ? receiverName
+            : undefined,
         );
       }
 
