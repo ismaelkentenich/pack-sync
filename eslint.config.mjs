@@ -50,8 +50,13 @@ export default [
       },
 
       "import/resolver": {
-        typescript: true,
+        typescript: {
+          project: "./tsconfig.json",
+        },
       },
+
+      "import/internal-regex":
+        "^@(app|assets|components|features|hooks|utils|theme|store|infrastructure|i18n|types|test)(/|$)",
     },
 
     rules: {
@@ -64,6 +69,7 @@ export default [
       "react/prop-types": "off",
 
       "@typescript-eslint/no-explicit-any": "warn",
+
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
@@ -83,19 +89,74 @@ export default [
             "builtin",
             "external",
             "internal",
-            "parent",
-            "sibling",
-            "index",
+            ["parent", "sibling", "index"],
             "object",
             "type",
           ],
 
-          "newlines-between": "never",
+          pathGroups: [
+            {
+              pattern: "@app/**",
+              group: "internal",
+            },
+            {
+              pattern: "@assets/**",
+              group: "internal",
+            },
+            {
+              pattern: "@components/**",
+              group: "internal",
+            },
+            {
+              pattern: "@features/**",
+              group: "internal",
+            },
+            {
+              pattern: "@hooks/**",
+              group: "internal",
+            },
+            {
+              pattern: "@i18n/**",
+              group: "internal",
+            },
+            {
+              pattern: "@infrastructure/**",
+              group: "internal",
+            },
+            {
+              pattern: "@store/**",
+              group: "internal",
+            },
+            {
+              pattern: "@test",
+              group: "internal",
+            },
+            {
+              pattern: "@test/**",
+              group: "internal",
+            },
+            {
+              pattern: "@theme/**",
+              group: "internal",
+            },
+            {
+              pattern: "@types/**",
+              group: "internal",
+            },
+            {
+              pattern: "@utils/**",
+              group: "internal",
+            },
+          ],
+
+          pathGroupsExcludedImportTypes: ["builtin"],
 
           alphabetize: {
             order: "asc",
             caseInsensitive: true,
           },
+
+          "newlines-between": "never",
         },
       ],
 

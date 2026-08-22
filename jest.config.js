@@ -3,6 +3,8 @@ module.exports = {
 
   clearMocks: true,
 
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+
   moduleNameMapper: {
     "^@app/(.*)$": "<rootDir>/src/app/$1",
     "^@assets/(.*)$": "<rootDir>/src/assets/$1",
@@ -16,6 +18,8 @@ module.exports = {
       "<rootDir>/src/infrastructure/$1",
     "^@i18n/(.*)$": "<rootDir>/src/i18n/$1",
     "^@types/(.*)$": "<rootDir>/src/types/$1",
+    "^@test$": "<rootDir>/src/test/index.ts",
+    "^@test/(.*)$": "<rootDir>/src/test/$1",
   },
 
   collectCoverageFrom: [
