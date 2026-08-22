@@ -15,6 +15,7 @@ import Card from "@components/primitives/Card";
 import Badge from "@components/primitives/Badge";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { formatDate } from "@utils/date";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 
 type PackageDetailsRouteProp = RouteProp<
   RootStackParamList,
@@ -22,6 +23,8 @@ type PackageDetailsRouteProp = RouteProp<
 >;
 
 export default function PackageDetailsScreen() {
+  const userId = useAuthStore((state) => state.user?.id);
+
   const updateStatusModalRef =
     useRef<BottomSheetModal>(null);
   const { params } = useRoute<PackageDetailsRouteProp>();
@@ -83,13 +86,16 @@ export default function PackageDetailsScreen() {
         </Card>
       </View>
 
-      <UpdateStatusModal
-        ref={updateStatusModalRef}
-        handleCloseModal={() =>
-          updateStatusModalRef.current?.close()
-        }
-        packageData={packageData}
-      />
+      {userId ? (
+        <UpdateStatusModal
+          ref={updateStatusModalRef}
+          handleCloseModal={() =>
+            updateStatusModalRef.current?.close()
+          }
+          packageData={packageData}
+          userId={userId}
+        />
+      ) : null}
     </ScreenContainer>
   );
 }

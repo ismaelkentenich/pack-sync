@@ -24,9 +24,13 @@ import { Package } from "@features/packages/domain/package.types";
 import UpdateStatusModal from "@features/packages/components/UpdateStatusModal";
 import { Picker } from "@react-native-picker/picker";
 import { PackageStatus } from "@features/packages/domain/package.enums";
+import { useAuthStore } from "@features/auth/store/useAuthStore";
 
 export default function PackagesListScreen() {
   const navigation = useAppNavigation("PackagesList");
+
+  const userId = useAuthStore((state) => state.user?.id);
+
   const updateStatusModalRef =
     useRef<BottomSheetModal>(null);
   const {
@@ -48,14 +52,20 @@ export default function PackagesListScreen() {
     useState<Package | null>(null);
 
   const handleRefresh = useCallback(async () => {
+    if (!userId) {
+      return;
+    }
     setRefreshing(true);
-    await loadPackages();
+    loadPackages(userId);
     setRefreshing(false);
-  }, [loadPackages]);
+  }, [loadPackages, userId]);
 
   useEffect(() => {
-    loadPackages();
-  }, []);
+    if (!userId) {
+      return;
+    }
+    loadPackages(userId);
+  }, [loadPackages, userId]);
 
   const handleOpenUpdateModal = (pkg: Package) => {
     setSelectedPackage(pkg);
@@ -159,15 +169,16 @@ export default function PackagesListScreen() {
         )}
       </View>
 
-      {selectedPackage && (
+      {selectedPackage && userId ? (
         <UpdateStatusModal
           ref={updateStatusModalRef}
           handleCloseModal={() =>
             updateStatusModalRef.current?.close()
           }
           packageData={selectedPackage}
+          userId={userId}
         />
-      )}
+      ) : null}
     </ScreenContainer>
   );
 }
