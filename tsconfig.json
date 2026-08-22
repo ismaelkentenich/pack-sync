@@ -5,6 +5,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
+    "types": ["jest"],
     "paths": {
       "@app/*": ["./src/app/*"],
       "@assets/*": ["./src/assets/*"],
