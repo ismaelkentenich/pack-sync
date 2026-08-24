@@ -45,11 +45,4 @@ export const styles = StyleSheet.create({
     lineHeight: Theme.typography.lineHeight.md,
     fontWeight: Theme.typography.weight.semibold,
   },
-
-  logoutButton: {
-    width: Theme.sizing.control.sm,
-    height: Theme.sizing.control.sm,
-    alignItems: "center",
-    justifyContent: "center",
-  },
 });

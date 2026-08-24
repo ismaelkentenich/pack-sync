@@ -1,6 +1,7 @@
 import { ArrowRight, Package } from "lucide-react-native";
 import { Text, View } from "react-native";
 import { Card } from "@components/primitives/Card";
+import { moderateScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
 import type { HomeActionCardProps } from "./types";
@@ -33,7 +34,7 @@ export function HomeActionCard({
           <View style={styles.heroPackageIllustration}>
             <Package
               testID={`${testID}PackageIllustration`}
-              size={Theme.sizing.icon.lg}
+              size={moderateScale(Theme.sizing.icon.lg)}
               color={Theme.colors.neutral[900]}
             />
           </View>
@@ -49,8 +50,8 @@ export function HomeActionCard({
           >
             <Icon
               testID={`${testID}Icon`}
-              size={Theme.sizing.icon.lg}
-              color={Theme.colors.neutral[50]}
+              size={moderateScale(Theme.sizing.icon.lg)}
+              color={Theme.colors.neutral[100]}
             />
           </View>
         </View>

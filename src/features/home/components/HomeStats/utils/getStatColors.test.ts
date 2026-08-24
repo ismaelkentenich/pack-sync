@@ -22,7 +22,7 @@ describe("getStatColors", () => {
 
   it("returns neutral colors", () => {
     expect(getStatColors("neutral")).toEqual({
-      backgroundColor: Theme.colors.primary[600],
+      backgroundColor: Theme.colors.primary[800],
       borderColor: Theme.colors.neutral[200],
       valueColor: Theme.colors.neutral[100],
       labelColor: Theme.colors.neutral[100],

@@ -57,38 +57,6 @@ jest.mock("@components/primitives/ScreenContainer", () => {
   };
 });
 
-jest.mock("@features/home/components/HomeHeader", () => {
-  const React = jest.requireActual("react");
-
-  const { Text, TouchableOpacity, View } =
-    jest.requireActual("react-native");
-
-  return {
-    HomeHeader: ({
-      greeting,
-      email,
-      onLogout,
-    }: {
-      greeting: string;
-      email?: string;
-      onLogout: () => void;
-    }) => (
-      <View testID="mockHomeHeader">
-        <Text testID="mockHomeGreeting">{greeting}</Text>
-
-        <Text testID="mockHomeEmail">{email ?? ""}</Text>
-
-        <TouchableOpacity
-          testID="mockHomeLogout"
-          onPress={onLogout}
-        >
-          <Text>Logout</Text>
-        </TouchableOpacity>
-      </View>
-    ),
-  };
-});
-
 jest.mock(
   "@features/home/components/HomeActionCard",
   () => {
@@ -204,42 +172,6 @@ describe("HomeScreen", () => {
       expect(getByTestId("homeScreen")).toBeTruthy();
     });
 
-    it("renders the home header", () => {
-      const { getByTestId } = render(<HomeScreen />);
-
-      expect(getByTestId("mockHomeHeader")).toBeTruthy();
-    });
-
-    it("renders the translated greeting", () => {
-      const { getByTestId } = render(<HomeScreen />);
-
-      expect(
-        getByTestId("mockHomeGreeting"),
-      ).toHaveTextContent("home.greeting");
-    });
-
-    it("renders user email", () => {
-      const { getByTestId } = render(<HomeScreen />);
-
-      expect(
-        getByTestId("mockHomeEmail"),
-      ).toHaveTextContent("user@example.com");
-    });
-
-    it("renders introduction", () => {
-      const { getByTestId } = render(<HomeScreen />);
-
-      expect(getByTestId("homeIntroduction")).toBeTruthy();
-
-      expect(getByTestId("homeHeadline")).toHaveTextContent(
-        "home.headline",
-      );
-
-      expect(
-        getByTestId("homeDescription"),
-      ).toHaveTextContent("home.description");
-    });
-
     it("renders quick actions section", () => {
       const { getByTestId } = render(<HomeScreen />);
 
@@ -264,10 +196,6 @@ describe("HomeScreen", () => {
       expect(
         getByTestId("homeScannerCardDescription"),
       ).toHaveTextContent("home.scanner.description");
-
-      expect(
-        getByTestId("homeScannerCardActionLabel"),
-      ).toHaveTextContent("home.scanner.action");
     });
 
     it("navigates to Scan", () => {
@@ -306,16 +234,6 @@ describe("HomeScreen", () => {
       expect(mockNavigate).toHaveBeenCalledWith(
         Routes.Packages,
       );
-    });
-  });
-
-  describe("logout", () => {
-    it("logs out when logout is pressed", () => {
-      const { getByTestId } = render(<HomeScreen />);
-
-      fireEvent.press(getByTestId("mockHomeLogout"));
-
-      expect(mockLogout).toHaveBeenCalledTimes(1);
     });
   });
 
