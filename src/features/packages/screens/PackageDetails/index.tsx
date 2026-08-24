@@ -157,7 +157,7 @@ export default function PackageDetailsScreen() {
                 packageData.deliveryStatus,
                 t,
               )}
-              variant="warning"
+              variant="secondary"
               size="sm"
             />
           </View>

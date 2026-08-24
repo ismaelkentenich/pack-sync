@@ -66,10 +66,6 @@ export default function PackagesListScreen() {
     (state) => state.setStatusFilter,
   );
 
-  const filteredPackages = usePackageStore(
-    (state) => state.filteredPackages,
-  );
-
   const loadPackages = usePackageStore(
     (state) => state.loadPackages,
   );
@@ -82,7 +78,26 @@ export default function PackagesListScreen() {
   const [selectedPackage, setSelectedPackage] =
     useState<Package | null>(null);
 
-  const filteredData = filteredPackages();
+  const filteredData = useMemo(() => {
+    const normalizedSearchTerm = searchTerm
+      .trim()
+      .toLowerCase();
+
+    return packages.filter((pkg) => {
+      const matchesSearch =
+        normalizedSearchTerm.length === 0 ||
+        pkg.code
+          .toLowerCase()
+          .includes(normalizedSearchTerm);
+
+      const matchesStatus =
+        statusFilter === "" ||
+        statusFilter === "all" ||
+        pkg.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [packages, searchTerm, statusFilter]);
 
   const isAllStatus =
     statusFilter === "" || statusFilter === "all";
@@ -249,17 +264,19 @@ export default function PackagesListScreen() {
           testID="packagesListControls"
           style={styles.controls}
         >
-          <Input
-            testID="packagesListSearchInput"
-            placeholder={t(
-              "packages.list.searchPlaceholder",
-            )}
-            value={searchTerm}
-            onChangeText={setSearchTerm}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="search"
-          />
+          <View style={styles.searchWrapper}>
+            <Input
+              testID="packagesListSearchInput"
+              placeholder={t(
+                "packages.list.searchPlaceholder",
+              )}
+              value={searchTerm}
+              onChangeText={setSearchTerm}
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="search"
+            />
+          </View>
 
           <View
             testID="packagesListFiltersSection"
