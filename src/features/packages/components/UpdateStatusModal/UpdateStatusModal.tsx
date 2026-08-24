@@ -15,13 +15,11 @@ import {
   ModalCloseIcon,
   ModalWrapper,
 } from "@components/composites/ModalWrapper";
+import { Badge } from "@components/primitives/Badge/Badge";
 import { Button } from "@components/primitives/Button";
 import { Card } from "@components/primitives/Card";
 import { Input } from "@components/primitives/Input";
-import {
-  DeliveryStatus,
-  PackageStatus,
-} from "@features/packages/domain/package.enums";
+import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translateDeliveryStatus } from "@features/packages/utils/packageTranslations";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
@@ -165,11 +163,6 @@ export const UpdateStatusModal = forwardRef<
       return;
     }
 
-    /*
-     * Atualizamos o estado local imediatamente.
-     * Se o webhook falhar, o pacote continua corretamente
-     * salvo como pending para uma futura sincronização.
-     */
     loadPackages(userId);
 
     const syncResult = await sendPackage(
@@ -267,50 +260,34 @@ export const UpdateStatusModal = forwardRef<
         >
           <View style={styles.stateItem}>
             <Text
-              testID="updateStatusModalCurrentStatusLabel"
-              style={styles.stateLabel}
-            >
-              {t("packages.packageStatus")}
-            </Text>
-
-            <View
-              testID="updateStatusModalCurrentStatus"
-              style={styles.statusPill}
-            >
-              <Text
-                testID="updateStatusModalCurrentStatusText"
-                style={styles.statusPillText}
-              >
-                {translatedCurrentStatus}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.stateItem}>
-            <Text
               testID="updateStatusModalDeliveryStatusLabel"
               style={styles.stateLabel}
             >
               {t("packages.deliveryStatusLabel")}
             </Text>
 
-            <View
+            <Badge
               testID="updateStatusModalDeliveryStatus"
-              style={[
-                styles.deliveryPill,
-                packageData.deliveryStatus ===
-                DeliveryStatus.SENT
-                  ? styles.deliveryPillSent
-                  : styles.deliveryPillPending,
-              ]}
+              label={translatedDeliveryStatus}
+              variant="secondary"
+              labelTestID="updateStatusModalDeliveryStatusText"
+            />
+          </View>
+
+          <View style={styles.stateItem}>
+            <Text
+              testID="updateStatusModalCurrentStatusLabel"
+              style={styles.stateLabel}
             >
-              <Text
-                testID="updateStatusModalDeliveryStatusText"
-                style={styles.deliveryPillText}
-              >
-                {translatedDeliveryStatus}
-              </Text>
-            </View>
+              {t("packages.packageStatus")}
+            </Text>
+
+            <Badge
+              testID="updateStatusModalCurrentStatus"
+              label={translatedCurrentStatus}
+              variant="primary"
+              labelTestID="updateStatusModalCurrentStatusText"
+            />
           </View>
         </View>
 
@@ -409,7 +386,7 @@ export const UpdateStatusModal = forwardRef<
             testID="updateStatusModalUpdateButton"
             title={t("common.update")}
             variant="brand"
-            size="lg"
+            size="md"
             disabled={isSyncing}
             onPress={handleUpdate}
           />
@@ -418,7 +395,7 @@ export const UpdateStatusModal = forwardRef<
             testID="updateStatusModalSyncButton"
             title={t("packages.actions.updateAndSync")}
             variant="outline"
-            size="lg"
+            size="md"
             loading={isSyncing}
             disabled={isSyncing}
             onPress={handleUpdateAndSync}
