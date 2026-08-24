@@ -95,9 +95,17 @@ export const enUS = {
     scannedAt: "Scanned",
 
     details: {
-      title: "Package Details",
-      changeStatus: "Change status",
+      title: "Package details",
+      description: "Package information and tracking.",
+      currentStatus: "Current status",
+      synchronization: "Synchronization",
+      information: "Information",
+      code: "Code",
+      scannedAt: "Scanned at",
       receiver: "Receiver",
+      notAvailable: "Not provided",
+      actions: "Actions",
+      changeStatus: "Change status",
     },
 
     list: {

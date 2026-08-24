@@ -96,9 +96,18 @@ export const ptBR = {
     scannedAt: "Escaneado",
 
     details: {
-      title: "Detalhes do Pacote",
-      changeStatus: "Alterar status",
+      title: "Detalhes do pacote",
+      description:
+        "Informações e acompanhamento do pacote.",
+      currentStatus: "Status atual",
+      synchronization: "Sincronização",
+      information: "Informações",
+      code: "Código",
+      scannedAt: "Escaneado em",
       receiver: "Recebedor",
+      notAvailable: "Não informado",
+      actions: "Ações",
+      changeStatus: "Alterar status",
     },
 
     list: {
