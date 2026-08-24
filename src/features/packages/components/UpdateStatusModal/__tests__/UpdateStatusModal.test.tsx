@@ -16,12 +16,12 @@ const mockSendPackage = jest.fn();
 
 const mockShowAlert = jest.fn();
 
-let mockSyncingPackageIds: number[] = [];
+let mockSyncingPackageIds: string[] = [];
 
 const mockPackage: Package = {
-  id: 1,
+  id: "1",
   code: "PKG-001",
-  status: PackageStatus.COLETADO,
+  status: PackageStatus.COLLECTED,
   deliveryStatus: DeliveryStatus.PENDING,
   clientCode: "user-1",
   scanned_at: "2026-08-22T14:30:00.000Z",
@@ -117,7 +117,7 @@ jest.mock("@react-native-picker/picker", () => {
           testID="mockPickerSelectDelivered"
           disabled={enabled === false}
           onPress={() =>
-            onValueChange?.(MockPackageStatus.ENTREGUE)
+            onValueChange?.(MockPackageStatus.DELIVERED)
           }
         >
           <Text>Delivered</Text>
@@ -127,9 +127,7 @@ jest.mock("@react-native-picker/picker", () => {
           testID="mockPickerSelectRoute"
           disabled={enabled === false}
           onPress={() =>
-            onValueChange?.(
-              MockPackageStatus.EM_ROTA_DE_ENTREGA,
-            )
+            onValueChange?.(MockPackageStatus.IN_DELIVERY)
           }
         >
           <Text>Route</Text>
@@ -169,7 +167,7 @@ jest.mock(
         changeStatus: typeof mockChangeStatus;
         loadPackages: typeof mockLoadPackages;
         sendPackage: typeof mockSendPackage;
-        syncingPackageIds: number[];
+        syncingPackageIds: string[];
       }) => unknown,
     ) =>
       selector({
@@ -271,7 +269,7 @@ describe("UpdateStatusModal", () => {
       expect(
         getByTestId("updateStatusModalCurrentStatusText"),
       ).toHaveTextContent(
-        `status:${PackageStatus.COLETADO}`,
+        `status:${PackageStatus.COLLECTED}`,
       );
     });
 
@@ -294,19 +292,19 @@ describe("UpdateStatusModal", () => {
 
       expect(
         getByTestId(
-          `mockPickerItem-${PackageStatus.COLETADO}`,
+          `mockPickerItem-${PackageStatus.COLLECTED}`,
         ),
       ).toBeTruthy();
 
       expect(
         getByTestId(
-          `mockPickerItem-${PackageStatus.EM_ROTA_DE_ENTREGA}`,
+          `mockPickerItem-${PackageStatus.IN_DELIVERY}`,
         ),
       ).toBeTruthy();
 
       expect(
         getByTestId(
-          `mockPickerItem-${PackageStatus.ENTREGUE}`,
+          `mockPickerItem-${PackageStatus.DELIVERED}`,
         ),
       ).toBeTruthy();
     });
@@ -339,7 +337,7 @@ describe("UpdateStatusModal", () => {
 
       expect(
         getByTestId("mockPickerSelectedValue"),
-      ).toHaveTextContent(PackageStatus.COLETADO);
+      ).toHaveTextContent(PackageStatus.COLLECTED);
     });
 
     it("does not show receiver input by default", () => {
@@ -446,9 +444,9 @@ describe("UpdateStatusModal", () => {
       );
 
       expect(mockChangeStatus).toHaveBeenCalledWith(
-        1,
+        "1",
         "user-1",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
         undefined,
       );
     });
@@ -472,9 +470,9 @@ describe("UpdateStatusModal", () => {
       );
 
       expect(mockChangeStatus).toHaveBeenCalledWith(
-        1,
+        "1",
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "John Doe",
       );
     });
@@ -559,10 +557,10 @@ describe("UpdateStatusModal", () => {
 
       expect(mockSendPackage).toHaveBeenCalledWith(
         expect.objectContaining({
-          id: 1,
+          id: "1",
           code: "PKG-001",
 
-          status: PackageStatus.ENTREGUE,
+          status: PackageStatus.DELIVERED,
 
           deliveryStatus: DeliveryStatus.PENDING,
 
@@ -677,7 +675,7 @@ describe("UpdateStatusModal", () => {
 
   describe("syncing state", () => {
     beforeEach(() => {
-      mockSyncingPackageIds = [1];
+      mockSyncingPackageIds = ["1"];
     });
 
     it("shows syncing information", () => {

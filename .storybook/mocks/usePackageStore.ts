@@ -5,10 +5,10 @@ import type { Package } from "../../src/features/packages/domain/package.types";
 type MockPackageStore = {
   packages: Package[];
 
-  syncingPackageIds: number[];
+  syncingPackageIds: string[];
 
   changeStatus: (
-    id: number,
+    id: string,
     userId: string,
     status: PackageStatus,
     receiverName?: string,
@@ -25,7 +25,7 @@ type MockPackageStore = {
     success: boolean;
   }>;
 
-  setSyncingPackageIds: (ids: number[]) => void;
+  setSyncingPackageIds: (ids: string[]) => void;
 
   resetStorybookState: () => void;
 };

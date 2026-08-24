@@ -10,9 +10,9 @@ import { PackageCard } from "../PackageCard";
 import type { Package } from "@features/packages/domain/package.types";
 
 const mockPackage: Package = {
-  id: 1,
+  id: "1",
   code: "PKG-001",
-  status: PackageStatus.COLETADO,
+  status: PackageStatus.COLLECTED,
   deliveryStatus: DeliveryStatus.PENDING,
   clientCode: "user-1",
   scanned_at: "2026-08-22T14:30:00.000Z",
@@ -113,7 +113,7 @@ describe("PackageCard", () => {
       expect(
         getByTestId("packageCardStatusBadge"),
       ).toHaveTextContent(
-        `status:${PackageStatus.COLETADO}`,
+        `status:${PackageStatus.COLLECTED}`,
       );
     });
   });
@@ -323,7 +323,7 @@ describe("PackageCard", () => {
     it("renders a delivered package", () => {
       const deliveredPackage: Package = {
         ...mockPackage,
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.SENT,
         receiverName: "John Doe",
       };
@@ -344,7 +344,7 @@ describe("PackageCard", () => {
     it("renders an out-for-delivery package", () => {
       const routePackage: Package = {
         ...mockPackage,
-        status: PackageStatus.EM_ROTA_DE_ENTREGA,
+        status: PackageStatus.IN_DELIVERY,
       };
 
       const { getByTestId } = render(

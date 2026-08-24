@@ -7,7 +7,7 @@ import { Package } from "@features/packages/domain/package.types";
 import { packagesDb } from "./index";
 
 export class SQLitePackageRepository implements PackageRepository {
-  findById(id: number, userId: string): Package | null {
+  findById(id: string, userId: string): Package | null {
     const result = packagesDb.getFirstSync<Package>(
       `
       SELECT *
@@ -97,7 +97,7 @@ export class SQLitePackageRepository implements PackageRepository {
   }
 
   updateStatus(
-    id: number,
+    id: string,
     userId: string,
     status: PackageStatus,
     receiverName?: string,
@@ -122,7 +122,7 @@ export class SQLitePackageRepository implements PackageRepository {
     );
   }
 
-  markAsSent(id: number, userId: string): void {
+  markAsSent(id: string, userId: string): void {
     const sentAt = new Date().toISOString();
 
     packagesDb.runSync(
@@ -156,7 +156,7 @@ export class SQLitePackageRepository implements PackageRepository {
     return result?.count ?? 0;
   }
 
-  delete(id: number, userId: string): void {
+  delete(id: string, userId: string): void {
     packagesDb.runSync(
       `
         DELETE FROM packages
@@ -168,7 +168,7 @@ export class SQLitePackageRepository implements PackageRepository {
   }
 
   batchUpdateStatus(
-    packageIds: number[],
+    packageIds: string[],
     userId: string,
     status: PackageStatus,
     receiverName?: string,

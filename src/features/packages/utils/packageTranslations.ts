@@ -9,13 +9,13 @@ export function translatePackageStatus(
   t: TFunction,
 ): string {
   switch (status) {
-    case PackageStatus.COLETADO:
+    case PackageStatus.COLLECTED:
       return t("packages.status.collected");
 
-    case PackageStatus.EM_ROTA_DE_ENTREGA:
+    case PackageStatus.IN_DELIVERY:
       return t("packages.status.outForDelivery");
 
-    case PackageStatus.ENTREGUE:
+    case PackageStatus.DELIVERED:
       return t("packages.status.delivered");
 
     default:

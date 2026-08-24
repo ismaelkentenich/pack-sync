@@ -12,7 +12,7 @@ export class WebhookPackageSyncGateway implements PackageSyncGateway {
       const payload = {
         code: pkg.code,
         clientName:
-          pkg.status === PackageStatus.ENTREGUE
+          pkg.status === PackageStatus.DELIVERED
             ? pkg.receiverName?.trim() || undefined
             : undefined,
         status: pkg.status,

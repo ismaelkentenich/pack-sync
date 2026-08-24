@@ -43,7 +43,7 @@ describe("PackageService", () => {
   describe("scanPackage", () => {
     it("allows different users to scan the same package code", async () => {
       const existingForUserOne = createPackage({
-        id: 1,
+        id: "1",
         code: "PKG-SHARED",
         clientCode: "user-1",
       });
@@ -63,7 +63,7 @@ describe("PackageService", () => {
 
       repository.create.mockImplementation((pkg) => ({
         ...pkg,
-        id: 2,
+        id: "2",
       }));
 
       const result = await service.scanPackage(
@@ -80,14 +80,14 @@ describe("PackageService", () => {
         expect.objectContaining({
           code: "PKG-SHARED",
           clientCode: "user-2",
-          status: PackageStatus.COLETADO,
+          status: PackageStatus.COLLECTED,
           deliveryStatus: DeliveryStatus.PENDING,
         }),
       );
 
       expect(result).toEqual(
         expect.objectContaining({
-          id: 2,
+          id: "2",
           code: "PKG-SHARED",
           clientCode: "user-2",
         }),
@@ -116,7 +116,7 @@ describe("PackageService", () => {
 
       repository.create.mockImplementation((pkg) => ({
         ...pkg,
-        id: 1,
+        id: "1",
       }));
 
       const result = await service.scanPackage(
@@ -126,10 +126,10 @@ describe("PackageService", () => {
 
       expect(result).toEqual(
         expect.objectContaining({
-          id: 1,
+          id: "1",
           code: "PKG-001",
           clientCode: "user-1",
-          status: PackageStatus.COLETADO,
+          status: PackageStatus.COLLECTED,
           deliveryStatus: DeliveryStatus.PENDING,
         }),
       );
@@ -139,9 +139,9 @@ describe("PackageService", () => {
   describe("changePackageStatus", () => {
     it("delegates the status update to the repository", () => {
       service.changePackageStatus(
-        1,
+        "1",
         "user-1",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
       );
 
       expect(repository.updateStatus).toHaveBeenCalledTimes(
@@ -149,9 +149,9 @@ describe("PackageService", () => {
       );
 
       expect(repository.updateStatus).toHaveBeenCalledWith(
-        1,
+        "1",
         "user-1",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
         undefined,
       );
     });
@@ -159,9 +159,9 @@ describe("PackageService", () => {
     it("requires a receiver when status is delivered", () => {
       expect(() =>
         service.changePackageStatus(
-          1,
+          "1",
           "user-1",
-          PackageStatus.ENTREGUE,
+          PackageStatus.DELIVERED,
         ),
       ).toThrow(
         new PackageError(
@@ -177,9 +177,9 @@ describe("PackageService", () => {
     it("rejects delivered status when receiver contains only whitespace", () => {
       expect(() =>
         service.changePackageStatus(
-          1,
+          "1",
           "user-1",
-          PackageStatus.ENTREGUE,
+          PackageStatus.DELIVERED,
           "   ",
         ),
       ).toThrow(
@@ -197,12 +197,12 @@ describe("PackageService", () => {
   describe("syncPackage", () => {
     it("sends the snapshot recovered from the repository", async () => {
       const stalePackage = createPackage({
-        status: PackageStatus.COLETADO,
+        status: PackageStatus.COLLECTED,
         receiverName: undefined,
       });
 
       const persistedPackage = createPackage({
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.PENDING,
         receiverName: "João",
       });
@@ -216,7 +216,7 @@ describe("PackageService", () => {
       await service.syncPackage(stalePackage);
 
       expect(repository.findById).toHaveBeenCalledWith(
-        1,
+        "1",
         "user-1",
       );
 
@@ -227,7 +227,7 @@ describe("PackageService", () => {
 
     it("preserves receiverName when retrying a pending delivered package", async () => {
       const pendingPackage = createPackage({
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.PENDING,
         receiverName: "Maria",
       });
@@ -246,7 +246,7 @@ describe("PackageService", () => {
 
       expect(syncGateway.send).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: PackageStatus.ENTREGUE,
+          status: PackageStatus.DELIVERED,
           deliveryStatus: DeliveryStatus.PENDING,
           receiverName: "Maria",
         }),
@@ -255,7 +255,7 @@ describe("PackageService", () => {
 
     it("does not send a delivered package without receiverName", async () => {
       const pkg = createPackage({
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.PENDING,
         receiverName: undefined,
       });
@@ -291,7 +291,7 @@ describe("PackageService", () => {
       expect(syncGateway.send).toHaveBeenCalledWith(pkg);
 
       expect(repository.markAsSent).toHaveBeenCalledWith(
-        1,
+        "1",
         "user-1",
       );
     });
@@ -327,37 +327,37 @@ describe("PackageService", () => {
 
     it("synchronizes batch packages using the persisted receiverName", async () => {
       const first = createPackage({
-        id: 1,
+        id: "1",
         code: "PKG-001",
       });
 
       const second = createPackage({
-        id: 2,
+        id: "2",
         code: "PKG-002",
       });
 
       const persistedFirst = createPackage({
-        id: 1,
+        id: "1",
         code: "PKG-001",
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.PENDING,
         receiverName: "João",
       });
 
       const persistedSecond = createPackage({
-        id: 2,
+        id: "2",
         code: "PKG-002",
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.PENDING,
         receiverName: "João",
       });
 
       repository.findById.mockImplementation((id) => {
-        if (id === 1) {
+        if (id === "1") {
           return persistedFirst;
         }
 
-        if (id === 2) {
+        if (id === "2") {
           return persistedSecond;
         }
 
@@ -371,16 +371,16 @@ describe("PackageService", () => {
       const result = await service.updateAndSendMultiple(
         [first, second],
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "João",
       );
 
       expect(
         repository.batchUpdateStatus,
       ).toHaveBeenCalledWith(
-        [1, 2],
+        ["1", "2"],
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "João",
       );
 
@@ -546,30 +546,30 @@ describe("PackageService", () => {
   describe("sendMultiplePackages", () => {
     it("reports a partial batch failure without hiding successful sends", async () => {
       const first = createPackage({
-        id: 1,
+        id: "1",
         code: "PKG-001",
       });
 
       const second = createPackage({
-        id: 2,
+        id: "2",
         code: "PKG-002",
       });
 
       const third = createPackage({
-        id: 3,
+        id: "3",
         code: "PKG-003",
       });
 
       repository.findById.mockImplementation((id) => {
-        if (id === 1) {
+        if (id === "1") {
           return first;
         }
 
-        if (id === 2) {
+        if (id === "2") {
           return second;
         }
 
-        if (id === 3) {
+        if (id === "3") {
           return third;
         }
 
@@ -614,12 +614,12 @@ describe("PackageService", () => {
       );
 
       expect(repository.markAsSent).toHaveBeenCalledWith(
-        1,
+        "1",
         "user-1",
       );
 
       expect(repository.markAsSent).toHaveBeenCalledWith(
-        3,
+        "3",
         "user-1",
       );
 
@@ -633,13 +633,13 @@ describe("PackageService", () => {
     it("updates the packages before synchronizing them", async () => {
       const packages = [
         createPackage({
-          id: 1,
+          id: "1",
           code: "PKG-001",
           deliveryStatus: DeliveryStatus.SENT,
           sent_at: "2026-08-22T10:00:00.000Z",
         }),
         createPackage({
-          id: 2,
+          id: "2",
           code: "PKG-002",
           deliveryStatus: DeliveryStatus.SENT,
           sent_at: "2026-08-22T10:10:00.000Z",
@@ -647,29 +647,29 @@ describe("PackageService", () => {
       ];
 
       const updatedFirst = createPackage({
-        id: 1,
+        id: "1",
         code: "PKG-001",
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.PENDING,
         sent_at: undefined,
         receiverName: "João",
       });
 
       const updatedSecond = createPackage({
-        id: 2,
+        id: "2",
         code: "PKG-002",
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.PENDING,
         sent_at: undefined,
         receiverName: "João",
       });
 
       repository.findById.mockImplementation((id) => {
-        if (id === 1) {
+        if (id === "1") {
           return updatedFirst;
         }
 
-        if (id === 2) {
+        if (id === "2") {
           return updatedSecond;
         }
 
@@ -683,7 +683,7 @@ describe("PackageService", () => {
       const result = await service.updateAndSendMultiple(
         packages,
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "João",
       );
 
@@ -694,9 +694,9 @@ describe("PackageService", () => {
       expect(
         repository.batchUpdateStatus,
       ).toHaveBeenCalledWith(
-        [1, 2],
+        ["1", "2"],
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "João",
       );
 
@@ -711,14 +711,14 @@ describe("PackageService", () => {
 
     it("does not preserve sent metadata from the previous package version", async () => {
       const pkg = createPackage({
-        id: 1,
+        id: "1",
         deliveryStatus: DeliveryStatus.SENT,
         sent_at: "2026-08-22T10:00:00.000Z",
       });
 
       const persistedPackage = createPackage({
-        id: 1,
-        status: PackageStatus.EM_ROTA_DE_ENTREGA,
+        id: "1",
+        status: PackageStatus.IN_DELIVERY,
         deliveryStatus: DeliveryStatus.PENDING,
         sent_at: undefined,
         receiverName: undefined,
@@ -733,7 +733,7 @@ describe("PackageService", () => {
       await service.updateAndSendMultiple(
         [pkg],
         "user-1",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
       );
 
       expect(syncGateway.send).toHaveBeenCalledWith(
@@ -745,7 +745,7 @@ describe("PackageService", () => {
       const result = await service.updateAndSendMultiple(
         [createPackage()],
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
       );
 
       expect(result.success).toBe(false);
@@ -764,11 +764,11 @@ describe("PackageService", () => {
     it("does not synchronize packages when persistence fails", async () => {
       const packages = [
         createPackage({
-          id: 1,
+          id: "1",
           code: "PKG-001",
         }),
         createPackage({
-          id: 2,
+          id: "2",
           code: "PKG-002",
         }),
       ];
@@ -782,7 +782,7 @@ describe("PackageService", () => {
       const result = await service.updateAndSendMultiple(
         packages,
         "user-1",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
       );
 
       expect(result.success).toBe(false);

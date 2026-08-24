@@ -55,7 +55,7 @@ export class PackageService {
 
     const pkgToInsert: Package = {
       code,
-      status: PackageStatus.COLETADO,
+      status: PackageStatus.COLLECTED,
       deliveryStatus: DeliveryStatus.PENDING,
       clientCode: userId,
       scanned_at: new Date().toISOString(),
@@ -65,13 +65,13 @@ export class PackageService {
   }
 
   changePackageStatus(
-    id: number,
+    id: string,
     userId: string,
     status: PackageStatus,
     receiverName?: string,
   ): void {
     if (
-      status === PackageStatus.ENTREGUE &&
+      status === PackageStatus.DELIVERED &&
       !receiverName?.trim()
     ) {
       throw new PackageError(
@@ -126,7 +126,7 @@ export class PackageService {
 
   private async runPackageSync(
     pkg: Package,
-    packageId: number,
+    packageId: string,
     syncKey: string,
   ): Promise<ServiceResult> {
     try {
@@ -138,7 +138,7 @@ export class PackageService {
 
   private async performPackageSync(
     pkg: Package,
-    packageId: number,
+    packageId: string,
   ): Promise<ServiceResult> {
     try {
       const packageToSync = this.packageRepository.findById(
@@ -156,7 +156,7 @@ export class PackageService {
       }
 
       if (
-        packageToSync.status === PackageStatus.ENTREGUE &&
+        packageToSync.status === PackageStatus.DELIVERED &&
         !packageToSync.receiverName?.trim()
       ) {
         return {
@@ -334,7 +334,7 @@ export class PackageService {
     receiverName?: string,
   ): Promise<ServiceResult<BatchSyncResult>> {
     if (
-      status === PackageStatus.ENTREGUE &&
+      status === PackageStatus.DELIVERED &&
       !receiverName?.trim()
     ) {
       return {

@@ -61,9 +61,9 @@ describe("usePackageStore", () => {
       const result = usePackageStore
         .getState()
         .changeStatus(
-          1,
+          "1",
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(
@@ -73,9 +73,9 @@ describe("usePackageStore", () => {
       expect(
         packageServiceMock.changePackageStatus,
       ).toHaveBeenCalledWith(
-        1,
+        "1",
         "user-1",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
         undefined,
       );
 
@@ -92,9 +92,9 @@ describe("usePackageStore", () => {
       const result = usePackageStore
         .getState()
         .changeStatus(
-          1,
+          "1",
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(result.success).toBe(true);
@@ -118,9 +118,9 @@ describe("usePackageStore", () => {
       const result = usePackageStore
         .getState()
         .changeStatus(
-          1,
+          "1",
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(result).toEqual({
@@ -139,7 +139,11 @@ describe("usePackageStore", () => {
 
       const result = usePackageStore
         .getState()
-        .changeStatus(1, "user-1", PackageStatus.ENTREGUE);
+        .changeStatus(
+          "1",
+          "user-1",
+          PackageStatus.DELIVERED,
+        );
 
       expect(result.success).toBe(false);
 
@@ -161,9 +165,9 @@ describe("usePackageStore", () => {
       const result = usePackageStore
         .getState()
         .changeStatus(
-          1,
+          "1",
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(result.success).toBe(false);
@@ -257,7 +261,7 @@ describe("usePackageStore", () => {
 
     it("releases the syncing package state after success", async () => {
       const pkg = createPackage({
-        id: 10,
+        id: "10",
       });
 
       packageServiceMock.syncPackage.mockResolvedValue({
@@ -270,12 +274,12 @@ describe("usePackageStore", () => {
 
       expect(
         usePackageStore.getState().syncingPackageIds,
-      ).not.toContain(10);
+      ).not.toContain("10");
     });
 
     it("releases the syncing package state after failure", async () => {
       const pkg = createPackage({
-        id: 10,
+        id: "10",
       });
 
       packageServiceMock.syncPackage.mockResolvedValue({
@@ -321,7 +325,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(result).toEqual({
@@ -363,7 +367,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(result).toEqual({
@@ -392,7 +396,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(result).toEqual({
@@ -428,7 +432,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(
@@ -455,7 +459,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(
@@ -472,7 +476,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(result).toEqual({
@@ -508,7 +512,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(
@@ -531,7 +535,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(
@@ -546,7 +550,7 @@ describe("usePackageStore", () => {
         },
         (_, index) =>
           createPackage({
-            id: index + 1,
+            id: index + "1",
             code: `PKG-${String(index + 1).padStart(
               3,
               "0",
@@ -588,7 +592,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
         );
 
       expect(result).toEqual({
@@ -604,20 +608,20 @@ describe("usePackageStore", () => {
 
     it("keeps the persisted snapshots of failed packages after a partial batch", async () => {
       const first = createPackage({
-        id: 1,
+        id: "1",
         code: "PKG-001",
       });
 
       const failed = createPackage({
-        id: 2,
+        id: "2",
         code: "PKG-002",
-        status: PackageStatus.COLETADO,
+        status: PackageStatus.COLLECTED,
       });
 
       const persistedFailed = createPackage({
-        id: 2,
+        id: "2",
         code: "PKG-002",
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         receiverName: "Maria",
       });
 
@@ -653,7 +657,7 @@ describe("usePackageStore", () => {
         .getState()
         .updateAndSendCurrentSessionPackages(
           "user-1",
-          PackageStatus.ENTREGUE,
+          PackageStatus.DELIVERED,
           "Maria",
         );
 
@@ -666,17 +670,17 @@ describe("usePackageStore", () => {
   describe("sendAllCurrentSessionPackages", () => {
     it("keeps only failed packages after a partial synchronization", async () => {
       const first = createPackage({
-        id: 1,
+        id: "1",
         code: "PKG-001",
       });
 
       const second = createPackage({
-        id: 2,
+        id: "2",
         code: "PKG-002",
       });
 
       const third = createPackage({
-        id: 3,
+        id: "3",
         code: "PKG-003",
       });
 
@@ -728,12 +732,12 @@ describe("usePackageStore", () => {
         currentSessionPackages: [pkg],
         pendingCount: 4,
 
-        syncingPackageIds: [1, 2],
+        syncingPackageIds: ["1", "2"],
         isSyncingSession: true,
         isSyncingPending: true,
 
         searchTerm: "PKG",
-        statusFilter: PackageStatus.ENTREGUE,
+        statusFilter: PackageStatus.DELIVERED,
 
         feedback: {
           loading: false,

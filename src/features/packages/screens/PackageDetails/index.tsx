@@ -100,7 +100,7 @@ export default function PackageDetailsScreen() {
             />
           </View>
 
-          {packageData.status === PackageStatus.ENTREGUE &&
+          {packageData.status === PackageStatus.DELIVERED &&
           packageData.receiverName ? (
             <Text style={styles.detailText}>
               {t("packages.details.receiver")}:{" "}
