@@ -287,6 +287,7 @@ export default function ScanScreen() {
       testID="scannerScreen"
       headerTitle={t("scanner.title")}
       headerVariant="neutral"
+      showBackButton={false}
       backgroundColorVariant="neutral100"
       safeAreaEdges={["bottom"]}
     >

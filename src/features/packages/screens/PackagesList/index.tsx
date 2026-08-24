@@ -247,14 +247,6 @@ export default function PackagesListScreen() {
           style={styles.introduction}
         >
           <Text
-            testID="packagesListHeadline"
-            accessibilityRole="header"
-            style={styles.headline}
-          >
-            {t("packages.list.headline")}
-          </Text>
-
-          <Text
             testID="packagesListDescription"
             style={styles.description}
           >
@@ -444,7 +436,8 @@ export default function PackagesListScreen() {
   return (
     <ScreenContainer
       testID="packagesListScreen"
-      headerTitle={t("packages.list.title")}
+      headerTitle={t("packages.list.headline")}
+      showBackButton={false}
       headerVariant="neutral"
       backgroundColorVariant="neutral100"
       safeAreaEdges={["bottom"]}
