@@ -1,11 +1,13 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   House,
+  Menu,
   PackageSearch,
   ScanLine,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import HomeScreen from "@features/home/screens/Home";
+import MenuScreen from "@features/menu/screens/Menu";
 import ScanScreen from "@features/scanner/screens/Scanner";
 import { verticalScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
@@ -42,7 +44,6 @@ export function MainTabs() {
           shadowRadius: 6,
           elevation: 8,
         },
-
         tabBarLabelStyle: {
           fontSize: Theme.typography.size.xs,
           lineHeight: Theme.typography.lineHeight.xs,
@@ -106,6 +107,26 @@ export function MainTabs() {
 
           tabBarIcon: ({ color, size, focused }) => (
             <PackageSearch
+              size={size}
+              color={color}
+              strokeWidth={focused ? 2.5 : 2}
+            />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name={Routes.Menu}
+        component={MenuScreen}
+        options={{
+          tabBarLabel: t("navigation.menu"),
+
+          tabBarAccessibilityLabel: t(
+            "accessibility.navigation.menu",
+          ),
+
+          tabBarIcon: ({ color, size, focused }) => (
+            <Menu
               size={size}
               color={color}
               strokeWidth={focused ? 2.5 : 2}

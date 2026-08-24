@@ -6,6 +6,7 @@ export const Routes = {
 
   Home: "Home",
   Scan: "Scan",
+  Menu: "Menu",
 
   Packages: "Packages",
   PackagesList: "PackagesList",

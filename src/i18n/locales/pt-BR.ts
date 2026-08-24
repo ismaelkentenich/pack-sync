@@ -17,6 +17,7 @@ export const ptBR = {
     scan: "Escanear",
     packages: "Pacotes",
     packageDetails: "Detalhes do Pacote",
+    menu: "Menu",
   },
 
   auth: {
@@ -242,6 +243,37 @@ export const ptBR = {
       home: "Ir para início",
       scan: "Ir para o scanner",
       packages: "Ir para pacotes",
+      menu: "Ir para menu",
+    },
+    menu: {
+      scan: "Abrir scanner de pacotes",
+      packages: "Abrir lista de pacotes",
+      logout: "Sair da conta",
+    },
+  },
+
+  menu: {
+    title: "Menu",
+    subtitle: "Acesse as principais funções do Pack Sync.",
+    sections: {
+      operations: "Operações",
+      account: "Conta",
+    },
+    items: {
+      scan: {
+        title: "Escanear pacote",
+        description:
+          "Leia o código de barras ou QR Code de um pacote.",
+      },
+      packages: {
+        title: "Lista de pacotes",
+        description:
+          "Consulte e gerencie os pacotes escaneados.",
+      },
+      logout: {
+        title: "Sair",
+        description: "Encerrar sua sessão no Pack Sync.",
+      },
     },
   },
 } as const;

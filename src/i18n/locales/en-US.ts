@@ -17,6 +17,7 @@ export const enUS = {
     scan: "Scan",
     packages: "Packages",
     packageDetails: "Package Details",
+    menu: "Menu",
   },
 
   auth: {
@@ -240,6 +241,35 @@ export const enUS = {
       home: "Go to home",
       scan: "Go to scanner",
       packages: "Go to packages",
+      menu: "Go to menu",
+    },
+    menu: {
+      scan: "Open package scanner",
+      packages: "Open package list",
+      logout: "Log out",
+    },
+  },
+
+  menu: {
+    title: "Menu",
+    subtitle: "Access the main Pack Sync features.",
+    sections: {
+      operations: "Operations",
+      account: "Account",
+    },
+    items: {
+      scan: {
+        title: "Scan package",
+        description: "Scan a package barcode or QR Code.",
+      },
+      packages: {
+        title: "Package list",
+        description: "View and manage scanned packages.",
+      },
+      logout: {
+        title: "Log out",
+        description: "End your Pack Sync session.",
+      },
     },
   },
 } as const;
