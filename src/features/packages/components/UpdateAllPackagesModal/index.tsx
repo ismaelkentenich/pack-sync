@@ -1,5 +1,6 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Picker } from "@react-native-picker/picker";
+import { Package } from "lucide-react-native";
 import React, { forwardRef, Ref, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
@@ -36,12 +37,15 @@ export default forwardRef(function UpdateAllPackagesModal(
   const insets = useSafeAreaInsets();
 
   const showAlert = useShowAlert((state) => state.show);
+
   const isSyncingSession = usePackageStore(
     (state) => state.isSyncingSession,
   );
+
   const currentSessionPackages = usePackageStore(
     (state) => state.currentSessionPackages,
   );
+
   const updateAndSendCurrentSessionPackages =
     usePackageStore(
       (state) => state.updateAndSendCurrentSessionPackages,
@@ -49,7 +53,9 @@ export default forwardRef(function UpdateAllPackagesModal(
 
   const [selectedStatus, setSelectedStatus] =
     useState<PackageStatus>(PackageStatus.COLLECTED);
+
   const [receiverName, setReceiverName] = useState("");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isBusy = isSubmitting || isSyncingSession;
@@ -64,6 +70,7 @@ export default forwardRef(function UpdateAllPackagesModal(
         t("packages.updateAll.emptySession"),
         "error",
       );
+
       return;
     }
 
@@ -75,6 +82,7 @@ export default forwardRef(function UpdateAllPackagesModal(
         t("packages.updateStatus.receiverRequired"),
         "error",
       );
+
       return;
     }
 
@@ -92,11 +100,14 @@ export default forwardRef(function UpdateAllPackagesModal(
 
       if (!result.success) {
         showAlert(t("packages.updateAll.error"), "error");
+
         return;
       }
 
       handleCloseModal();
+
       showAlert(t("packages.updateAll.success"), "success");
+
       onSuccessNavigate?.();
     } finally {
       setIsSubmitting(false);
@@ -106,13 +117,20 @@ export default forwardRef(function UpdateAllPackagesModal(
   return (
     <ModalWrapper
       ref={ref}
-      snapPoints={["60%"]}
+      testID="updateAllPackagesModal"
+      snapPoints={["68%", "88%"]}
       style={styles.wrapper}
       hasInputInsideModal
+      isBlocked={isBusy}
     >
-      <ModalCloseIcon onPress={handleCloseModal} />
+      <ModalCloseIcon
+        testID="updateAllPackagesCloseButton"
+        onPress={handleCloseModal}
+        disabled={isBusy}
+      />
 
       <View
+        testID="updateAllPackagesContent"
         style={[
           styles.container,
           {
@@ -120,29 +138,87 @@ export default forwardRef(function UpdateAllPackagesModal(
           },
         ]}
       >
-        <Text style={styles.title}>
-          {t("packages.updateAll.title")}
-        </Text>
+        <View
+          testID="updateAllPackagesHeader"
+          style={styles.header}
+        >
+          <Text
+            testID="updateAllPackagesTitle"
+            style={styles.title}
+            accessibilityRole="header"
+          >
+            {t("packages.updateAll.title")}
+          </Text>
 
-        <Text style={styles.text}>
-          {t("packages.updateAll.packagesInSession", {
-            count: currentSessionPackages.length,
-          })}
-        </Text>
+          <Text
+            testID="updateAllPackagesDescription"
+            style={styles.description}
+          >
+            {t("packages.updateAll.description")}
+          </Text>
+        </View>
 
-        <View style={styles.innerContainer}>
-          <Text style={styles.text}>
+        <View
+          testID="updateAllPackagesSummary"
+          style={styles.summary}
+        >
+          <View
+            testID="updateAllPackagesSummaryIconContainer"
+            style={styles.summaryIconContainer}
+          >
+            <Package
+              testID="updateAllPackagesSummaryIcon"
+              size={Theme.sizing.icon.md}
+              color={Theme.colors.primary[700]}
+            />
+          </View>
+
+          <View style={styles.summaryContent}>
+            <Text
+              testID="updateAllPackagesCount"
+              style={styles.summaryValue}
+            >
+              {t("packages.updateAll.packagesInSession", {
+                count: currentSessionPackages.length,
+              })}
+            </Text>
+
+            <Text
+              testID="updateAllPackagesSummaryDescription"
+              style={styles.summaryDescription}
+            >
+              {t("packages.updateAll.summaryDescription")}
+            </Text>
+          </View>
+        </View>
+
+        <View
+          testID="updateAllPackagesStatusField"
+          style={styles.field}
+        >
+          <Text
+            testID="updateAllPackagesStatusLabel"
+            style={styles.label}
+          >
             {t("packages.updateAll.selectStatus")}
           </Text>
 
-          <View style={styles.pickerWrapper}>
+          <View
+            testID="updateAllPackagesPickerWrapper"
+            style={styles.pickerWrapper}
+          >
             <Picker
+              testID="updateAllPackagesPicker"
               selectedValue={selectedStatus}
-              onValueChange={(value) =>
-                setSelectedStatus(value)
-              }
-              style={styles.pickerContainer}
-              dropdownIconColor={Theme.colors.neutral[300]}
+              onValueChange={(value) => {
+                setSelectedStatus(value);
+
+                if (value !== PackageStatus.DELIVERED) {
+                  setReceiverName("");
+                }
+              }}
+              style={styles.picker}
+              dropdownIconColor={Theme.colors.neutral[600]}
               itemStyle={styles.pickerItem}
               mode="dropdown"
               enabled={!isBusy}
@@ -156,7 +232,6 @@ export default forwardRef(function UpdateAllPackagesModal(
                       t,
                     )}
                     value={status}
-                    style={styles.pickerLabel}
                   />
                 ),
               )}
@@ -165,28 +240,38 @@ export default forwardRef(function UpdateAllPackagesModal(
         </View>
 
         {selectedStatus === PackageStatus.DELIVERED ? (
-          <View style={styles.innerContainer}>
-            <Text style={styles.text}>
-              {t("packages.updateStatus.receiverName")}
-            </Text>
-
+          <View
+            testID="updateAllPackagesReceiverField"
+            style={styles.field}
+          >
             <Input
+              testID="updateAllPackagesReceiverInput"
+              label={t(
+                "packages.updateStatus.receiverName",
+              )}
               placeholder={t(
                 "packages.updateStatus.receiverPlaceholder",
               )}
               value={receiverName}
               onChangeText={setReceiverName}
               editable={!isBusy}
+              autoCapitalize="words"
+              autoCorrect={false}
+              returnKeyType="done"
             />
           </View>
         ) : null}
 
-        <View style={styles.buttonContainer}>
+        <View
+          testID="updateAllPackagesActions"
+          style={styles.actions}
+        >
           <Button
+            testID="updateAllPackagesSubmitButton"
             title={t("packages.actions.updateAndSync")}
-            onPress={() => {
-              handleApplyToAll();
-            }}
+            variant="brand"
+            size="lg"
+            onPress={handleApplyToAll}
             loading={isBusy}
             disabled={isBusy}
           />

@@ -163,14 +163,22 @@ export const enUS = {
     },
 
     updateAll: {
-      title: "Change status for all packages",
-      packagesInSession:
-        "Packages scanned in this session: {{count}}",
-      selectStatus: "Select the new status:",
-      emptySession: "No packages scanned in this session.",
+      title: "Update packages",
+      description:
+        "Choose a status for the packages in this session and sync the changes.",
+      packagesInSession_one:
+        "{{count}} package in this session",
+      packagesInSession_other:
+        "{{count}} packages in this session",
+      summaryDescription:
+        "All packages in this session will be updated.",
+      selectStatus: "New status",
+      emptySession:
+        "There are no packages in the current session to update.",
       success:
-        "Status updated and packages sent to the webhook!",
-      error: "Failed to update packages.",
+        "Packages updated and synchronized successfully.",
+      error:
+        "We could not update and synchronize all packages.",
     },
 
     feedback: {
