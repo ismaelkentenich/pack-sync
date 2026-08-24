@@ -4,7 +4,15 @@ import type {
   ViewStyle,
 } from "react-native";
 
-export type BadgeVariant = "status" | "delivery";
+export type BadgeVariant =
+  | "primary"
+  | "secondary"
+  | "neutral"
+  | "success"
+  | "warning"
+  | "error";
+
+export type BadgeSize = "sm" | "md" | "lg";
 
 export type BadgeColors = {
   backgroundColor: string;
@@ -13,7 +21,8 @@ export type BadgeColors = {
 
 export type BadgeProps = {
   label: string;
-  variant: BadgeVariant;
+  variant?: BadgeVariant;
+  size?: BadgeSize;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   testID?: string;

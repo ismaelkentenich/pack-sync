@@ -6,7 +6,7 @@ describe("Badge", () => {
   describe("rendering", () => {
     it("renders with the default testID", () => {
       const { getByTestId } = render(
-        <Badge label="Collected" variant="status" />,
+        <Badge label="Collected" />,
       );
 
       expect(getByTestId("badgeRoot")).toBeTruthy();
@@ -14,7 +14,7 @@ describe("Badge", () => {
 
     it("renders the label", () => {
       const { getByTestId } = render(
-        <Badge label="Collected" variant="status" />,
+        <Badge label="Collected" />,
       );
 
       expect(getByTestId("badgeText")).toHaveTextContent(
@@ -26,7 +26,6 @@ describe("Badge", () => {
       const { getByTestId, queryByTestId } = render(
         <Badge
           label="Collected"
-          variant="status"
           testID="packageStatusBadge"
         />,
       );
@@ -40,9 +39,23 @@ describe("Badge", () => {
   });
 
   describe("variants", () => {
-    it("applies status colors", () => {
+    it("uses neutral variant by default", () => {
       const { getByTestId } = render(
-        <Badge label="Collected" variant="status" />,
+        <Badge label="Default" />,
+      );
+
+      expect(getByTestId("badgeRoot")).toHaveStyle({
+        backgroundColor: Theme.colors.neutral[200],
+      });
+
+      expect(getByTestId("badgeText")).toHaveStyle({
+        color: Theme.colors.neutral[800],
+      });
+    });
+
+    it("applies primary colors", () => {
+      const { getByTestId } = render(
+        <Badge label="Primary" variant="primary" />,
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
@@ -54,9 +67,9 @@ describe("Badge", () => {
       });
     });
 
-    it("applies delivery colors", () => {
+    it("applies secondary colors", () => {
       const { getByTestId } = render(
-        <Badge label="Pending" variant="delivery" />,
+        <Badge label="Secondary" variant="secondary" />,
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
@@ -67,6 +80,101 @@ describe("Badge", () => {
         color: Theme.colors.secondary[900],
       });
     });
+
+    it("applies success colors", () => {
+      const { getByTestId } = render(
+        <Badge label="Success" variant="success" />,
+      );
+
+      expect(getByTestId("badgeRoot")).toHaveStyle({
+        backgroundColor: Theme.colors.success[50],
+      });
+
+      expect(getByTestId("badgeText")).toHaveStyle({
+        color: Theme.colors.success[700],
+      });
+    });
+
+    it("applies warning colors", () => {
+      const { getByTestId } = render(
+        <Badge label="Warning" variant="warning" />,
+      );
+
+      expect(getByTestId("badgeRoot")).toHaveStyle({
+        backgroundColor: Theme.colors.warning[50],
+      });
+
+      expect(getByTestId("badgeText")).toHaveStyle({
+        color: Theme.colors.warning[700],
+      });
+    });
+
+    it("applies error colors", () => {
+      const { getByTestId } = render(
+        <Badge label="Error" variant="error" />,
+      );
+
+      expect(getByTestId("badgeRoot")).toHaveStyle({
+        backgroundColor: Theme.colors.error[50],
+      });
+
+      expect(getByTestId("badgeText")).toHaveStyle({
+        color: Theme.colors.error[700],
+      });
+    });
+  });
+
+  describe("sizes", () => {
+    it("uses medium size by default", () => {
+      const { getByTestId } = render(
+        <Badge label="Medium" />,
+      );
+
+      expect(getByTestId("badgeRoot")).toHaveStyle({
+        paddingHorizontal: Theme.spacing.sm,
+        paddingVertical: Theme.spacing.xxs,
+        borderRadius: Theme.radius.sm,
+      });
+
+      expect(getByTestId("badgeText")).toHaveStyle({
+        fontSize: Theme.typography.size.sm,
+        lineHeight: Theme.typography.lineHeight.sm,
+      });
+    });
+
+    it("applies small size styles", () => {
+      const { getByTestId } = render(
+        <Badge label="Small" size="sm" />,
+      );
+
+      expect(getByTestId("badgeRoot")).toHaveStyle({
+        paddingHorizontal: Theme.spacing.xs,
+        paddingVertical: Theme.spacing.xxs,
+        borderRadius: Theme.radius.xs,
+      });
+
+      expect(getByTestId("badgeText")).toHaveStyle({
+        fontSize: Theme.typography.size.xs,
+        lineHeight: Theme.typography.lineHeight.xs,
+      });
+    });
+
+    it("applies large size styles", () => {
+      const { getByTestId } = render(
+        <Badge label="Large" size="lg" />,
+      );
+
+      expect(getByTestId("badgeRoot")).toHaveStyle({
+        paddingHorizontal: Theme.spacing.md,
+        paddingVertical: Theme.spacing.xs,
+        borderRadius: Theme.radius.md,
+      });
+
+      expect(getByTestId("badgeText")).toHaveStyle({
+        fontSize: Theme.typography.size.md,
+        lineHeight: Theme.typography.lineHeight.md,
+      });
+    });
   });
 
   describe("custom styles", () => {
@@ -74,7 +182,7 @@ describe("Badge", () => {
       const { getByTestId } = render(
         <Badge
           label="Collected"
-          variant="status"
+          variant="primary"
           style={{
             marginTop: 20,
           }}
@@ -90,7 +198,7 @@ describe("Badge", () => {
       const { getByTestId } = render(
         <Badge
           label="Collected"
-          variant="status"
+          variant="primary"
           textStyle={{
             letterSpacing: 2,
           }}
@@ -99,6 +207,38 @@ describe("Badge", () => {
 
       expect(getByTestId("badgeText")).toHaveStyle({
         letterSpacing: 2,
+      });
+    });
+
+    it("allows custom container styles to override variant styles", () => {
+      const { getByTestId } = render(
+        <Badge
+          label="Custom"
+          variant="primary"
+          style={{
+            backgroundColor: "#123456",
+          }}
+        />,
+      );
+
+      expect(getByTestId("badgeRoot")).toHaveStyle({
+        backgroundColor: "#123456",
+      });
+    });
+
+    it("allows custom text styles to override variant styles", () => {
+      const { getByTestId } = render(
+        <Badge
+          label="Custom"
+          variant="primary"
+          textStyle={{
+            color: "#654321",
+          }}
+        />,
+      );
+
+      expect(getByTestId("badgeText")).toHaveStyle({
+        color: "#654321",
       });
     });
   });
