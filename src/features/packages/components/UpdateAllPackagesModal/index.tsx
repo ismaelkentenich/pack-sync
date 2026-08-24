@@ -48,7 +48,7 @@ export default forwardRef(function UpdateAllPackagesModal(
     );
 
   const [selectedStatus, setSelectedStatus] =
-    useState<PackageStatus>(PackageStatus.COLETADO);
+    useState<PackageStatus>(PackageStatus.COLLECTED);
   const [receiverName, setReceiverName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -68,7 +68,7 @@ export default forwardRef(function UpdateAllPackagesModal(
     }
 
     if (
-      selectedStatus === PackageStatus.ENTREGUE &&
+      selectedStatus === PackageStatus.DELIVERED &&
       !receiverName.trim()
     ) {
       showAlert(
@@ -85,7 +85,7 @@ export default forwardRef(function UpdateAllPackagesModal(
         await updateAndSendCurrentSessionPackages(
           userId,
           selectedStatus,
-          selectedStatus === PackageStatus.ENTREGUE
+          selectedStatus === PackageStatus.DELIVERED
             ? receiverName.trim()
             : undefined,
         );
@@ -164,7 +164,7 @@ export default forwardRef(function UpdateAllPackagesModal(
           </View>
         </View>
 
-        {selectedStatus === PackageStatus.ENTREGUE ? (
+        {selectedStatus === PackageStatus.DELIVERED ? (
           <View style={styles.innerContainer}>
             <Text style={styles.text}>
               {t("packages.updateStatus.receiverName")}

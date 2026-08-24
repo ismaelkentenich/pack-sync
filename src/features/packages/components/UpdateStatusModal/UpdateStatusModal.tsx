@@ -32,9 +32,9 @@ import { buildUpdatedPackage } from "./utils/buildUpdatedPackage";
 import type { UpdateStatusModalProps } from "./types";
 
 const PACKAGE_STATUSES = [
-  PackageStatus.COLETADO,
-  PackageStatus.EM_ROTA_DE_ENTREGA,
-  PackageStatus.ENTREGUE,
+  PackageStatus.COLLECTED,
+  PackageStatus.IN_DELIVERY,
+  PackageStatus.DELIVERED,
 ];
 
 export const UpdateStatusModal = forwardRef<
@@ -76,7 +76,7 @@ export const UpdateStatusModal = forwardRef<
     syncingPackageIds.includes(packageData.id);
 
   const isDelivered =
-    selectedStatus === PackageStatus.ENTREGUE;
+    selectedStatus === PackageStatus.DELIVERED;
 
   const receiverValue = receiverName.trim();
 

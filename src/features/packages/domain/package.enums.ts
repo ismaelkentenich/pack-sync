@@ -1,7 +1,7 @@
 export enum PackageStatus {
-  COLETADO = "Coletado",
-  EM_ROTA_DE_ENTREGA = "Em rota de entrega",
-  ENTREGUE = "Entregue",
+  COLLECTED = "Coletado",
+  IN_DELIVERY = "Em rota de entrega",
+  DELIVERED = "Entregue",
 }
 
 export enum DeliveryStatus {

@@ -23,7 +23,7 @@ export function buildUpdatedPackage({
     deliveryStatus: DeliveryStatus.PENDING,
 
     receiverName:
-      status === PackageStatus.ENTREGUE
+      status === PackageStatus.DELIVERED
         ? receiverName?.trim()
         : undefined,
 

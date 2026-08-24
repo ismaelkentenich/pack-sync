@@ -5,7 +5,7 @@ import {
 import { Package } from "./package.types";
 
 export interface PackageRepository {
-  findById(id: number, userId: string): Package | null;
+  findById(id: string, userId: string): Package | null;
 
   findByCode(code: string, userId: string): Package | null;
 
@@ -19,23 +19,23 @@ export interface PackageRepository {
   create(pkg: Package): Package;
 
   updateStatus(
-    id: number,
+    id: string,
     userId: string,
     status: PackageStatus,
     receiverName?: string,
   ): void;
 
-  markAsSent(id: number, userId: string): void;
+  markAsSent(id: string, userId: string): void;
 
   countByDeliveryStatus(
     userId: string,
     status: DeliveryStatus,
   ): number;
 
-  delete(id: number, userId: string): void;
+  delete(id: string, userId: string): void;
 
   batchUpdateStatus(
-    packageIds: number[],
+    packageIds: string[],
     userId: string,
     status: PackageStatus,
     receiverName?: string,

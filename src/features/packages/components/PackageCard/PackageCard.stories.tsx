@@ -12,9 +12,9 @@ import type {
 } from "@storybook/react-native";
 
 const collectedPackage: Package = {
-  id: 1,
+  id: "1",
   code: "PKG-001",
-  status: PackageStatus.COLETADO,
+  status: PackageStatus.COLLECTED,
   deliveryStatus: DeliveryStatus.PENDING,
   clientCode: "storybook-user",
   scanned_at: "2026-08-22T14:30:00.000Z",
@@ -22,23 +22,23 @@ const collectedPackage: Package = {
 
 const routePackage: Package = {
   ...collectedPackage,
-  id: 2,
+  id: "2",
   code: "PKG-002",
-  status: PackageStatus.EM_ROTA_DE_ENTREGA,
+  status: PackageStatus.IN_DELIVERY,
 };
 
 const deliveredPackage: Package = {
   ...collectedPackage,
-  id: 3,
+  id: "3",
   code: "PKG-003",
-  status: PackageStatus.ENTREGUE,
+  status: PackageStatus.DELIVERED,
   deliveryStatus: DeliveryStatus.SENT,
   receiverName: "John Doe",
 };
 
 const pendingDeliveredPackage: Package = {
   ...deliveredPackage,
-  id: 4,
+  id: "4",
   code: "PKG-004",
   deliveryStatus: DeliveryStatus.PENDING,
 };

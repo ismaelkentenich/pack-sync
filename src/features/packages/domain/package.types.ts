@@ -4,7 +4,7 @@ import {
 } from "./package.enums";
 
 export type Package = {
-  id?: number;
+  id?: string;
   code: string;
   status: PackageStatus;
   deliveryStatus: DeliveryStatus;

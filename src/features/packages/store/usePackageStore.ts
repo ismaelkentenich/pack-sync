@@ -28,7 +28,7 @@ type PackageState = {
   currentSessionPackages: Package[];
   pendingCount: number;
 
-  syncingPackageIds: number[];
+  syncingPackageIds: string[];
   isSyncingSession: boolean;
   isSyncingPending: boolean;
 
@@ -45,7 +45,7 @@ type PackageState = {
   ) => Promise<void>;
 
   changeStatus: (
-    id: number,
+    id: string,
     userId: string,
     status: PackageStatus,
     receiverName?: string,

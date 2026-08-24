@@ -21,7 +21,7 @@ describe("WebhookPackageSyncGateway", () => {
 
     const pkg = createPackage({
       code: "PKG-001",
-      status: PackageStatus.ENTREGUE,
+      status: PackageStatus.DELIVERED,
       deliveryStatus: DeliveryStatus.PENDING,
       receiverName: "  João da Silva  ",
       scanned_at: "2026-08-22T12:00:00.000Z",
@@ -43,7 +43,7 @@ describe("WebhookPackageSyncGateway", () => {
         body: JSON.stringify({
           code: "PKG-001",
           clientName: "João da Silva",
-          status: PackageStatus.ENTREGUE,
+          status: PackageStatus.DELIVERED,
           deliveryStatus: DeliveryStatus.PENDING,
           scanned_at: "2026-08-22T12:00:00.000Z",
         }),
@@ -61,7 +61,7 @@ describe("WebhookPackageSyncGateway", () => {
     const gateway = new WebhookPackageSyncGateway();
 
     const pkg = createPackage({
-      status: PackageStatus.COLETADO,
+      status: PackageStatus.COLLECTED,
       receiverName: "Should not be sent",
     });
 
@@ -80,7 +80,7 @@ describe("WebhookPackageSyncGateway", () => {
         },
         body: JSON.stringify({
           code: pkg.code,
-          status: PackageStatus.COLETADO,
+          status: PackageStatus.COLLECTED,
           deliveryStatus: DeliveryStatus.PENDING,
           scanned_at: pkg.scanned_at,
         }),

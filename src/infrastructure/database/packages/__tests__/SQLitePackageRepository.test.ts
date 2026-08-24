@@ -42,9 +42,9 @@ describe("SQLitePackageRepository", () => {
   describe("findById", () => {
     it("finds the package by id and user", () => {
       const persistedPackage: Package = {
-        id: 10,
+        id: "10",
         code: "PKG-010",
-        status: PackageStatus.ENTREGUE,
+        status: PackageStatus.DELIVERED,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode: "user-1",
         scanned_at: "2026-08-22T12:00:00.000Z",
@@ -53,13 +53,13 @@ describe("SQLitePackageRepository", () => {
 
       getFirstSyncMock.mockReturnValue(persistedPackage);
 
-      const result = repository.findById(10, "user-1");
+      const result = repository.findById("10", "user-1");
 
       expect(getFirstSyncMock).toHaveBeenCalledTimes(1);
 
       expect(getFirstSyncMock).toHaveBeenCalledWith(
         expect.stringContaining("WHERE id = ?"),
-        [10, "user-1"],
+        ["10", "user-1"],
       );
 
       const [sql] = getFirstSyncMock.mock.calls[0];
@@ -72,11 +72,11 @@ describe("SQLitePackageRepository", () => {
     it("returns null when the package does not belong to the user", () => {
       getFirstSyncMock.mockReturnValue(null);
 
-      const result = repository.findById(10, "user-2");
+      const result = repository.findById("10", "user-2");
 
       expect(getFirstSyncMock).toHaveBeenCalledWith(
         expect.stringContaining("WHERE id = ?"),
-        [10, "user-2"],
+        ["10", "user-2"],
       );
 
       expect(result).toBeNull();
@@ -86,9 +86,9 @@ describe("SQLitePackageRepository", () => {
   describe("findByCode", () => {
     it("scopes package lookup by code and user", () => {
       const persistedPackage: Package = {
-        id: 1,
+        id: "1",
         code: "PKG-SHARED",
-        status: PackageStatus.COLETADO,
+        status: PackageStatus.COLLECTED,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode: "user-1",
         scanned_at: "2026-08-22T12:00:00.000Z",
@@ -117,18 +117,18 @@ describe("SQLitePackageRepository", () => {
 
     it("allows the same code to be queried independently for different users", () => {
       const userOnePackage: Package = {
-        id: 1,
+        id: "1",
         code: "PKG-SHARED",
-        status: PackageStatus.COLETADO,
+        status: PackageStatus.COLLECTED,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode: "user-1",
         scanned_at: "2026-08-22T12:00:00.000Z",
       };
 
       const userTwoPackage: Package = {
-        id: 2,
+        id: "2",
         code: "PKG-SHARED",
-        status: PackageStatus.COLETADO,
+        status: PackageStatus.COLLECTED,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode: "user-2",
         scanned_at: "2026-08-22T12:01:00.000Z",
@@ -180,17 +180,17 @@ describe("SQLitePackageRepository", () => {
     it("returns only packages scoped to the user", () => {
       const persistedPackages: Package[] = [
         {
-          id: 1,
+          id: "1",
           code: "PKG-001",
-          status: PackageStatus.COLETADO,
+          status: PackageStatus.COLLECTED,
           deliveryStatus: DeliveryStatus.PENDING,
           clientCode: "user-1",
           scanned_at: "2026-08-22T12:00:00.000Z",
         },
         {
-          id: 2,
+          id: "2",
           code: "PKG-002",
-          status: PackageStatus.ENTREGUE,
+          status: PackageStatus.DELIVERED,
           deliveryStatus: DeliveryStatus.SENT,
           clientCode: "user-1",
           scanned_at: "2026-08-22T12:10:00.000Z",
@@ -217,9 +217,9 @@ describe("SQLitePackageRepository", () => {
     it("finds packages by delivery status only for the requested user", () => {
       const pendingPackages: Package[] = [
         {
-          id: 1,
+          id: "1",
           code: "PKG-001",
-          status: PackageStatus.COLETADO,
+          status: PackageStatus.COLLECTED,
           deliveryStatus: DeliveryStatus.PENDING,
           clientCode: "user-1",
           scanned_at: "2026-08-22T12:00:00.000Z",
@@ -252,7 +252,7 @@ describe("SQLitePackageRepository", () => {
     it("persists the package with its user identity", () => {
       const pkg: Package = {
         code: "PKG-001",
-        status: PackageStatus.COLETADO,
+        status: PackageStatus.COLLECTED,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode: "user-1",
         scanned_at: "2026-08-22T12:00:00.000Z",
@@ -260,7 +260,7 @@ describe("SQLitePackageRepository", () => {
 
       const persistedPackage: Package = {
         ...pkg,
-        id: 1,
+        id: "1",
       };
 
       getFirstSyncMock.mockReturnValue(persistedPackage);
@@ -273,7 +273,7 @@ describe("SQLitePackageRepository", () => {
         expect.stringContaining("INSERT INTO packages"),
         [
           "PKG-001",
-          PackageStatus.COLETADO,
+          PackageStatus.COLLECTED,
           DeliveryStatus.PENDING,
           "user-1",
           "2026-08-22T12:00:00.000Z",
@@ -291,7 +291,7 @@ describe("SQLitePackageRepository", () => {
     it("recovers the created package using code and user identity", () => {
       const pkg: Package = {
         code: "PKG-SHARED",
-        status: PackageStatus.COLETADO,
+        status: PackageStatus.COLLECTED,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode: "user-2",
         scanned_at: "2026-08-22T12:00:00.000Z",
@@ -299,7 +299,7 @@ describe("SQLitePackageRepository", () => {
 
       const persistedPackage: Package = {
         ...pkg,
-        id: 2,
+        id: "2",
       };
 
       getFirstSyncMock.mockReturnValue(persistedPackage);
@@ -315,7 +315,7 @@ describe("SQLitePackageRepository", () => {
     it("throws when the created package cannot be recovered", () => {
       const pkg: Package = {
         code: "PKG-001",
-        status: PackageStatus.COLETADO,
+        status: PackageStatus.COLLECTED,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode: "user-1",
         scanned_at: "2026-08-22T12:00:00.000Z",
@@ -332,9 +332,9 @@ describe("SQLitePackageRepository", () => {
   describe("updateStatus", () => {
     it("invalidates the previous synchronization state atomically", () => {
       repository.updateStatus(
-        10,
+        "10",
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "João",
       );
 
@@ -349,37 +349,37 @@ describe("SQLitePackageRepository", () => {
       expect(sql).toContain("clientCode = ?");
 
       expect(params).toEqual([
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "João",
         DeliveryStatus.PENDING,
-        10,
+        "10",
         "user-1",
       ]);
     });
 
     it("removes receiverName when it is not provided", () => {
       repository.updateStatus(
-        10,
+        "10",
         "user-1",
-        PackageStatus.COLETADO,
+        PackageStatus.COLLECTED,
       );
 
       const [, params] = runSyncMock.mock.calls[0];
 
       expect(params).toEqual([
-        PackageStatus.COLETADO,
+        PackageStatus.COLLECTED,
         null,
         DeliveryStatus.PENDING,
-        10,
+        "10",
         "user-1",
       ]);
     });
 
     it("scopes the status update by package id and user", () => {
       repository.updateStatus(
-        10,
+        "10",
         "user-2",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
       );
 
       const [sql, params] = runSyncMock.mock.calls[0];
@@ -388,10 +388,10 @@ describe("SQLitePackageRepository", () => {
       expect(sql).toContain("clientCode = ?");
 
       expect(params).toEqual([
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
         null,
         DeliveryStatus.PENDING,
-        10,
+        "10",
         "user-2",
       ]);
     });
@@ -399,7 +399,7 @@ describe("SQLitePackageRepository", () => {
 
   describe("markAsSent", () => {
     it("marks the package as sent for the correct user", () => {
-      repository.markAsSent(10, "user-1");
+      repository.markAsSent("10", "user-1");
 
       expect(runSyncMock).toHaveBeenCalledTimes(1);
 
@@ -421,7 +421,7 @@ describe("SQLitePackageRepository", () => {
       expect(params).toHaveLength(4);
 
       expect(params[0]).toBe(DeliveryStatus.SENT);
-      expect(params[2]).toBe(10);
+      expect(params[2]).toBe("10");
       expect(params[3]).toBe("user-1");
 
       const sentAt = params[1];
@@ -471,13 +471,13 @@ describe("SQLitePackageRepository", () => {
 
   describe("delete", () => {
     it("deletes the package only for the requested user", () => {
-      repository.delete(10, "user-1");
+      repository.delete("10", "user-1");
 
       expect(runSyncMock).toHaveBeenCalledTimes(1);
 
       expect(runSyncMock).toHaveBeenCalledWith(
         expect.stringContaining("DELETE FROM packages"),
-        [10, "user-1"],
+        ["10", "user-1"],
       );
 
       const [sql] = runSyncMock.mock.calls[0];
@@ -490,9 +490,9 @@ describe("SQLitePackageRepository", () => {
   describe("batchUpdateStatus", () => {
     it("updates all packages inside a single transaction", () => {
       repository.batchUpdateStatus(
-        [1, 2, 3],
+        ["1", "2", "3"],
         "user-1",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
       );
 
       expect(withTransactionSyncMock).toHaveBeenCalledTimes(
@@ -504,9 +504,9 @@ describe("SQLitePackageRepository", () => {
 
     it("invalidates synchronization for every package in the batch", () => {
       repository.batchUpdateStatus(
-        [1, 2],
+        ["1", "2"],
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "Maria",
       );
 
@@ -514,10 +514,10 @@ describe("SQLitePackageRepository", () => {
         1,
         expect.stringContaining("sent_at = NULL"),
         [
-          PackageStatus.ENTREGUE,
+          PackageStatus.DELIVERED,
           "Maria",
           DeliveryStatus.PENDING,
-          1,
+          "1",
           "user-1",
         ],
       );
@@ -526,10 +526,10 @@ describe("SQLitePackageRepository", () => {
         2,
         expect.stringContaining("sent_at = NULL"),
         [
-          PackageStatus.ENTREGUE,
+          PackageStatus.DELIVERED,
           "Maria",
           DeliveryStatus.PENDING,
-          2,
+          "2",
           "user-1",
         ],
       );
@@ -537,9 +537,9 @@ describe("SQLitePackageRepository", () => {
 
     it("scopes every batch update to the requested user", () => {
       repository.batchUpdateStatus(
-        [1, 2],
+        ["1", "2"],
         "user-2",
-        PackageStatus.EM_ROTA_DE_ENTREGA,
+        PackageStatus.IN_DELIVERY,
       );
 
       expect(runSyncMock).toHaveBeenCalledTimes(2);
@@ -548,10 +548,10 @@ describe("SQLitePackageRepository", () => {
         1,
         expect.stringContaining("clientCode = ?"),
         [
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
           null,
           DeliveryStatus.PENDING,
-          1,
+          "1",
           "user-2",
         ],
       );
@@ -560,10 +560,10 @@ describe("SQLitePackageRepository", () => {
         2,
         expect.stringContaining("clientCode = ?"),
         [
-          PackageStatus.EM_ROTA_DE_ENTREGA,
+          PackageStatus.IN_DELIVERY,
           null,
           DeliveryStatus.PENDING,
-          2,
+          "2",
           "user-2",
         ],
       );
@@ -573,7 +573,7 @@ describe("SQLitePackageRepository", () => {
       repository.batchUpdateStatus(
         [],
         "user-1",
-        PackageStatus.ENTREGUE,
+        PackageStatus.DELIVERED,
         "Maria",
       );
 
