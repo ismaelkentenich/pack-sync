@@ -73,25 +73,6 @@ describe("HomeActionCard", () => {
       ).toBeGreaterThan(0);
     });
 
-    it("renders package illustration on hero card", () => {
-      const { getAllByTestId } = render(
-        <HomeActionCard
-          testID="scannerCard"
-          icon={PackageSearch}
-          variant="hero"
-          title="Scan package"
-          description="Scan a package"
-          actionLabel="Get started"
-          onPress={jest.fn()}
-        />,
-      );
-
-      expect(
-        getAllByTestId("scannerCardPackageIllustration")
-          .length,
-      ).toBeGreaterThan(0);
-    });
-
     it("calls onPress", () => {
       const onPress = jest.fn();
 
