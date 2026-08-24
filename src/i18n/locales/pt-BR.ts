@@ -193,13 +193,24 @@ export const ptBR = {
   },
 
   scanner: {
-    title: "Scanner",
+    title: "Escanear pacote",
     requestingPermission:
-      "Solicitando permissão de câmera...",
+      "Verificando a permissão da câmera...",
+    preparingCamera: "Preparando câmera",
+    permissionTitle: "Acesso à câmera necessário",
     permissionRequired:
-      "Para escanear os pacotes, ative a permissão da câmera.",
-    grantPermission: "Conceder permissão",
+      "Permita o acesso à câmera para escanear QR Codes e códigos de barras dos pacotes.",
+    grantPermission: "Permitir acesso à câmera",
+    instructionTitle: "Aponte para o código",
+    instructionDescription:
+      "Posicione o QR Code ou código de barras dentro da área destacada.",
+    sessionTitle: "Sessão atual",
+    sessionCount_one: "{{count}} pacote escaneado",
+    sessionCount_other: "{{count}} pacotes escaneados",
     empty: "Nenhum pacote escaneado ainda",
+    emptyTitle: "Nenhum pacote escaneado",
+    emptyDescription:
+      "Os pacotes adicionados nesta sessão aparecerão aqui.",
   },
 
   accessibility: {
