@@ -3,7 +3,12 @@ import {
   RouteProp,
   useRoute,
 } from "@react-navigation/native";
-import React, { useRef } from "react";
+import {
+  CalendarDays,
+  Package as PackageIcon,
+  UserRound,
+} from "lucide-react-native";
+import React, { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import { RootStackParamList } from "@app/navigation/types";
@@ -13,12 +18,12 @@ import { Card } from "@components/primitives/Card";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { UpdateStatusModal } from "@features/packages/components/UpdateStatusModal";
-import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import {
   translateDeliveryStatus,
   translatePackageStatus,
 } from "@features/packages/utils/packageTranslations";
+import Theme from "@theme/theme";
 import { formatDate } from "@utils/date";
 import { styles } from "./styles";
 
@@ -47,80 +52,247 @@ export default function PackageDetailsScreen() {
 
   const locale = i18n.resolvedLanguage ?? i18n.language;
 
+  const handleOpenStatusModal = useCallback(() => {
+    updateStatusModalRef.current?.present();
+  }, []);
+
+  const handleCloseStatusModal = useCallback(() => {
+    updateStatusModalRef.current?.close();
+  }, []);
+
+  const receiverName =
+    packageData.receiverName?.trim() ||
+    t("packages.details.notAvailable");
+
   return (
     <ScreenContainer
+      testID="packageDetailsScreen"
       headerTitle={t("packages.details.title")}
-      withGradientBackground
+      headerVariant="neutral"
+      backgroundColorVariant="neutral100"
+      safeAreaEdges={["bottom"]}
+      scrollable
+      contentContainerStyle={styles.screenContent}
     >
-      <View style={styles.container}>
-        <Card
-          style={styles.cardContainer}
-          touchable={false}
+      <View
+        testID="packageDetailsContainer"
+        style={styles.container}
+      >
+        <View
+          testID="packageDetailsIntroduction"
+          style={styles.introduction}
         >
-          <View style={styles.detailHeader}>
-            <Text style={styles.detailTitle}>
-              {t("packages.code")}: {packageData.code}
-            </Text>
+          <View
+            testID="packageDetailsCodeRow"
+            style={styles.codeRow}
+          >
+            <View
+              testID="packageDetailsIconContainer"
+              style={styles.iconContainer}
+            >
+              <PackageIcon
+                testID="packageDetailsIcon"
+                size={Theme.sizing.icon.md}
+                color={Theme.colors.primary[600]}
+              />
+            </View>
 
-            <Button
-              title={t("packages.details.changeStatus")}
-              onPress={() =>
-                updateStatusModalRef.current?.present()
-              }
-              variant="outline"
-              style={styles.button}
-            />
+            <View style={styles.codeContent}>
+              <Text
+                testID="packageDetailsCode"
+                accessibilityRole="header"
+                numberOfLines={2}
+                style={styles.code}
+              >
+                {packageData.code}
+              </Text>
+
+              <Text
+                testID="packageDetailsDescription"
+                style={styles.description}
+              >
+                {t("packages.details.description")}
+              </Text>
+            </View>
           </View>
+        </View>
 
-          <View style={styles.detailRow}>
-            <Text style={styles.detailText}>
-              {t("common.status")}:
+        <Card
+          testID="packageDetailsStatusCard"
+          touchable={false}
+          style={styles.statusCard}
+        >
+          <View
+            testID="packageDetailsStatusItem"
+            style={styles.statusItem}
+          >
+            <Text style={styles.statusLabel}>
+              {t("packages.details.currentStatus")}
             </Text>
 
             <Badge
+              testID="packageDetailsStatusBadge"
               label={translatePackageStatus(
                 packageData.status,
                 t,
               )}
-              variant="warning"
+              variant="primary"
+              size="sm"
             />
           </View>
 
-          <View style={styles.detailRow}>
-            <Text style={styles.detailText}>
-              {t("common.delivery")}:
+          <View style={styles.statusDivider} />
+
+          <View
+            testID="packageDetailsDeliveryItem"
+            style={styles.statusItem}
+          >
+            <Text style={styles.statusLabel}>
+              {t("packages.details.synchronization")}
             </Text>
 
             <Badge
+              testID="packageDetailsDeliveryBadge"
               label={translateDeliveryStatus(
                 packageData.deliveryStatus,
                 t,
               )}
-              variant="success"
+              variant="warning"
+              size="sm"
             />
           </View>
-
-          {packageData.status === PackageStatus.DELIVERED &&
-          packageData.receiverName ? (
-            <Text style={styles.detailText}>
-              {t("packages.details.receiver")}:{" "}
-              {packageData.receiverName}
-            </Text>
-          ) : null}
-
-          <Text style={styles.detailText}>
-            {t("packages.scannedAt")}:{" "}
-            {formatDate(packageData.scanned_at, locale)}
-          </Text>
         </Card>
+
+        <View
+          testID="packageDetailsInformationSection"
+          style={styles.section}
+        >
+          <Text
+            testID="packageDetailsInformationTitle"
+            style={styles.sectionTitle}
+          >
+            {t("packages.details.information")}
+          </Text>
+
+          <Card
+            testID="packageDetailsInformationCard"
+            touchable={false}
+            style={styles.informationCard}
+          >
+            <View
+              testID="packageDetailsCodeInfo"
+              style={styles.informationRow}
+            >
+              <View style={styles.informationIconContainer}>
+                <PackageIcon
+                  size={Theme.sizing.icon.sm}
+                  color={Theme.colors.primary[600]}
+                />
+              </View>
+
+              <View style={styles.informationContent}>
+                <Text style={styles.informationLabel}>
+                  {t("packages.details.code")}
+                </Text>
+
+                <Text
+                  testID="packageDetailsCodeValue"
+                  selectable
+                  style={styles.informationValue}
+                >
+                  {packageData.code}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.informationDivider} />
+
+            <View
+              testID="packageDetailsScannedAtInfo"
+              style={styles.informationRow}
+            >
+              <View style={styles.informationIconContainer}>
+                <CalendarDays
+                  size={Theme.sizing.icon.sm}
+                  color={Theme.colors.primary[600]}
+                />
+              </View>
+
+              <View style={styles.informationContent}>
+                <Text style={styles.informationLabel}>
+                  {t("packages.details.scannedAt")}
+                </Text>
+
+                <Text
+                  testID="packageDetailsScannedAtValue"
+                  style={styles.informationValue}
+                >
+                  {formatDate(
+                    packageData.scanned_at,
+                    locale,
+                  )}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.informationDivider} />
+
+            <View
+              testID="packageDetailsReceiverInfo"
+              style={styles.informationRow}
+            >
+              <View style={styles.informationIconContainer}>
+                <UserRound
+                  size={Theme.sizing.icon.sm}
+                  color={Theme.colors.primary[600]}
+                />
+              </View>
+
+              <View style={styles.informationContent}>
+                <Text style={styles.informationLabel}>
+                  {t("packages.details.receiver")}
+                </Text>
+
+                <Text
+                  testID="packageDetailsReceiverValue"
+                  style={[
+                    styles.informationValue,
+                    !packageData.receiverName &&
+                      styles.informationValueMuted,
+                  ]}
+                >
+                  {receiverName}
+                </Text>
+              </View>
+            </View>
+          </Card>
+        </View>
+
+        <View
+          testID="packageDetailsActionsSection"
+          style={styles.section}
+        >
+          <Text
+            testID="packageDetailsActionsTitle"
+            style={styles.sectionTitle}
+          >
+            {t("packages.details.actions")}
+          </Text>
+
+          <Button
+            testID="packageDetailsChangeStatusButton"
+            title={t("packages.details.changeStatus")}
+            variant="brand"
+            size="md"
+            onPress={handleOpenStatusModal}
+          />
+        </View>
       </View>
 
       {userId ? (
         <UpdateStatusModal
           ref={updateStatusModalRef}
-          handleCloseModal={() =>
-            updateStatusModalRef.current?.close()
-          }
+          handleCloseModal={handleCloseStatusModal}
           packageData={packageData}
           userId={userId}
         />
