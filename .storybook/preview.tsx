@@ -5,6 +5,7 @@ import React from "react";
 import { useWindowDimensions, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { HeaderHeightProvider } from "../src/contexts/HeaderHeightContext";
 import type { Preview } from "@storybook/react-native-web-vite";
 
 function StorybookContainer({
@@ -22,16 +23,18 @@ function StorybookContainer({
       }}
     >
       <SafeAreaProvider>
-        <NavigationContainer>
-          <View
-            style={{
-              width,
-              height,
-            }}
-          >
-            {children}
-          </View>
-        </NavigationContainer>
+        <HeaderHeightProvider>
+          <NavigationContainer>
+            <View
+              style={{
+                width,
+                height,
+              }}
+            >
+              {children}
+            </View>
+          </NavigationContainer>
+        </HeaderHeightProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

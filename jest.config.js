@@ -24,6 +24,7 @@ module.exports = {
     "^@types/(.*)$": "<rootDir>/src/types/$1",
     "^@test$": "<rootDir>/src/test/index.ts",
     "^@test/(.*)$": "<rootDir>/src/test/$1",
+    "^@contexts/(.*)$": "<rootDir>/src/contexts/$1",
   },
 
   collectCoverageFrom: [

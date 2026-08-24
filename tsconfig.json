@@ -19,7 +19,8 @@
       "@i18n/*": ["./src/i18n/*"],
       "@types/*": ["./src/types/*"],
       "@test": ["./src/test/index.ts"],
-      "@test/*": ["./src/test/*"]
+      "@test/*": ["./src/test/*"],
+      "@contexts/*": ["./src/contexts/*"]
     }
   }
 }
