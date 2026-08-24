@@ -1,26 +1,22 @@
 {
   "expo": {
-    "name": "pack-sync",
+    "name": "Pack Sync",
     "slug": "pack-sync",
-    "scheme": "packsync",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "src/assets/icon.png",
+    "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ismael.packsync"
+      "bundleIdentifier": "com.ismael.packsync",
+      "icon": "./src/assets/icon.png"
     },
     "android": {
       "package": "com.ismael.packsync",
       "adaptiveIcon": {
-        "foregroundImage": "src/assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "src/assets/favicon.png"
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#6F5BD2"
+      }
     },
     "extra": {
       "eas": {
@@ -33,9 +29,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "src/assets/splash-icon.png",
+          "image": "./src/assets/splash-icon.png",
+          "imageWidth": 180,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#6F5BD2"
         }
       ],
       "expo-localization",
