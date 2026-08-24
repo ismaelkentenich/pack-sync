@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationStack } from "@app/navigation";
 import { GlobalAlert } from "@components/composites/CustomAlert";
+import { HeaderHeightProvider } from "@contexts/HeaderHeightContext";
 import { setupAllDatabases } from "@infrastructure/database/setup";
 import { ThemeProvider } from "@theme/ThemeProvider";
 
@@ -24,14 +25,16 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <BottomSheetModalProvider>
-          <ThemeProvider>
-            <NavigationContainer>
-              <NavigationStack />
-              <GlobalAlert />
-            </NavigationContainer>
-          </ThemeProvider>
-        </BottomSheetModalProvider>
+        <HeaderHeightProvider>
+          <BottomSheetModalProvider>
+            <ThemeProvider>
+              <NavigationContainer>
+                <NavigationStack />
+                <GlobalAlert />
+              </NavigationContainer>
+            </ThemeProvider>
+          </BottomSheetModalProvider>
+        </HeaderHeightProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
