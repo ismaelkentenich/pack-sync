@@ -8,6 +8,7 @@ export const typography = {
     xxl: 24,
     xxxl: 32,
     xxxxl: 40,
+    xxxxxl: 48,
   },
 
   lineHeight: {

@@ -94,7 +94,7 @@ describe("HomeStats", () => {
   });
 
   describe("variants", () => {
-    it("uses neutral colors by default", () => {
+    it("uses primary colors by default", () => {
       const { getByTestId } = render(
         <HomeStats
           items={[
@@ -107,7 +107,7 @@ describe("HomeStats", () => {
       );
 
       expect(getByTestId("homeStatCard-0")).toHaveStyle({
-        backgroundColor: Theme.colors.primary[600],
+        backgroundColor: Theme.colors.primary[800],
         borderColor: Theme.colors.neutral[200],
       });
 
@@ -120,7 +120,7 @@ describe("HomeStats", () => {
       });
     });
 
-    it("applies neutral colors", () => {
+    it("applies primary colors", () => {
       const { getByTestId } = render(
         <HomeStats
           items={[
@@ -134,7 +134,7 @@ describe("HomeStats", () => {
       );
 
       expect(getByTestId("homeStatCard-0")).toHaveStyle({
-        backgroundColor: Theme.colors.primary[600],
+        backgroundColor: Theme.colors.primary[800],
         borderColor: Theme.colors.neutral[200],
       });
 
@@ -294,7 +294,7 @@ describe("HomeStats", () => {
       );
 
       expect(getByTestId("homeStatCard-0")).toHaveStyle({
-        backgroundColor: Theme.colors.primary[600],
+        backgroundColor: Theme.colors.primary[800],
       });
 
       expect(getByTestId("homeStatCard-1")).toHaveStyle({

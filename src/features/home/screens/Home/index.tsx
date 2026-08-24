@@ -6,9 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 import { Routes } from "@app/config/routes";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { HomeActionCard } from "@features/home/components/HomeActionCard";
-import { HomeHeader } from "@features/home/components/HomeHeader";
 import { HomeStats } from "@features/home/components/HomeStats";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
@@ -20,10 +18,6 @@ export default function HomeScreen() {
   const navigation =
     useMainTabNavigation<typeof Routes.Home>();
 
-  const user = useAuthStore((state) => state.user);
-
-  const logout = useAuthStore((state) => state.logout);
-
   const packagesCount = usePackageStore(
     (state) => state.packages.length,
   );
@@ -31,12 +25,6 @@ export default function HomeScreen() {
   const pendingCount = usePackageStore(
     (state) => state.pendingCount,
   );
-
-  const userEmail = user?.email ?? undefined;
-
-  const handleLogout = async () => {
-    await logout();
-  };
 
   const handleOpenScanner = () => {
     navigation.navigate(Routes.Scan);
@@ -55,14 +43,10 @@ export default function HomeScreen() {
       contentContainerStyle={styles.screenContent}
       safeAreaEdges={["top"]}
     >
-      <HomeHeader
-        greeting={t("home.greeting")}
-        email={userEmail}
-        logoutAccessibilityLabel={t(
-          "accessibility.header.logout",
-        )}
-        onLogout={handleLogout}
-      />
+      <View style={styles.circleLargeSecondary} />
+      <View style={styles.circleLargePrimary} />
+      <View style={styles.circleSmallPrimary} />
+      <View style={styles.circleSmallSecondary} />
 
       <View
         testID="homeIntroduction"
@@ -74,13 +58,6 @@ export default function HomeScreen() {
           accessibilityRole="header"
         >
           {t("home.headline")}
-        </Text>
-
-        <Text
-          testID="homeDescription"
-          style={styles.description}
-        >
-          {t("home.description")}
         </Text>
       </View>
 
@@ -94,7 +71,6 @@ export default function HomeScreen() {
           variant="hero"
           title={t("home.scanner.title")}
           description={t("home.scanner.description")}
-          actionLabel={t("home.scanner.action")}
           onPress={handleOpenScanner}
         />
       </View>

@@ -1,10 +1,15 @@
 import { StyleSheet } from "react-native";
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from "@theme/responsiveScale";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   heroCard: {
     position: "relative",
-    minHeight: 250,
+    minHeight: verticalScale(140),
     overflow: "hidden",
     padding: Theme.spacing.lg,
     justifyContent: "space-between",
@@ -19,29 +24,29 @@ export const styles = StyleSheet.create({
 
   heroDecorationCircleLarge: {
     position: "absolute",
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    top: -70,
-    right: -55,
+    width: horizontalScale(180),
+    height: verticalScale(180),
+    borderRadius: horizontalScale(90),
+    top: verticalScale(-70),
+    right: horizontalScale(-55),
     backgroundColor: Theme.colors.secondary[200],
     opacity: 0.4,
   },
 
   heroDecorationCircleSmall: {
     position: "absolute",
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    right: Theme.spacing.md,
-    bottom: -35,
+    width: horizontalScale(90),
+    height: verticalScale(90),
+    borderRadius: horizontalScale(45),
+    right: horizontalScale(Theme.spacing.md),
+    bottom: verticalScale(-35),
     backgroundColor: Theme.colors.neutral[50],
     opacity: 0.18,
   },
 
   heroPackageIllustration: {
     position: "absolute",
-    right: Theme.spacing.lg,
+    right: moderateScale(Theme.spacing.lg),
     top: "42%",
     opacity: 0.12,
     transform: [
@@ -62,29 +67,29 @@ export const styles = StyleSheet.create({
   },
 
   heroIconContainer: {
-    width: Theme.sizing.control.lg,
-    height: Theme.sizing.control.lg,
+    width: horizontalScale(Theme.sizing.control.lg),
+    height: verticalScale(Theme.sizing.control.lg),
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: Theme.radius.md,
-    backgroundColor: Theme.colors.primary[600],
+    borderRadius: moderateScale(Theme.radius.md),
+    backgroundColor: Theme.colors.primary[800],
   },
 
   heroContent: {
     maxWidth: "75%",
-    gap: Theme.spacing.xs,
+    gap: moderateScale(Theme.spacing.xs),
     zIndex: 1,
   },
 
   heroTitle: {
-    color: Theme.colors.neutral[900],
+    color: Theme.colors.primary[800],
     fontSize: Theme.typography.size.xxl,
     lineHeight: Theme.typography.lineHeight.xxl,
     fontWeight: Theme.typography.weight.bold,
   },
 
   heroDescription: {
-    color: Theme.colors.neutral[800],
+    color: Theme.colors.primary[800],
     fontSize: Theme.typography.size.md,
     lineHeight: Theme.typography.lineHeight.md,
   },
@@ -93,16 +98,16 @@ export const styles = StyleSheet.create({
     alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
-    gap: Theme.spacing.xs,
-    paddingVertical: Theme.spacing.xs,
-    paddingHorizontal: Theme.spacing.md,
-    borderRadius: Theme.radius.md,
+    gap: horizontalScale(Theme.spacing.xs),
+    paddingVertical: verticalScale(Theme.spacing.xs),
+    paddingHorizontal: horizontalScale(Theme.spacing.md),
+    borderRadius: moderateScale(Theme.radius.md),
     backgroundColor: Theme.colors.primary[600],
     zIndex: 1,
   },
 
   heroActionText: {
-    color: Theme.colors.neutral[50],
+    color: Theme.colors.primary[600],
     fontSize: Theme.typography.size.sm,
     lineHeight: Theme.typography.lineHeight.sm,
     fontWeight: Theme.typography.weight.semibold,
