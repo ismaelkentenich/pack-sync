@@ -7,7 +7,7 @@ describe("getHomeActionCardColors", () => {
       "hero",
       {
         backgroundColor: Theme.colors.secondary[400],
-        borderColor: Theme.colors.secondary[200],
+        borderColor: Theme.colors.secondary[400],
         titleColor: Theme.colors.neutral[900],
         descriptionColor: Theme.colors.neutral[700],
         iconBackgroundColor: Theme.colors.secondary[50],

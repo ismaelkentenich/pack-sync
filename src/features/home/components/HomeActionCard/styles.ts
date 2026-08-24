@@ -5,7 +5,6 @@ export const styles = StyleSheet.create({
   card: {
     position: "relative",
     overflow: "hidden",
-    borderWidth: 1,
   },
 
   horizontal: {

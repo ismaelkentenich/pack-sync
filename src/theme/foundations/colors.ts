@@ -2,45 +2,64 @@ export const palette = {
   white: "#FFFFFF",
   black: "#000000",
 
+  /**
+   * Primary / Brand
+   *
+   * Base:
+   * Splash background: #6F5BD2
+   * Dark brand surface: #4A39A4
+   */
   ultramarine: {
-    50: "#EEF3FF",
-    100: "#DCE6FF",
-    200: "#B9CCFF",
-    300: "#8EACFF",
-    400: "#6189FF",
-    500: "#3670FF",
-    600: "#285BE0",
-    700: "#2149B5",
-    800: "#203E8F",
-    900: "#1F376F",
+    50: "#F5F2FF",
+    100: "#ECE7FF",
+    200: "#D9D0FF",
+    300: "#BEAEF6",
+    400: "#9480E5",
+    500: "#7D68D9",
+    600: "#6F5BD2",
+    700: "#5D49BC",
+    800: "#4A39A4",
+    900: "#3A2D80",
   },
 
+  /**
+   * Secondary / Accent
+   *
+   * Base:
+   * Splash package/scan mark: #F6C945
+   */
   golden: {
-    50: "#FFFBE5",
-    100: "#FFF5B8",
-    200: "#FFEC7A",
-    300: "#FFE13D",
-    400: "#F9D601",
-    500: "#DDBE00",
-    600: "#B59600",
-    700: "#8A7200",
-    800: "#675500",
-    900: "#4A3D00",
+    50: "#FFFBEA",
+    100: "#FFF4C7",
+    200: "#FFE99A",
+    300: "#FFDD69",
+    400: "#F6C945",
+    500: "#DCAE28",
+    600: "#B88D18",
+    700: "#8F6B11",
+    800: "#674D10",
+    900: "#45340D",
   },
 
+  /**
+   * Neutral
+   *
+   * Slightly purple-tinted whites so neutral surfaces
+   * feel consistent with #FAF8FF from the splash.
+   */
   neutral: {
     0: "#FFFFFF",
-    50: "#FAFAFA",
-    100: "#F5F5F5",
-    200: "#EFEFEF",
-    300: "#D9D9D9",
-    400: "#B8B8B8",
-    500: "#8C8C8C",
-    600: "#666666",
-    700: "#484848",
-    800: "#2E2E2E",
-    900: "#171717",
-    950: "#0D0D0D",
+    50: "#FAF8FF",
+    100: "#F5F2FA",
+    200: "#ECE8F1",
+    300: "#D8D3DF",
+    400: "#B6B0BE",
+    500: "#8B8592",
+    600: "#68626E",
+    700: "#49444F",
+    800: "#302C36",
+    900: "#191822",
+    950: "#0E0D13",
   },
 
   green: {
@@ -50,13 +69,13 @@ export const palette = {
   },
 
   amber: {
-    50: "#FFF7E6",
+    50: "#FFF8E8",
     500: "#D98500",
     700: "#945C00",
   },
 
   red: {
-    50: "#FFF0F0",
+    50: "#FFF1F1",
     500: "#D92D20",
     700: "#9E1F17",
   },

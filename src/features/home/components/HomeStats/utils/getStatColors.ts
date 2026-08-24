@@ -7,8 +7,8 @@ export function getStatColors(
   switch (variant) {
     case "success":
       return {
-        backgroundColor: Theme.colors.success[500],
-        borderColor: Theme.colors.success[500],
+        backgroundColor: Theme.colors.primary[400],
+        borderColor: Theme.colors.neutral[200],
         valueColor: Theme.colors.neutral[100],
         labelColor: Theme.colors.neutral[100],
       };
