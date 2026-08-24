@@ -1,22 +1,25 @@
 import { StyleSheet } from "react-native";
+import {
+  horizontalScale,
+  verticalScale,
+} from "@theme/responsiveScale";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
   screenContent: {
     flexGrow: 1,
-    paddingHorizontal: Theme.spacing.md,
-    paddingTop: Theme.spacing.md,
-    paddingBottom: Theme.spacing.xxxl,
-    gap: Theme.spacing.lg,
+    paddingHorizontal: horizontalScale(Theme.spacing.md),
+    paddingTop: verticalScale(Theme.spacing.md),
+    paddingBottom: verticalScale(Theme.spacing.xxxl),
+    gap: verticalScale(Theme.spacing.xl),
   },
 
   introduction: {
-    gap: Theme.spacing.xs,
-    marginBottom: Theme.spacing.xs,
+    gap: verticalScale(Theme.spacing.xs),
   },
 
   headline: {
-    maxWidth: 320,
+    maxWidth: horizontalScale(330),
     color: Theme.colors.neutral[900],
     fontSize: Theme.typography.size.xxxl,
     lineHeight: Theme.typography.lineHeight.xxxl,
@@ -25,15 +28,18 @@ export const styles = StyleSheet.create({
   },
 
   description: {
-    maxWidth: 340,
+    maxWidth: horizontalScale(340),
     color: Theme.colors.neutral[600],
     fontSize: Theme.typography.size.md,
     lineHeight: Theme.typography.lineHeight.md,
   },
 
-  quickActions: {
-    gap: Theme.spacing.sm,
-    marginTop: Theme.spacing.xs,
+  primaryAction: {
+    marginTop: verticalScale(Theme.spacing.xxs),
+  },
+
+  section: {
+    gap: verticalScale(Theme.spacing.sm),
   },
 
   sectionTitle: {

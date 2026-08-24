@@ -80,7 +80,12 @@ export const enUS = {
         "Scan a QR Code or barcode to add a package.",
       action: "Get started",
     },
-    quickActions: "Quick access",
+    overview: "Overview",
+    stats: {
+      packages: "Packages",
+      pending: "Pending",
+    },
+    quickActions: "Actions",
     packageList: {
       title: "All packages",
       description: "View, track, and manage your packages.",

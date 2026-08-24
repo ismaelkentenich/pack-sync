@@ -128,6 +128,69 @@ jest.mock(
   },
 );
 
+jest.mock(
+  "@features/packages/store/usePackageStore",
+  () => ({
+    usePackageStore: (
+      selector: (state: typeof mockPackageState) => unknown,
+    ) => selector(mockPackageState),
+  }),
+);
+
+jest.mock("@features/home/components/HomeStats", () => {
+  const React = jest.requireActual("react");
+
+  const { Text, View } = jest.requireActual("react-native");
+
+  return {
+    HomeStats: ({
+      items,
+    }: {
+      items: Array<{
+        label: string;
+        value: number;
+        variant?: string;
+      }>;
+    }) => (
+      <View testID="mockHomeStats">
+        {items.map((item, index) => (
+          <View
+            key={item.label}
+            testID={`mockHomeStat-${index}`}
+          >
+            <Text testID={`mockHomeStatLabel-${index}`}>
+              {item.label}
+            </Text>
+
+            <Text testID={`mockHomeStatValue-${index}`}>
+              {item.value}
+            </Text>
+
+            <Text testID={`mockHomeStatVariant-${index}`}>
+              {item.variant}
+            </Text>
+          </View>
+        ))}
+      </View>
+    ),
+  };
+});
+
+const mockPackageState = {
+  packages: [
+    {
+      id: "1",
+    },
+    {
+      id: "2",
+    },
+    {
+      id: "3",
+    },
+  ],
+  pendingCount: 2,
+};
+
 describe("HomeScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -252,6 +315,50 @@ describe("HomeScreen", () => {
       fireEvent.press(getByTestId("mockHomeLogout"));
 
       expect(mockLogout).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("overview", () => {
+    it("renders overview section", () => {
+      const { getByTestId } = render(<HomeScreen />);
+
+      expect(getByTestId("homeOverview")).toBeTruthy();
+
+      expect(
+        getByTestId("homeOverviewTitle"),
+      ).toHaveTextContent("home.overview");
+    });
+
+    it("renders package count", () => {
+      const { getByTestId } = render(<HomeScreen />);
+
+      expect(
+        getByTestId("mockHomeStatLabel-0"),
+      ).toHaveTextContent("home.stats.packages");
+
+      expect(
+        getByTestId("mockHomeStatValue-0"),
+      ).toHaveTextContent("3");
+    });
+
+    it("renders pending count", () => {
+      const { getByTestId } = render(<HomeScreen />);
+
+      expect(
+        getByTestId("mockHomeStatLabel-1"),
+      ).toHaveTextContent("home.stats.pending");
+
+      expect(
+        getByTestId("mockHomeStatValue-1"),
+      ).toHaveTextContent("2");
+    });
+
+    it("uses warning variant when packages are pending", () => {
+      const { getByTestId } = render(<HomeScreen />);
+
+      expect(
+        getByTestId("mockHomeStatVariant-1"),
+      ).toHaveTextContent("warning");
     });
   });
 });
