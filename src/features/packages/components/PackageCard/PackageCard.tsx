@@ -57,6 +57,7 @@ export function PackageCard({
             testID="packageCardStatusBadge"
             label={translatePackageStatus(item.status, t)}
             variant="primary"
+            size="sm"
           />
         </View>
 
@@ -78,6 +79,7 @@ export function PackageCard({
               t,
             )}
             variant="secondary"
+            size="sm"
           />
         </View>
 

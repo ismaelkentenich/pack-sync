@@ -9,7 +9,6 @@ import Theme from "@theme/theme";
 export const styles = StyleSheet.create({
   listContent: {
     flexGrow: 1,
-    paddingHorizontal: horizontalScale(Theme.spacing.md),
     paddingTop: verticalScale(Theme.spacing.md),
     paddingBottom: verticalScale(Theme.spacing.xxxl),
     backgroundColor: Theme.colors.neutral[100],
@@ -22,6 +21,7 @@ export const styles = StyleSheet.create({
 
   introduction: {
     gap: verticalScale(Theme.spacing.xs),
+    paddingHorizontal: horizontalScale(Theme.spacing.md),
   },
 
   headline: {
@@ -41,7 +41,11 @@ export const styles = StyleSheet.create({
   },
 
   controls: {
-    gap: verticalScale(Theme.spacing.sm),
+    gap: verticalScale(Theme.spacing.xl),
+  },
+
+  searchWrapper: {
+    marginHorizontal: horizontalScale(Theme.spacing.md),
   },
 
   filtersSection: {
@@ -49,11 +53,11 @@ export const styles = StyleSheet.create({
   },
 
   filtersHeader: {
-    minHeight: verticalScale(Theme.sizing.control.md),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: horizontalScale(Theme.spacing.md),
+    paddingHorizontal: horizontalScale(Theme.spacing.md),
   },
 
   filtersLabel: {
@@ -65,9 +69,6 @@ export const styles = StyleSheet.create({
   },
 
   clearFiltersButton: {
-    minHeight: verticalScale(
-      Theme.sizing.touchTarget.minimum,
-    ),
     justifyContent: "center",
     paddingHorizontal: horizontalScale(Theme.spacing.xs),
   },
@@ -82,6 +83,7 @@ export const styles = StyleSheet.create({
   filtersContent: {
     gap: horizontalScale(Theme.spacing.xs),
     paddingRight: horizontalScale(Theme.spacing.xxl),
+    paddingHorizontal: horizontalScale(Theme.spacing.md),
   },
 
   filterChip: {
@@ -109,14 +111,13 @@ export const styles = StyleSheet.create({
 
   filterChipTextActive: {
     color: Theme.colors.neutral[50],
-
     fontWeight: Theme.typography.weight.semibold,
   },
 
   resultsSummary: {
     gap: verticalScale(Theme.spacing.xxs),
-
     paddingTop: verticalScale(Theme.spacing.xs),
+    paddingHorizontal: horizontalScale(Theme.spacing.md),
   },
 
   resultsTitle: {
@@ -134,6 +135,7 @@ export const styles = StyleSheet.create({
 
   cardWrapper: {
     marginBottom: verticalScale(Theme.spacing.sm),
+    paddingHorizontal: horizontalScale(Theme.spacing.md),
   },
 
   emptyState: {
