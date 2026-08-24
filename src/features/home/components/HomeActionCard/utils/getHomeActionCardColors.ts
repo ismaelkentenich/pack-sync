@@ -4,13 +4,10 @@ import type { HomeActionCardVariant } from "../types";
 export type HomeActionCardColors = {
   backgroundColor: string;
   borderColor: string;
-
   titleColor: string;
   descriptionColor: string;
-
   iconBackgroundColor: string;
   iconColor: string;
-
   actionColor: string;
   arrowColor: string;
 };
@@ -21,7 +18,7 @@ const colors: Record<
 > = {
   hero: {
     backgroundColor: Theme.colors.secondary[400],
-    borderColor: Theme.colors.secondary[200],
+    borderColor: Theme.colors.secondary[400],
     titleColor: Theme.colors.neutral[900],
     descriptionColor: Theme.colors.neutral[700],
     iconBackgroundColor: Theme.colors.secondary[50],

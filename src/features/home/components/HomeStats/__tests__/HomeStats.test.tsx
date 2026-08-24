@@ -161,8 +161,8 @@ describe("HomeStats", () => {
       );
 
       expect(getByTestId("homeStatCard-0")).toHaveStyle({
-        backgroundColor: Theme.colors.success[500],
-        borderColor: Theme.colors.success[500],
+        backgroundColor: Theme.colors.primary[400],
+        borderColor: Theme.colors.neutral[200],
       });
 
       expect(getByTestId("homeStatValue-0")).toHaveStyle({
@@ -302,7 +302,7 @@ describe("HomeStats", () => {
       });
 
       expect(getByTestId("homeStatCard-2")).toHaveStyle({
-        backgroundColor: Theme.colors.success[500],
+        backgroundColor: Theme.colors.primary[400],
       });
     });
   });

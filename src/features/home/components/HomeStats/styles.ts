@@ -13,7 +13,6 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Theme.spacing.xxs,
     padding: Theme.spacing.md,
-    borderWidth: 1,
     borderRadius: Theme.radius.lg,
   },
 
