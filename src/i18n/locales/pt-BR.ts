@@ -165,14 +165,22 @@ export const ptBR = {
     },
 
     updateAll: {
-      title: "Alterar status de todos os pacotes",
-      packagesInSession:
-        "Pacotes bipados nesta sessão: {{count}}",
-      selectStatus: "Selecione o novo status:",
-      emptySession: "Nenhum pacote bipado nesta sessão.",
+      title: "Atualizar pacotes",
+      description:
+        "Escolha um status para aplicar aos pacotes desta sessão e sincronize as alterações.",
+      packagesInSession_one:
+        "{{count}} pacote nesta sessão",
+      packagesInSession_other:
+        "{{count}} pacotes nesta sessão",
+      summaryDescription:
+        "Todos os pacotes da sessão serão atualizados.",
+      selectStatus: "Novo status",
+      emptySession:
+        "Não há pacotes na sessão atual para atualizar.",
       success:
-        "Status atualizado e pacotes enviados ao webhook!",
-      error: "Falha ao atualizar os pacotes.",
+        "Pacotes atualizados e sincronizados com sucesso.",
+      error:
+        "Não foi possível atualizar e sincronizar todos os pacotes.",
     },
 
     feedback: {
