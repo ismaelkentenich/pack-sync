@@ -2,43 +2,62 @@ import Theme from "@theme/theme";
 import { getInputColors } from "../getInputColors";
 
 describe("getInputColors", () => {
-  it("returns default colors", () => {
-    expect(getInputColors("default")).toEqual({
-      backgroundColor: Theme.colors.neutral[50],
-      borderColor: Theme.colors.neutral[300],
-      textColor: Theme.colors.neutral[900],
-      placeholderColor: Theme.colors.neutral[400],
-      labelColor: Theme.colors.neutral[700],
-    });
-  });
+  it.each([
+    [
+      "default",
+      {
+        backgroundColor: Theme.colors.neutral[50],
+        borderColor: Theme.colors.neutral[400],
+        textColor: Theme.colors.neutral[900],
+        placeholderColor: Theme.colors.neutral[400],
+        labelColor: Theme.colors.neutral[700],
+        iconColor: Theme.colors.neutral[500],
+        supportingTextColor: Theme.colors.neutral[600],
+      },
+    ],
 
-  it("returns focused colors", () => {
-    expect(getInputColors("focused")).toEqual({
-      backgroundColor: Theme.colors.neutral[50],
-      borderColor: Theme.colors.primary[500],
-      textColor: Theme.colors.neutral[900],
-      placeholderColor: Theme.colors.neutral[400],
-      labelColor: Theme.colors.neutral[800],
-    });
-  });
+    [
+      "focused",
+      {
+        backgroundColor: Theme.colors.neutral[50],
+        borderColor: Theme.colors.primary[600],
+        textColor: Theme.colors.neutral[900],
+        placeholderColor: Theme.colors.neutral[400],
+        labelColor: Theme.colors.primary[600],
+        iconColor: Theme.colors.primary[600],
+        supportingTextColor: Theme.colors.neutral[600],
+      },
+    ],
 
-  it("returns error colors", () => {
-    expect(getInputColors("error")).toEqual({
-      backgroundColor: Theme.colors.neutral[50],
-      borderColor: Theme.colors.error[500],
-      textColor: Theme.colors.neutral[900],
-      placeholderColor: Theme.colors.neutral[400],
-      labelColor: Theme.colors.error[500],
-    });
-  });
+    [
+      "error",
+      {
+        backgroundColor: Theme.colors.neutral[50],
+        borderColor: Theme.colors.error[500],
+        textColor: Theme.colors.neutral[900],
+        placeholderColor: Theme.colors.neutral[400],
+        labelColor: Theme.colors.error[500],
+        iconColor: Theme.colors.error[500],
+        supportingTextColor: Theme.colors.error[500],
+      },
+    ],
 
-  it("returns disabled colors", () => {
-    expect(getInputColors("disabled")).toEqual({
-      backgroundColor: Theme.colors.neutral[100],
-      borderColor: Theme.colors.neutral[200],
-      textColor: Theme.colors.neutral[500],
-      placeholderColor: Theme.colors.neutral[400],
-      labelColor: Theme.colors.neutral[500],
-    });
-  });
+    [
+      "disabled",
+      {
+        backgroundColor: Theme.colors.neutral[100],
+        borderColor: Theme.colors.neutral[200],
+        textColor: Theme.colors.neutral[500],
+        placeholderColor: Theme.colors.neutral[400],
+        labelColor: Theme.colors.neutral[500],
+        iconColor: Theme.colors.neutral[400],
+        supportingTextColor: Theme.colors.neutral[500],
+      },
+    ],
+  ] as const)(
+    "returns the expected colors for %s state",
+    (state, expectedColors) => {
+      expect(getInputColors(state)).toEqual(expectedColors);
+    },
+  );
 });

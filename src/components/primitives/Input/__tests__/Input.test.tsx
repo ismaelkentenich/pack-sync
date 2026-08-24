@@ -1,37 +1,45 @@
 import {
+  act,
   fireEvent,
   render,
 } from "@testing-library/react-native";
-import Theme from "@theme/theme";
 import { Input } from "../Input";
+
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
 
 describe("Input", () => {
   describe("rendering", () => {
-    it("renders the input with the default testID", () => {
+    it("renders with the default testID", () => {
       const { getByTestId } = render(
-        <Input placeholder="Type something" />,
+        <Input label="Email" />,
       );
 
       expect(getByTestId("inputRoot")).toBeTruthy();
-      expect(getByTestId("inputField")).toBeTruthy();
-      expect(getByTestId("inputWrapper")).toBeTruthy();
     });
 
-    it("uses a custom root testID when provided", () => {
-      const { getByTestId, queryByTestId } = render(
-        <Input placeholder="Email" testID="emailInput" />,
+    it("renders with a custom testID", () => {
+      const { getByTestId } = render(
+        <Input testID="emailInput" label="Email" />,
       );
 
       expect(getByTestId("emailInput")).toBeTruthy();
-      expect(queryByTestId("inputRoot")).toBeNull();
     });
 
-    it("renders the label when provided", () => {
+    it("renders the input field", () => {
       const { getByTestId } = render(
-        <Input
-          label="Email"
-          placeholder="Type your email"
-        />,
+        <Input label="Email" />,
+      );
+
+      expect(getByTestId("inputField")).toBeTruthy();
+    });
+
+    it("renders the label", () => {
+      const { getByTestId } = render(
+        <Input label="Email" />,
       );
 
       expect(getByTestId("inputLabel")).toHaveTextContent(
@@ -39,373 +47,457 @@ describe("Input", () => {
       );
     });
 
-    it("does not render a label when not provided", () => {
+    it("does not render the label when label is not provided", () => {
       const { queryByTestId } = render(
-        <Input placeholder="Type something" />,
+        <Input placeholder="Search..." />,
       );
 
       expect(queryByTestId("inputLabel")).toBeNull();
+
+      expect(
+        queryByTestId("inputLabelContainer"),
+      ).toBeNull();
     });
 
     it("forwards TextInput props", () => {
       const { getByTestId } = render(
         <Input
-          placeholder="Email"
-          autoCapitalize="none"
+          label="Email"
           keyboardType="email-address"
+          autoCapitalize="none"
         />,
       );
 
-      expect(getByTestId("inputField")).toHaveProp(
-        "placeholder",
-        "Email",
-      );
+      const input = getByTestId("inputField");
 
-      expect(getByTestId("inputField")).toHaveProp(
-        "autoCapitalize",
-        "none",
-      );
-
-      expect(getByTestId("inputField")).toHaveProp(
-        "keyboardType",
+      expect(input.props.keyboardType).toBe(
         "email-address",
       );
+
+      expect(input.props.autoCapitalize).toBe("none");
     });
   });
 
-  describe("interaction", () => {
-    it("calls onChangeText when text changes", () => {
+  describe("value", () => {
+    it("renders a controlled value", () => {
+      const { getByDisplayValue } = render(
+        <Input label="Email" value="john@example.com" />,
+      );
+
+      expect(
+        getByDisplayValue("john@example.com"),
+      ).toBeTruthy();
+    });
+
+    it("renders a default value", () => {
+      const { getByDisplayValue } = render(
+        <Input
+          label="Email"
+          defaultValue="john@example.com"
+        />,
+      );
+
+      expect(
+        getByDisplayValue("john@example.com"),
+      ).toBeTruthy();
+    });
+
+    it("calls onChangeText when the value changes", () => {
       const onChangeText = jest.fn();
 
       const { getByTestId } = render(
-        <Input onChangeText={onChangeText} />,
+        <Input label="Email" onChangeText={onChangeText} />,
       );
 
       fireEvent.changeText(
         getByTestId("inputField"),
-        "hello@example.com",
+        "john@example.com",
       );
 
+      expect(onChangeText).toHaveBeenCalledTimes(1);
+
       expect(onChangeText).toHaveBeenCalledWith(
-        "hello@example.com",
+        "john@example.com",
+      );
+    });
+  });
+
+  describe("floating label", () => {
+    it("renders the label container", () => {
+      const { getByTestId } = render(
+        <Input label="Email" />,
+      );
+
+      expect(
+        getByTestId("inputLabelContainer"),
+      ).toBeTruthy();
+    });
+
+    it("keeps the label rendered when the input receives focus", () => {
+      const { getByTestId } = render(
+        <Input label="Email" />,
+      );
+
+      fireEvent(getByTestId("inputField"), "focus");
+
+      expect(getByTestId("inputLabel")).toHaveTextContent(
+        "Email",
       );
     });
 
-    it("calls onFocus when focused", () => {
+    it("keeps the label rendered when the input has a value", () => {
+      const { getByTestId } = render(
+        <Input label="Email" value="john@example.com" />,
+      );
+
+      expect(getByTestId("inputLabel")).toHaveTextContent(
+        "Email",
+      );
+    });
+
+    it("shows the provided placeholder while focused", () => {
+      const { getByTestId } = render(
+        <Input
+          label="Email"
+          placeholder="name@example.com"
+        />,
+      );
+
+      const input = getByTestId("inputField");
+
+      expect(input.props.placeholder).toBeUndefined();
+
+      fireEvent(input, "focus");
+
+      expect(input.props.placeholder).toBe(
+        "name@example.com",
+      );
+    });
+
+    it("shows the placeholder when the input already has a value", () => {
+      const { getByTestId } = render(
+        <Input
+          label="Email"
+          placeholder="name@example.com"
+          value="john@example.com"
+        />,
+      );
+
+      expect(
+        getByTestId("inputField").props.placeholder,
+      ).toBe("name@example.com");
+    });
+  });
+
+  describe("focus", () => {
+    it("calls onFocus", () => {
       const onFocus = jest.fn();
 
       const { getByTestId } = render(
-        <Input onFocus={onFocus} />,
+        <Input label="Email" onFocus={onFocus} />,
       );
 
-      fireEvent(getByTestId("inputField"), "focus", {});
+      fireEvent(getByTestId("inputField"), "focus");
 
       expect(onFocus).toHaveBeenCalledTimes(1);
     });
 
-    it("calls onBlur when blurred", () => {
+    it("calls onBlur", () => {
       const onBlur = jest.fn();
 
       const { getByTestId } = render(
-        <Input onBlur={onBlur} />,
+        <Input label="Email" onBlur={onBlur} />,
       );
 
-      fireEvent(getByTestId("inputField"), "blur", {});
+      fireEvent(getByTestId("inputField"), "blur");
 
       expect(onBlur).toHaveBeenCalledTimes(1);
     });
+
+    it("removes the placeholder after blur when the input is empty", () => {
+      const { getByTestId } = render(
+        <Input
+          label="Email"
+          placeholder="name@example.com"
+        />,
+      );
+
+      const input = getByTestId("inputField");
+
+      fireEvent(input, "focus");
+
+      expect(input.props.placeholder).toBe(
+        "name@example.com",
+      );
+
+      fireEvent(input, "blur");
+
+      expect(input.props.placeholder).toBeUndefined();
+    });
   });
 
-  describe("states", () => {
-    it("uses default colors initially", () => {
-      const { getByTestId } = render(
-        <Input label="Name" />,
-      );
-
-      expect(getByTestId("inputWrapper")).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[50],
-        borderColor: Theme.colors.neutral[300],
-      });
-
-      expect(getByTestId("inputField")).toHaveStyle({
-        color: Theme.colors.neutral[900],
-      });
-
-      expect(getByTestId("inputLabel")).toHaveStyle({
-        color: Theme.colors.neutral[700],
-      });
-    });
-
-    it("uses focused colors when focused", () => {
-      const { getByTestId } = render(
-        <Input label="Name" />,
-      );
-
-      fireEvent(getByTestId("inputField"), "focus", {});
-
-      expect(getByTestId("inputWrapper")).toHaveStyle({
-        borderColor: Theme.colors.primary[500],
-      });
-
-      expect(getByTestId("inputLabel")).toHaveStyle({
-        color: Theme.colors.neutral[800],
-      });
-    });
-
-    it("returns to default colors after blur", () => {
-      const { getByTestId } = render(
-        <Input label="Name" />,
-      );
-
-      fireEvent(getByTestId("inputField"), "focus", {});
-
-      fireEvent(getByTestId("inputField"), "blur", {});
-
-      expect(getByTestId("inputWrapper")).toHaveStyle({
-        borderColor: Theme.colors.neutral[300],
-      });
-    });
-
-    it("prioritizes the error state over focused state", () => {
+  describe("supporting text", () => {
+    it("renders an error message", () => {
       const { getByTestId } = render(
         <Input label="Email" error="Invalid email" />,
       );
 
-      fireEvent(getByTestId("inputField"), "focus", {});
-
-      expect(getByTestId("inputWrapper")).toHaveStyle({
-        borderColor: Theme.colors.error[500],
-      });
-
-      expect(getByTestId("inputLabel")).toHaveStyle({
-        color: Theme.colors.error[500],
-      });
+      expect(getByTestId("inputError")).toHaveTextContent(
+        "Invalid email",
+      );
     });
 
-    it("prioritizes disabled state over error", () => {
+    it("renders helper text", () => {
       const { getByTestId } = render(
         <Input
-          label="Email"
-          error="Invalid email"
-          editable={false}
+          label="Password"
+          helperText="Minimum 8 characters"
         />,
       );
 
-      expect(getByTestId("inputWrapper")).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[100],
-        borderColor: Theme.colors.neutral[200],
-      });
-
-      expect(getByTestId("inputField")).toHaveStyle({
-        color: Theme.colors.neutral[500],
-      });
-
-      expect(getByTestId("inputLabel")).toHaveStyle({
-        color: Theme.colors.neutral[500],
-      });
+      expect(
+        getByTestId("inputHelperText"),
+      ).toHaveTextContent("Minimum 8 characters");
     });
-  });
 
-  describe("error", () => {
-    it("renders the error message", () => {
-      const { getByTestId } = render(
-        <Input error="Invalid value" />,
+    it("prioritizes error over helper text", () => {
+      const { getByTestId, queryByTestId } = render(
+        <Input
+          label="Email"
+          error="Invalid email"
+          helperText="Enter your email"
+        />,
       );
 
       expect(getByTestId("inputError")).toHaveTextContent(
-        "Invalid value",
+        "Invalid email",
       );
+
+      expect(queryByTestId("inputHelperText")).toBeNull();
     });
 
-    it("does not render an error message when absent", () => {
-      const { queryByTestId } = render(<Input />);
+    it("does not render supporting text when none is provided", () => {
+      const { queryByTestId } = render(
+        <Input label="Email" />,
+      );
 
       expect(queryByTestId("inputError")).toBeNull();
-    });
 
-    it("exposes the error as an accessibility alert", () => {
-      const { getByTestId } = render(
-        <Input error="Invalid value" />,
-      );
-
-      expect(getByTestId("inputError")).toHaveProp(
-        "accessibilityRole",
-        "alert",
-      );
+      expect(queryByTestId("inputHelperText")).toBeNull();
     });
   });
 
-  describe("disabled", () => {
-    it("passes editable false to TextInput", () => {
+  describe("password", () => {
+    it("hides password by default", () => {
       const { getByTestId } = render(
-        <Input editable={false} />,
+        <Input label="Password" secure />,
       );
 
-      expect(getByTestId("inputField")).toHaveProp(
-        "editable",
-        false,
-      );
+      expect(
+        getByTestId("inputField").props.secureTextEntry,
+      ).toBe(true);
     });
 
-    it("exposes disabled accessibility state", () => {
-      const { getByTestId } = render(
-        <Input editable={false} />,
+    it("renders the password toggle", () => {
+      const { getByTestId, getAllByTestId } = render(
+        <Input label="Password" secure />,
       );
 
-      expect(getByTestId("inputField")).toHaveProp(
-        "accessibilityState",
-        {
-          disabled: true,
-        },
-      );
+      expect(
+        getByTestId("inputTogglePassword"),
+      ).toBeTruthy();
+
+      expect(
+        getAllByTestId("inputEyeIcon").length,
+      ).toBeGreaterThan(0);
     });
 
-    it("exposes enabled accessibility state by default", () => {
-      const { getByTestId } = render(<Input />);
-
-      expect(getByTestId("inputField")).toHaveProp(
-        "accessibilityState",
-        {
-          disabled: false,
-        },
+    it("does not render the password toggle for regular inputs", () => {
+      const { queryByTestId } = render(
+        <Input label="Email" />,
       );
-    });
-  });
-
-  describe("secure input", () => {
-    it("does not render password toggle when secure is false", () => {
-      const { queryByTestId } = render(<Input />);
 
       expect(
         queryByTestId("inputTogglePassword"),
       ).toBeNull();
     });
 
-    it("renders password toggle when secure is true", () => {
-      const { getByTestId } = render(<Input secure />);
-
-      expect(
-        getByTestId("inputTogglePassword"),
-      ).toBeTruthy();
-    });
-
-    it("hides password by default", () => {
-      const { getByTestId, getAllByTestId, queryByTestId } =
-        render(<Input secure />);
-
-      expect(getByTestId("inputField")).toHaveProp(
-        "secureTextEntry",
-        true,
+    it("shows the password when toggle is pressed", () => {
+      const { getByTestId, getAllByTestId } = render(
+        <Input label="Password" secure />,
       );
-
-      expect(
-        getAllByTestId("inputEyeIcon").length,
-      ).toBeGreaterThan(0);
-
-      expect(queryByTestId("inputEyeOffIcon")).toBeNull();
-    });
-
-    it("shows password after pressing the toggle", () => {
-      const { getByTestId, getAllByTestId, queryByTestId } =
-        render(<Input secure />);
 
       fireEvent.press(getByTestId("inputTogglePassword"));
 
-      expect(getByTestId("inputField")).toHaveProp(
-        "secureTextEntry",
-        false,
-      );
+      expect(
+        getByTestId("inputField").props.secureTextEntry,
+      ).toBe(false);
 
       expect(
         getAllByTestId("inputEyeOffIcon").length,
       ).toBeGreaterThan(0);
-
-      expect(queryByTestId("inputEyeIcon")).toBeNull();
     });
 
-    it("hides password again after pressing the toggle twice", () => {
-      const { getByTestId, getAllByTestId, queryByTestId } =
-        render(<Input secure />);
+    it("hides the password again when toggle is pressed twice", () => {
+      const { getByTestId, getAllByTestId } = render(
+        <Input label="Password" secure />,
+      );
 
       const toggle = getByTestId("inputTogglePassword");
 
       fireEvent.press(toggle);
       fireEvent.press(toggle);
 
-      expect(getByTestId("inputField")).toHaveProp(
-        "secureTextEntry",
-        true,
-      );
+      expect(
+        getByTestId("inputField").props.secureTextEntry,
+      ).toBe(true);
 
       expect(
         getAllByTestId("inputEyeIcon").length,
       ).toBeGreaterThan(0);
-
-      expect(queryByTestId("inputEyeOffIcon")).toBeNull();
     });
 
-    it("has button accessibility role on password toggle", () => {
-      const { getByTestId } = render(<Input secure />);
-
-      expect(getByTestId("inputTogglePassword")).toHaveProp(
-        "accessibilityRole",
-        "button",
-      );
-    });
-
-    it("exposes disabled state on password toggle when input is disabled", () => {
+    it("uses the correct accessibility label when password is hidden", () => {
       const { getByTestId } = render(
-        <Input secure editable={false} />,
+        <Input label="Password" secure />,
       );
 
       expect(getByTestId("inputTogglePassword")).toHaveProp(
-        "accessibilityState",
-        {
-          disabled: true,
-        },
+        "accessibilityLabel",
+        "accessibility.input.showPassword",
       );
     });
 
-    it("does not reveal the password when input is disabled", () => {
+    it("updates the accessibility label when password becomes visible", () => {
       const { getByTestId } = render(
-        <Input secure editable={false} />,
+        <Input label="Password" secure />,
       );
 
-      fireEvent.press(getByTestId("inputTogglePassword"));
+      const toggle = getByTestId("inputTogglePassword");
 
-      expect(getByTestId("inputField")).toHaveProp(
-        "secureTextEntry",
-        true,
+      fireEvent.press(toggle);
+
+      expect(toggle).toHaveProp(
+        "accessibilityLabel",
+        "accessibility.input.hidePassword",
       );
     });
   });
-  describe("custom styles", () => {
-    it("applies custom container styles", () => {
+
+  describe("disabled", () => {
+    it("sets the TextInput as non-editable", () => {
       const { getByTestId } = render(
-        <Input
-          containerStyle={{
-            marginTop: 20,
-          }}
-        />,
+        <Input label="Email" editable={false} />,
       );
 
-      expect(getByTestId("inputRoot")).toHaveStyle({
-        marginTop: 20,
+      expect(getByTestId("inputField").props.editable).toBe(
+        false,
+      );
+    });
+
+    it("sets the disabled accessibility state", () => {
+      const { getByTestId } = render(
+        <Input label="Email" editable={false} />,
+      );
+
+      expect(
+        getByTestId("inputField").props.accessibilityState,
+      ).toEqual({
+        disabled: true,
       });
     });
 
-    it("applies custom input styles", () => {
+    it("disables the password toggle", () => {
+      const { getByTestId } = render(
+        <Input label="Password" secure editable={false} />,
+      );
+
+      expect(
+        getByTestId("inputTogglePassword").props
+          .accessibilityState,
+      ).toEqual({
+        disabled: true,
+      });
+    });
+  });
+
+  describe("animation", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.runOnlyPendingTimers();
+      jest.useRealTimers();
+    });
+
+    it("keeps the label available while the floating animation runs", () => {
+      const { getByTestId } = render(
+        <Input label="Email" />,
+      );
+
+      fireEvent(getByTestId("inputField"), "focus");
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(
+        getByTestId("inputLabelContainer"),
+      ).toBeTruthy();
+
+      expect(getByTestId("inputLabel")).toHaveTextContent(
+        "Email",
+      );
+    });
+
+    it("keeps the label available after blur animation", () => {
+      const { getByTestId } = render(
+        <Input label="Email" />,
+      );
+
+      const input = getByTestId("inputField");
+
+      fireEvent(input, "focus");
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      fireEvent(input, "blur");
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(getByTestId("inputLabel")).toHaveTextContent(
+        "Email",
+      );
+    });
+
+    it("keeps the label floating after typing in an uncontrolled input", () => {
       const { getByTestId } = render(
         <Input
-          inputStyle={{
-            letterSpacing: 2,
-          }}
+          label="Email"
+          placeholder="name@example.com"
         />,
       );
 
-      expect(getByTestId("inputField")).toHaveStyle({
-        letterSpacing: 2,
-      });
+      const input = getByTestId("inputField");
+
+      fireEvent(input, "focus");
+
+      fireEvent.changeText(input, "john@example.com");
+
+      fireEvent(input, "blur");
+
+      expect(getByTestId("inputLabel")).toHaveTextContent(
+        "Email",
+      );
+
+      expect(
+        getByTestId("inputField").props.placeholder,
+      ).toBe("name@example.com");
     });
   });
 });

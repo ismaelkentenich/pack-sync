@@ -264,6 +264,7 @@ export default function PackagesListScreen() {
               placeholder={t(
                 "packages.list.searchPlaceholder",
               )}
+              label={t("packages.list.searchPlaceholder")}
               value={searchTerm}
               onChangeText={setSearchTerm}
               autoCapitalize="none"
