@@ -2,13 +2,13 @@ import { ArrowLeft, Package } from "lucide-react-native";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
-import { Routes } from "@app/navigation/routes";
+import { Routes } from "@app/config/routes";
 import { Button } from "@components/primitives/Button";
 import { Input } from "@components/primitives/Input";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { getAuthErrorMessage } from "@features/auth/utils/getAuthErrorMessage";
-import { useAppNavigation } from "@hooks/useAppNavigation";
+import { useAuthNavigation } from "@hooks/useAuthNavigation";
 import { useShowAlert } from "@store/useAlertStore";
 import Theme from "@theme/theme";
 import {
@@ -20,7 +20,8 @@ import { styles } from "./styles";
 export default function SignupScreen() {
   const { t } = useTranslation();
 
-  const navigation = useAppNavigation(Routes.SignUp);
+  const navigation =
+    useAuthNavigation<typeof Routes.SignUp>();
 
   const signup = useAuthStore((state) => state.signup);
 
@@ -85,7 +86,7 @@ export default function SignupScreen() {
   };
 
   const handleBackToLogin = () => {
-    navigation.navigate("Login");
+    navigation.navigate(Routes.Login);
   };
 
   return (

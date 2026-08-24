@@ -11,7 +11,7 @@ import {
 import React, { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import { RootStackParamList } from "@app/navigation/types";
+import { Routes } from "@app/config/routes";
 import { Badge } from "@components/primitives/Badge";
 import { Button } from "@components/primitives/Button";
 import { Card } from "@components/primitives/Card";
@@ -26,10 +26,11 @@ import {
 import Theme from "@theme/theme";
 import { formatDate } from "@utils/date";
 import { styles } from "./styles";
+import type { PackagesStackParamList } from "@app/config/types";
 
 type PackageDetailsRouteProp = RouteProp<
-  RootStackParamList,
-  "PackageDetails"
+  PackagesStackParamList,
+  typeof Routes.PackageDetails
 >;
 
 export default function PackageDetailsScreen() {

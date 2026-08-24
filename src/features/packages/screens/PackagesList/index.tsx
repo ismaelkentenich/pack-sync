@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Routes } from "@app/config/routes";
 import { Input } from "@components/primitives/Input";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
@@ -27,7 +28,7 @@ import { UpdateStatusModal } from "@features/packages/components/UpdateStatusMod
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
-import { useAppNavigation } from "@hooks/useAppNavigation";
+import { usePackagesNavigation } from "@hooks/usePackagesNavigation";
 import { moderateScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
@@ -42,7 +43,8 @@ type StatusFilterOption = {
 export default function PackagesListScreen() {
   const { t } = useTranslation();
 
-  const navigation = useAppNavigation("PackagesList");
+  const navigation =
+    usePackagesNavigation<typeof Routes.PackagesList>();
 
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -149,7 +151,7 @@ export default function PackagesListScreen() {
 
   const handleOpenDetails = useCallback(
     (pkg: Package) => {
-      navigation.navigate("PackageDetails", {
+      navigation.navigate(Routes.PackageDetails, {
         pkg,
       });
     },

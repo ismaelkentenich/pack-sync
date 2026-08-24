@@ -4,22 +4,24 @@ import {
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import { Routes } from "@app/navigation/routes";
+import { Routes } from "@app/config/routes";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { HomeActionCard } from "@features/home/components/HomeActionCard";
 import { HomeHeader } from "@features/home/components/HomeHeader";
 import { HomeStats } from "@features/home/components/HomeStats";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
-import { useAppNavigation } from "@hooks/useAppNavigation";
+import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
 import { styles } from "./styles";
 
 export default function HomeScreen() {
   const { t } = useTranslation();
 
-  const navigation = useAppNavigation(Routes.Home);
+  const navigation =
+    useMainTabNavigation<typeof Routes.Home>();
 
   const user = useAuthStore((state) => state.user);
+
   const logout = useAuthStore((state) => state.logout);
 
   const packagesCount = usePackageStore(
@@ -37,11 +39,11 @@ export default function HomeScreen() {
   };
 
   const handleOpenScanner = () => {
-    navigation.navigate("Scan");
+    navigation.navigate(Routes.Scan);
   };
 
   const handleOpenPackages = () => {
-    navigation.navigate("PackagesList");
+    navigation.navigate(Routes.Packages);
   };
 
   return (

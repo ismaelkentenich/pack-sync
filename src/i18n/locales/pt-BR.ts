@@ -14,8 +14,8 @@ export const ptBR = {
 
   navigation: {
     home: "Início",
-    scanner: "Scanner",
-    packages: "Lista de Pacotes",
+    scan: "Escanear",
+    packages: "Pacotes",
     packageDetails: "Detalhes do Pacote",
   },
 
@@ -237,6 +237,11 @@ export const ptBR = {
     },
     modal: {
       close: "Fechar modal",
+    },
+    navigation: {
+      home: "Ir para início",
+      scan: "Ir para o scanner",
+      packages: "Ir para pacotes",
     },
   },
 } as const;
