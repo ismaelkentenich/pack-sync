@@ -67,11 +67,14 @@ export default function HomeScreen() {
       >
         <HomeActionCard
           testID="homeScannerCard"
-          icon={ScanQrCode}
           variant="hero"
+          orientation="vertical"
+          size="lg"
+          icon={ScanQrCode}
           title={t("home.scanner.title")}
           description={t("home.scanner.description")}
           onPress={handleOpenScanner}
+          showArrow={false}
         />
       </View>
 
@@ -117,6 +120,8 @@ export default function HomeScreen() {
           title={t("home.packageList.title")}
           description={t("home.packageList.description")}
           onPress={handleOpenPackages}
+          variant="accentDark"
+          size="md"
         />
       </View>
     </ScreenContainer>

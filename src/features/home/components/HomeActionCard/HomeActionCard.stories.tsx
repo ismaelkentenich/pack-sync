@@ -1,5 +1,4 @@
 import {
-  PackageCheck,
   PackageSearch,
   ScanLine,
 } from "lucide-react-native";
@@ -15,31 +14,44 @@ const meta: Meta<typeof HomeActionCard> = {
   title: "Features/Home/HomeActionCard",
   component: HomeActionCard,
 
-  render: (args) => (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        padding: Theme.spacing.xl,
-        backgroundColor: Theme.colors.neutral[100],
-      }}
-    >
-      <HomeActionCard {...args} />
-    </View>
-  ),
-
   args: {
     testID: "homeActionCard",
-    title: "Scan package",
-    description:
-      "Scan a barcode or QR Code to add a package.",
-    actionLabel: "Start scanning",
-    icon: ScanLine,
-    variant: "secondary",
+    title: "Package list",
+    description: "View and manage scanned packages.",
+    actionLabel: undefined,
+    icon: PackageSearch,
+    variant: "default",
+    size: "md",
+    orientation: "horizontal",
+    showArrow: true,
+    showDecoration: false,
+    disabled: false,
     onPress: () => {},
   },
 
   argTypes: {
+    variant: {
+      control: "select",
+      options: [
+        "hero",
+        "default",
+        "outlined",
+        "soft",
+        "accent",
+        "danger",
+      ],
+    },
+
+    size: {
+      control: "select",
+      options: ["sm", "md", "lg"],
+    },
+
+    orientation: {
+      control: "select",
+      options: ["horizontal", "vertical"],
+    },
+
     title: {
       control: "text",
     },
@@ -52,174 +64,238 @@ const meta: Meta<typeof HomeActionCard> = {
       control: "text",
     },
 
-    variant: {
-      control: "select",
-      options: ["hero", "secondary"],
+    showArrow: {
+      control: "boolean",
     },
 
-    onPress: {
-      action: "pressed",
+    showDecoration: {
+      control: "boolean",
+    },
+
+    disabled: {
+      control: "boolean",
     },
   },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
+type Story = StoryObj<typeof HomeActionCard>;
 
 export const Hero: Story = {
   args: {
-    testID: "heroScanCard",
-    title: "Scan package",
-    description:
-      "Point your camera at a barcode or QR Code to register a package.",
+    variant: "hero",
+    size: "lg",
     actionLabel: "Start scanning",
     icon: ScanLine,
-    variant: "hero",
   },
 };
 
-export const Secondary: Story = {
+export const Default: Story = {};
+
+export const Outlined: Story = {
   args: {
-    testID: "packagesCard",
-    title: "Package list",
-    description: "View and manage all scanned packages.",
-    icon: PackageSearch,
-    variant: "secondary",
+    variant: "outlined",
   },
 };
 
-export const HeroWithoutAction: Story = {
+export const Soft: Story = {
   args: {
-    testID: "heroWithoutActionCard",
-    title: "Scan package",
-    description:
-      "Point your camera at a barcode or QR Code to register a package.",
-    actionLabel: undefined,
-    icon: ScanLine,
-    variant: "hero",
+    variant: "soft",
   },
 };
 
-export const Packages: Story = {
+export const Accent: Story = {
   args: {
-    testID: "packagesCard",
-    title: "Packages",
-    description:
-      "Review package status and synchronization details.",
-    icon: PackageSearch,
-    variant: "secondary",
+    variant: "accent",
   },
 };
 
-export const DeliveredPackages: Story = {
+export const Danger: Story = {
   args: {
-    testID: "deliveredPackagesCard",
-    title: "Delivered packages",
-    description:
-      "Review packages that have already been delivered.",
-    icon: PackageCheck,
-    variant: "secondary",
+    variant: "danger",
   },
 };
 
-export const PortugueseHero: Story = {
+export const Vertical: Story = {
   args: {
-    testID: "scanCardPtBr",
-    title: "Escanear pacote",
-    description:
-      "Aponte a câmera para o código de barras ou QR Code do pacote.",
-    actionLabel: "Iniciar escaneamento",
-    icon: ScanLine,
-    variant: "hero",
+    orientation: "vertical",
+    showArrow: false,
   },
 };
 
-export const PortugueseSecondary: Story = {
+export const WithoutIcon: Story = {
   args: {
-    testID: "packagesCardPtBr",
-    title: "Lista de pacotes",
-    description:
-      "Consulte e gerencie os pacotes escaneados.",
-    icon: PackageSearch,
-    variant: "secondary",
+    icon: undefined,
   },
 };
 
-export const LongContentHero: Story = {
+export const WithoutDescription: Story = {
   args: {
-    testID: "longHeroCard",
-    title: "Scan a new package using the device camera",
-    description:
-      "Use the camera to identify supported barcode and QR Code formats and register the package in the current session.",
-    actionLabel: "Open package scanner",
-    icon: ScanLine,
-    variant: "hero",
+    description: undefined,
   },
 };
 
-export const LongContentSecondary: Story = {
-  args: {
-    testID: "longSecondaryCard",
-    title: "View and manage all scanned packages",
-    description:
-      "Review package details, delivery status, synchronization information and the latest changes made to each package.",
-    icon: PackageSearch,
-    variant: "secondary",
-  },
-};
-
-export const CompactWidth: Story = {
-  render: (args) => (
-    <View
-      style={{
-        width: 300,
-        padding: Theme.spacing.md,
-        backgroundColor: Theme.colors.neutral[100],
-      }}
-    >
-      <HomeActionCard {...args} />
-    </View>
-  ),
-
-  args: {
-    testID: "compactCard",
-    title: "Package list",
-    description: "View and manage all scanned packages.",
-    icon: PackageSearch,
-    variant: "secondary",
-  },
-};
-
-export const AllVariants: Story = {
+export const AllVersions: Story = {
   render: () => (
     <View
       style={{
         flex: 1,
-        justifyContent: "center",
         gap: Theme.spacing.lg,
         padding: Theme.spacing.xl,
         backgroundColor: Theme.colors.neutral[100],
       }}
     >
       <HomeActionCard
-        testID="heroCard"
+        testID="allVersionsHero"
         title="Scan package"
         description="Scan a barcode or QR Code to register a package."
         actionLabel="Start scanning"
         icon={ScanLine}
         variant="hero"
+        size="lg"
         onPress={() => {}}
       />
 
       <HomeActionCard
-        testID="secondaryCard"
+        testID="allVersionsOutlined"
         title="Package list"
         description="View and manage scanned packages."
         icon={PackageSearch}
-        variant="secondary"
+        variant="outlined"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsSoft"
+        title="Package list"
+        description="View and manage scanned packages."
+        icon={PackageSearch}
+        variant="soft"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsAccent"
+        title="Package list"
+        description="View and manage scanned packages."
+        icon={PackageSearch}
+        variant="accent"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsAccent"
+        title="Package list"
+        description="View and manage scanned packages."
+        icon={PackageSearch}
+        variant="accentDark"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsDanger"
+        title="Remove package"
+        description="This action may permanently affect package data."
+        icon={PackageSearch}
+        variant="danger"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsVertical"
+        title="Scan"
+        description="Open the package scanner."
+        icon={ScanLine}
+        variant="soft"
+        orientation="vertical"
+        showArrow={false}
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsWithoutIcon"
+        title="Package summary"
+        description="Review current package information."
+        variant="outlined"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsWithoutDescription"
+        title="Package list"
+        icon={PackageSearch}
+        variant="default"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsWithoutArrow"
+        title="Package list"
+        description="View and manage scanned packages."
+        icon={PackageSearch}
+        variant="default"
+        showArrow={false}
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsWithDecoration"
+        title="Package list"
+        description="View and manage scanned packages."
+        icon={PackageSearch}
+        variant="default"
+        showDecoration
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="allVersionsDisabled"
+        title="Unavailable action"
+        description="This action is currently disabled."
+        icon={PackageSearch}
+        variant="default"
+        disabled
+        onPress={() => {}}
+      />
+    </View>
+  ),
+};
+
+export const AllSizes: Story = {
+  render: () => (
+    <View
+      style={{
+        flex: 1,
+        gap: Theme.spacing.lg,
+        padding: Theme.spacing.xl,
+        backgroundColor: Theme.colors.neutral[100],
+      }}
+    >
+      <HomeActionCard
+        testID="smallCard"
+        title="Small"
+        description="Small action card."
+        icon={PackageSearch}
+        size="sm"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="mediumCard"
+        title="Medium"
+        description="Medium action card."
+        icon={PackageSearch}
+        size="md"
+        onPress={() => {}}
+      />
+
+      <HomeActionCard
+        testID="largeCard"
+        title="Large"
+        description="Large action card."
+        icon={PackageSearch}
+        size="lg"
         onPress={() => {}}
       />
     </View>

@@ -1,160 +1,89 @@
 import { StyleSheet } from "react-native";
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from "@theme/responsiveScale";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
-  heroCard: {
+  card: {
     position: "relative",
-    minHeight: verticalScale(140),
     overflow: "hidden",
-    padding: Theme.spacing.lg,
-    justifyContent: "space-between",
-    gap: Theme.spacing.xl,
-    borderWidth: 0,
-    backgroundColor: Theme.colors.secondary[400],
+    borderWidth: 1,
   },
 
-  heroDecoration: {
-    ...StyleSheet.absoluteFill,
-  },
-
-  heroDecorationCircleLarge: {
-    position: "absolute",
-    width: horizontalScale(180),
-    height: verticalScale(180),
-    borderRadius: horizontalScale(90),
-    top: verticalScale(-70),
-    right: horizontalScale(-55),
-    backgroundColor: Theme.colors.secondary[200],
-    opacity: 0.4,
-  },
-
-  heroDecorationCircleSmall: {
-    position: "absolute",
-    width: horizontalScale(90),
-    height: verticalScale(90),
-    borderRadius: horizontalScale(45),
-    right: horizontalScale(Theme.spacing.md),
-    bottom: verticalScale(-35),
-    backgroundColor: Theme.colors.neutral[50],
-    opacity: 0.18,
-  },
-
-  heroPackageIllustration: {
-    position: "absolute",
-    right: moderateScale(Theme.spacing.lg),
-    top: "42%",
-    opacity: 0.12,
-    transform: [
-      {
-        rotate: "-8deg",
-      },
-      {
-        scale: 2.4,
-      },
-    ],
-  },
-
-  heroTopRow: {
+  horizontal: {
     flexDirection: "row",
+    alignItems: "center",
+  },
+
+  vertical: {
+    flexDirection: "column",
     alignItems: "flex-start",
-    justifyContent: "space-between",
-    zIndex: 1,
   },
 
-  heroIconContainer: {
-    width: horizontalScale(Theme.sizing.control.lg),
-    height: verticalScale(Theme.sizing.control.lg),
+  iconContainer: {
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: moderateScale(Theme.radius.md),
-    backgroundColor: Theme.colors.primary[800],
+    borderRadius: Theme.radius.lg,
+    flexShrink: 0,
   },
 
-  heroContent: {
-    maxWidth: "75%",
-    gap: moderateScale(Theme.spacing.xs),
-    zIndex: 1,
-  },
-
-  heroTitle: {
-    color: Theme.colors.primary[800],
-    fontSize: Theme.typography.size.xxl,
-    lineHeight: Theme.typography.lineHeight.xxl,
-    fontWeight: Theme.typography.weight.bold,
-  },
-
-  heroDescription: {
-    color: Theme.colors.primary[800],
-    fontSize: Theme.typography.size.md,
-    lineHeight: Theme.typography.lineHeight.md,
-  },
-
-  heroAction: {
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: horizontalScale(Theme.spacing.xs),
-    paddingVertical: verticalScale(Theme.spacing.xs),
-    paddingHorizontal: horizontalScale(Theme.spacing.md),
-    borderRadius: moderateScale(Theme.radius.md),
-    backgroundColor: Theme.colors.primary[600],
-    zIndex: 1,
-  },
-
-  heroActionText: {
-    color: Theme.colors.primary[600],
-    fontSize: Theme.typography.size.sm,
-    lineHeight: Theme.typography.lineHeight.sm,
-    fontWeight: Theme.typography.weight.semibold,
-  },
-
-  secondaryCard: {
-    minHeight: Theme.sizing.control.lg,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Theme.spacing.md,
-    padding: Theme.spacing.md,
-    backgroundColor: Theme.colors.neutral[50],
-  },
-
-  secondaryIconContainer: {
-    width: Theme.sizing.control.md,
-    height: Theme.sizing.control.md,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: Theme.radius.md,
-    backgroundColor: Theme.colors.primary[100],
-  },
-
-  secondaryContent: {
+  content: {
     flex: 1,
     gap: Theme.spacing.xxs,
   },
 
-  secondaryTitle: {
-    color: Theme.colors.neutral[900],
-    fontSize: Theme.typography.size.md,
-    lineHeight: Theme.typography.lineHeight.md,
+  title: {
     fontWeight: Theme.typography.weight.semibold,
   },
 
-  secondaryDescription: {
-    color: Theme.colors.neutral[600],
-    fontSize: Theme.typography.size.sm,
-    lineHeight: Theme.typography.lineHeight.sm,
+  description: {
+    flexShrink: 1,
   },
 
-  secondaryArrowContainer: {
-    width: Theme.sizing.control.sm,
-    height: Theme.sizing.control.sm,
+  arrowContainer: {
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: Theme.radius.md,
-    backgroundColor: Theme.colors.primary[100],
+    flexShrink: 0,
+  },
+
+  action: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Theme.spacing.xxs,
+  },
+
+  actionText: {
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.sm,
+    fontWeight: Theme.typography.weight.semibold,
+  },
+
+  decoration: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: "45%",
+    overflow: "hidden",
+  },
+
+  decorationLarge: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    right: -40,
+    top: -50,
+    backgroundColor: Theme.colors.neutral[50],
+    opacity: 0.06,
+  },
+
+  decorationSmall: {
+    position: "absolute",
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    right: 25,
+    bottom: -35,
+    backgroundColor: Theme.colors.secondary[400],
+    opacity: 0.2,
   },
 });
