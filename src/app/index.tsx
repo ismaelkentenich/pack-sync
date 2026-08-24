@@ -3,8 +3,8 @@ import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
 import Theme from "@theme/theme";
-import { AppStack } from "./AppStack";
-import { AuthStack } from "./AuthStack";
+import { AppStack } from "./stacks/AppStack";
+import { AuthStack } from "./stacks/AuthStack";
 
 export function NavigationStack() {
   const isAuthenticated = useAuthStore(

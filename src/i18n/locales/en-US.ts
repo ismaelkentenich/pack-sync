@@ -14,8 +14,8 @@ export const enUS = {
 
   navigation: {
     home: "Home",
-    scanner: "Scanner",
-    packages: "Package List",
+    scan: "Scan",
+    packages: "Packages",
     packageDetails: "Package Details",
   },
 
@@ -235,6 +235,11 @@ export const enUS = {
     },
     modal: {
       close: "Close modal",
+    },
+    navigation: {
+      home: "Go to home",
+      scan: "Go to scanner",
+      packages: "Go to packages",
     },
   },
 } as const;

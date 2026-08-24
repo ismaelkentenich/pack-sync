@@ -23,7 +23,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Routes } from "@app/navigation/routes";
+import { Routes } from "@app/config/routes";
 import { Button } from "@components/primitives/Button";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
@@ -31,7 +31,7 @@ import { PackageCard } from "@features/packages/components/PackageCard";
 import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageFeedback } from "@features/packages/utils/getPackageErrorFeedback";
-import { useAppNavigation } from "@hooks/useAppNavigation";
+import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
 import { useShowAlert } from "@store/useAlertStore";
 import { moderateScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
@@ -42,7 +42,8 @@ import type { ListRenderItemInfo } from "@shopify/flash-list";
 export default function ScanScreen() {
   const { t } = useTranslation();
 
-  const navigation = useAppNavigation(Routes.Scan);
+  const navigation =
+    useMainTabNavigation<typeof Routes.Scan>();
 
   const updateAllModalRef = useRef<BottomSheetModal>(null);
 
@@ -132,7 +133,7 @@ export default function ScanScreen() {
   ]);
 
   const handleViewAll = useCallback(() => {
-    navigation.navigate(Routes.PackagesList);
+    navigation.navigate(Routes.Packages);
   }, [navigation]);
 
   const renderItem = useCallback(
@@ -476,7 +477,7 @@ export default function ScanScreen() {
           ref={updateAllModalRef}
           handleCloseModal={closeUpdateAllModal}
           onSuccessNavigate={() =>
-            navigation.navigate(Routes.PackagesList)
+            navigation.navigate(Routes.Packages)
           }
           userId={userId}
         />

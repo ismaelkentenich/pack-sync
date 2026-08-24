@@ -2,6 +2,7 @@ import {
   fireEvent,
   render,
 } from "@testing-library/react-native";
+import { Routes } from "@app/config/routes";
 import HomeScreen from "../index";
 
 const mockNavigate = jest.fn();
@@ -11,8 +12,8 @@ const mockUser = {
   email: "user@example.com",
 };
 
-jest.mock("@hooks/useAppNavigation", () => ({
-  useAppNavigation: () => ({
+jest.mock("@hooks/useMainTabNavigation", () => ({
+  useMainTabNavigation: () => ({
     navigate: mockNavigate,
   }),
 }));
@@ -295,7 +296,7 @@ describe("HomeScreen", () => {
       ).toHaveTextContent("home.packageList.description");
     });
 
-    it("navigates to PackagesList", () => {
+    it("navigates to Packages", () => {
       const { getByTestId } = render(<HomeScreen />);
 
       fireEvent.press(getByTestId("homePackagesCard"));
@@ -303,7 +304,7 @@ describe("HomeScreen", () => {
       expect(mockNavigate).toHaveBeenCalledTimes(1);
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        "PackagesList",
+        Routes.Packages,
       );
     });
   });

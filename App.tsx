@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { NavigationStack } from "@app/navigation";
+import { NavigationStack } from "@app/index";
 import { GlobalAlert } from "@components/composites/CustomAlert";
 import { HeaderHeightProvider } from "@contexts/HeaderHeightContext";
 import { setupAllDatabases } from "@infrastructure/database/setup";
