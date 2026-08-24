@@ -1,24 +1,36 @@
 import { StyleSheet } from "react-native";
+import {
+  horizontalScale,
+  verticalScale,
+} from "@theme/responsiveScale";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
+  safeArea: {
+    width: "100%",
+  },
+
   container: {
-    height: Theme.sizing.control.lg,
-    backgroundColor: Theme.colors.primary[600],
+    minHeight: verticalScale(56),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: Theme.spacing.xs,
+    paddingHorizontal: horizontalScale(12),
   },
 
   backButton: {
     position: "absolute",
-    left: Theme.spacing.sm,
-    padding: Theme.spacing.xs,
+    left: horizontalScale(4),
+    minWidth: Theme.sizing.touchTarget.minimum,
+    minHeight: Theme.sizing.touchTarget.minimum,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   title: {
-    color: Theme.colors.neutral[50],
+    flexShrink: 1,
+    maxWidth: "70%",
+    paddingHorizontal: horizontalScale(8),
     fontSize: Theme.typography.size.lg,
     lineHeight: Theme.typography.lineHeight.lg,
     fontWeight: Theme.typography.weight.semibold,
@@ -27,7 +39,10 @@ export const styles = StyleSheet.create({
 
   logoutButton: {
     position: "absolute",
-    right: Theme.spacing.sm,
-    padding: Theme.spacing.xs,
+    right: horizontalScale(4),
+    minWidth: Theme.sizing.touchTarget.minimum,
+    minHeight: Theme.sizing.touchTarget.minimum,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

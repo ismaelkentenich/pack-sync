@@ -9,6 +9,9 @@ import type {
 const meta: Meta<typeof Header> = {
   title: "Composites/Header",
   component: Header,
+  parameters: {
+    layout: "fullscreen",
+  },
 
   render: (args) => (
     <View
@@ -25,19 +28,21 @@ const meta: Meta<typeof Header> = {
     title: "Header",
     showBack: true,
     showLogout: false,
+    variant: "brand",
   },
-
   argTypes: {
     title: {
       control: "text",
     },
-
     showBack: {
       control: "boolean",
     },
-
     showLogout: {
       control: "boolean",
+    },
+    variant: {
+      control: "select",
+      options: ["brand", "neutral"],
     },
   },
 };
@@ -48,9 +53,28 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const Brand: Story = {
+  args: {
+    title: "Pacotes",
+    variant: "brand",
+    showBack: true,
+    showLogout: false,
+  },
+};
+
+export const Neutral: Story = {
+  args: {
+    title: "Pacotes",
+    variant: "neutral",
+    showBack: true,
+    showLogout: false,
+  },
+};
+
 export const Home: Story = {
   args: {
     title: "Home",
+    variant: "neutral",
     showBack: false,
     showLogout: true,
   },
@@ -58,7 +82,8 @@ export const Home: Story = {
 
 export const WithBack: Story = {
   args: {
-    title: "Package details",
+    title: "Detalhes do pacote",
+    variant: "neutral",
     showBack: true,
     showLogout: false,
   },
@@ -67,6 +92,7 @@ export const WithBack: Story = {
 export const WithLogout: Story = {
   args: {
     title: "Home",
+    variant: "neutral",
     showBack: false,
     showLogout: true,
   },
@@ -74,7 +100,8 @@ export const WithLogout: Story = {
 
 export const WithBothActions: Story = {
   args: {
-    title: "Settings",
+    title: "Configurações",
+    variant: "neutral",
     showBack: true,
     showLogout: true,
   },
@@ -82,7 +109,17 @@ export const WithBothActions: Story = {
 
 export const WithoutActions: Story = {
   args: {
-    title: "Title only",
+    title: "Somente título",
+    variant: "neutral",
+    showBack: false,
+    showLogout: false,
+  },
+};
+
+export const BrandWithoutActions: Story = {
+  args: {
+    title: "Pack Sync",
+    variant: "brand",
     showBack: false,
     showLogout: false,
   },
@@ -91,7 +128,18 @@ export const WithoutActions: Story = {
 export const LongTitle: Story = {
   args: {
     title:
-      "This is a very long header title that should not overflow",
+      "Este é um título muito longo que não deve ultrapassar os limites do header",
+    variant: "neutral",
+    showBack: true,
+    showLogout: true,
+  },
+};
+
+export const LongTitleBrand: Story = {
+  args: {
+    title:
+      "Este é um título muito longo para validar o comportamento responsivo",
+    variant: "brand",
     showBack: true,
     showLogout: true,
   },

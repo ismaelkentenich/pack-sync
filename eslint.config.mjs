@@ -59,7 +59,7 @@ export default [
       },
 
       "import/internal-regex":
-        "^@(app|assets|components|features|hooks|utils|theme|store|infrastructure|i18n|types|test)(/|$)",
+        "^@(app|assets|components|contexts|features|hooks|utils|theme|store|infrastructure|i18n|types|test)(/|$)",
     },
 
     rules: {

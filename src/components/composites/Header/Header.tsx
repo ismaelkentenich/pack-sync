@@ -3,6 +3,7 @@ import { ArrowLeft, LogOut } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
@@ -12,7 +13,10 @@ export function Header({
   title,
   showBack = true,
   showLogout = false,
+  variant = "brand",
   testID,
+  onLayout,
+  style,
 }: HeaderProps) {
   const { t } = useTranslation();
 
@@ -20,62 +24,93 @@ export function Header({
 
   const logout = useAuthStore((state) => state.logout);
 
-  const handleBack = () => {
-    navigation.goBack();
-  };
+  const isNeutral = variant === "neutral";
 
-  const handleLogout = async () => {
-    await logout();
-  };
+  const backgroundColor = isNeutral
+    ? Theme.colors.neutral[100]
+    : Theme.colors.primary[600];
+
+  const foregroundColor = isNeutral
+    ? Theme.colors.neutral[900]
+    : Theme.colors.neutral[50];
+
+  const actionColor = isNeutral
+    ? Theme.colors.primary[600]
+    : Theme.colors.neutral[50];
 
   return (
-    <View
+    <SafeAreaView
       testID={testID ?? "headerRoot"}
-      style={styles.container}
+      edges={["top"]}
+      onLayout={onLayout}
+      style={[
+        styles.safeArea,
+        {
+          backgroundColor,
+        },
+        style,
+      ]}
     >
-      {showBack ? (
-        <TouchableOpacity
-          testID="headerBackButton"
-          accessibilityRole="button"
-          accessibilityLabel={t(
-            "accessibility.header.back",
-          )}
-          onPress={handleBack}
-          style={styles.backButton}
-        >
-          <ArrowLeft
-            testID="headerBackIcon"
-            size={Theme.sizing.icon.md}
-            color={Theme.colors.neutral[50]}
-          />
-        </TouchableOpacity>
-      ) : null}
-
-      <Text
-        testID="headerTitle"
-        style={styles.title}
-        numberOfLines={1}
+      <View
+        testID="headerContent"
+        style={[
+          styles.container,
+          {
+            backgroundColor,
+          },
+        ]}
       >
-        {title}
-      </Text>
+        {showBack ? (
+          <TouchableOpacity
+            testID="headerBackButton"
+            accessibilityRole="button"
+            accessibilityLabel={t(
+              "accessibility.header.back",
+            )}
+            activeOpacity={0.7}
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+          >
+            <ArrowLeft
+              testID="headerBackIcon"
+              size={Theme.sizing.icon.md}
+              color={actionColor}
+            />
+          </TouchableOpacity>
+        ) : null}
 
-      {showLogout ? (
-        <TouchableOpacity
-          testID="headerLogoutButton"
-          accessibilityRole="button"
-          accessibilityLabel={t(
-            "accessibility.header.logout",
-          )}
-          onPress={handleLogout}
-          style={styles.logoutButton}
+        <Text
+          testID="headerTitle"
+          numberOfLines={1}
+          style={[
+            styles.title,
+            {
+              color: foregroundColor,
+            },
+          ]}
         >
-          <LogOut
-            testID="headerLogoutIcon"
-            size={Theme.sizing.icon.md}
-            color={Theme.colors.neutral[50]}
-          />
-        </TouchableOpacity>
-      ) : null}
-    </View>
+          {title}
+        </Text>
+
+        {showLogout ? (
+          <TouchableOpacity
+            testID="headerLogoutButton"
+            accessibilityRole="button"
+            accessibilityLabel={t(
+              "accessibility.header.logout",
+            )}
+            activeOpacity={0.7}
+            onPress={logout}
+            style={styles.logoutButton}
+          >
+            <LogOut
+              testID="headerLogoutIcon"
+              size={Theme.sizing.icon.md}
+              color={actionColor}
+            />
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    </SafeAreaView>
   );
 }
