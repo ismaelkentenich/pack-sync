@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import Theme from "@theme/theme";
+import { verticalScale } from "@theme/responsiveScale";
 
 export const styles = StyleSheet.create({
   root: {
@@ -7,10 +7,6 @@ export const styles = StyleSheet.create({
   },
 
   safeArea: {
-    flex: 1,
-  },
-
-  unsafeArea: {
     flex: 1,
   },
 
@@ -24,14 +20,11 @@ export const styles = StyleSheet.create({
 
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: Theme.spacing.md,
+    paddingBottom: verticalScale(16),
   },
 
   background: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    height: "60%",
+    ...StyleSheet.absoluteFill,
     zIndex: -1,
   },
 });

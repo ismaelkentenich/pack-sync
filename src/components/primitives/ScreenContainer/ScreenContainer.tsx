@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@components/composites/Header";
+import { useHeaderHeight } from "@contexts/HeaderHeightContext";
 import Theme from "@theme/theme";
 import { styles } from "./styles";
 import type {
@@ -35,27 +36,58 @@ export function ScreenContainer({
   headerTitle,
   showBackButton = true,
   showLogout = false,
+  headerVariant = "brand",
   scrollable = false,
   showVerticalScroll = false,
   withKeyboardAvoiding = false,
   withStatusBar = true,
-  statusBarColor = Theme.colors.primary[600],
+  statusBarColor,
   statusBarStyle = "dark-content",
   withSafeArea = true,
-  safeAreaEdges = ["top", "bottom"],
+  safeAreaEdges = ["bottom"],
   backgroundColorVariant = "neutral50",
   withGradientBackground = false,
   style,
   contentContainerStyle,
   testID,
 }: ScreenContainerProps) {
+  const { setHeaderHeight } = useHeaderHeight();
+
+  const [localHeaderHeight, setLocalHeaderHeight] =
+    useState(0);
+
   const backgroundColor = getBackgroundColor(
     backgroundColorVariant,
   );
 
-  const gradientTop = withHeader
-    ? Theme.sizing.control.lg
-    : 0;
+  const headerBackgroundColor =
+    headerVariant === "neutral"
+      ? backgroundColor
+      : Theme.colors.primary[600];
+
+  const resolvedStatusBarColor =
+    statusBarColor ?? headerBackgroundColor;
+
+  const handleHeaderLayout = useCallback(
+    (
+      event: Parameters<
+        NonNullable<
+          React.ComponentProps<typeof Header>["onLayout"]
+        >
+      >[0],
+    ) => {
+      const { height } = event.nativeEvent.layout;
+
+      if (height === localHeaderHeight) {
+        return;
+      }
+
+      setLocalHeaderHeight(height);
+
+      setHeaderHeight(height);
+    },
+    [localHeaderHeight, setHeaderHeight],
+  );
 
   const content = scrollable ? (
     <ScrollView
@@ -66,6 +98,9 @@ export function ScreenContainer({
       ]}
       showsVerticalScrollIndicator={showVerticalScroll}
       keyboardShouldPersistTaps="handled"
+      keyboardDismissMode={
+        Platform.OS === "ios" ? "interactive" : "on-drag"
+      }
     >
       {children}
     </ScrollView>
@@ -78,23 +113,18 @@ export function ScreenContainer({
     </View>
   );
 
-  const screenContent = (
+  const mainContent = (
     <KeyboardAvoidingView
       testID="screenContainerKeyboardAvoiding"
       style={styles.keyboardAvoiding}
       behavior={
-        Platform.OS === "ios" ? "padding" : "height"
+        Platform.OS === "ios" ? "padding" : undefined
+      }
+      keyboardVerticalOffset={
+        withHeader ? localHeaderHeight : 0
       }
       enabled={withKeyboardAvoiding}
     >
-      {withHeader ? (
-        <Header
-          title={headerTitle}
-          showBack={showBackButton}
-          showLogout={showLogout}
-        />
-      ) : null}
-
       {content}
 
       {withGradientBackground ? (
@@ -105,12 +135,7 @@ export function ScreenContainer({
             Theme.colors.primary[600],
             "transparent",
           ]}
-          style={[
-            styles.background,
-            {
-              top: gradientTop,
-            },
-          ]}
+          style={styles.background}
         />
       ) : null}
     </KeyboardAvoidingView>
@@ -128,15 +153,26 @@ export function ScreenContainer({
     >
       {withStatusBar ? (
         <StatusBar
-          backgroundColor={statusBarColor}
+          backgroundColor={resolvedStatusBarColor}
           barStyle={statusBarStyle}
           translucent={false}
+        />
+      ) : null}
+
+      {withHeader ? (
+        <Header
+          title={headerTitle}
+          showBack={showBackButton}
+          showLogout={showLogout}
+          variant={headerVariant}
+          onLayout={handleHeaderLayout}
         />
       ) : null}
 
       {withSafeArea ? (
         <SafeAreaView
           testID="screenContainerSafeArea"
+          edges={safeAreaEdges}
           style={[
             styles.safeArea,
             {
@@ -144,22 +180,21 @@ export function ScreenContainer({
             },
             style,
           ]}
-          edges={safeAreaEdges}
         >
-          {screenContent}
+          {mainContent}
         </SafeAreaView>
       ) : (
         <View
           testID="screenContainerUnsafeArea"
           style={[
-            styles.unsafeArea,
+            styles.safeArea,
             {
               backgroundColor,
             },
             style,
           ]}
         >
-          {screenContent}
+          {mainContent}
         </View>
       )}
     </View>
