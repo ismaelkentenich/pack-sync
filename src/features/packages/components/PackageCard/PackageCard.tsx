@@ -56,7 +56,7 @@ export function PackageCard({
           <Badge
             testID="packageCardStatusBadge"
             label={translatePackageStatus(item.status, t)}
-            variant="status"
+            variant="warning"
           />
         </View>
 
@@ -77,7 +77,7 @@ export function PackageCard({
               item.deliveryStatus,
               t,
             )}
-            variant="delivery"
+            variant="success"
           />
         </View>
 

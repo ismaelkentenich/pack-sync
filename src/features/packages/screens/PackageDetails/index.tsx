@@ -82,7 +82,7 @@ export default function PackageDetailsScreen() {
                 packageData.status,
                 t,
               )}
-              variant="status"
+              variant="warning"
             />
           </View>
 
@@ -96,7 +96,7 @@ export default function PackageDetailsScreen() {
                 packageData.deliveryStatus,
                 t,
               )}
-              variant="delivery"
+              variant="success"
             />
           </View>
 
