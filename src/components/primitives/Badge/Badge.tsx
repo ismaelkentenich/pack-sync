@@ -12,6 +12,7 @@ export function Badge({
   style,
   textStyle,
   testID,
+  labelTestID,
 }: BadgeProps) {
   const colors = getBadgeColors(variant);
   const sizeStyles = getBadgeSizeStyles(size);
@@ -29,7 +30,7 @@ export function Badge({
       ]}
     >
       <Text
-        testID="badgeText"
+        testID={labelTestID ?? "badgeText"}
         style={[
           styles.text,
           sizeStyles.text,

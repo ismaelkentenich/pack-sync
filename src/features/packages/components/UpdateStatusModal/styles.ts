@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { moderateScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
@@ -91,43 +92,6 @@ export const styles = StyleSheet.create({
     fontWeight: Theme.typography.weight.medium,
   },
 
-  statusPill: {
-    minHeight: Theme.sizing.control.sm,
-    justifyContent: "center",
-    paddingHorizontal: Theme.spacing.sm,
-    borderRadius: Theme.radius.pill,
-    backgroundColor: Theme.colors.secondary[100],
-  },
-
-  statusPillText: {
-    color: Theme.colors.secondary[800],
-    fontSize: Theme.typography.size.xs,
-    lineHeight: Theme.typography.lineHeight.xs,
-    fontWeight: Theme.typography.weight.semibold,
-  },
-
-  deliveryPill: {
-    minHeight: Theme.sizing.control.sm,
-    justifyContent: "center",
-    paddingHorizontal: Theme.spacing.sm,
-    borderRadius: Theme.radius.pill,
-  },
-
-  deliveryPillPending: {
-    backgroundColor: Theme.colors.secondary[100],
-  },
-
-  deliveryPillSent: {
-    backgroundColor: Theme.colors.success[500],
-  },
-
-  deliveryPillText: {
-    color: Theme.colors.neutral[800],
-    fontSize: Theme.typography.size.xs,
-    lineHeight: Theme.typography.lineHeight.xs,
-    fontWeight: Theme.typography.weight.semibold,
-  },
-
   form: {
     gap: Theme.spacing.md,
   },
@@ -144,7 +108,8 @@ export const styles = StyleSheet.create({
   },
 
   pickerWrapper: {
-    minHeight: Theme.sizing.control.lg,
+    minHeight: moderateScale(60),
+    maxHeight: moderateScale(120),
     justifyContent: "center",
     overflow: "hidden",
     borderWidth: 1,

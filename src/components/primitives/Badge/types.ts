@@ -26,4 +26,5 @@ export type BadgeProps = {
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   testID?: string;
+  labelTestID?: string;
 };
