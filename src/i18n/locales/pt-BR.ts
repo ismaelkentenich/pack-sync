@@ -102,10 +102,24 @@ export const ptBR = {
     },
 
     list: {
-      title: "Lista de Pacotes",
-      searchPlaceholder: "Buscar por código...",
+      title: "Pacotes",
+      headline: "Gerencie seus pacotes",
+      description:
+        "Pesquise, filtre e acompanhe todos os seus pacotes em um só lugar.",
+      searchPlaceholder: "Buscar pelo código do pacote...",
+      filterByStatus: "Filtrar por status",
+      clearFilters: "Limpar",
       all: "Todos",
+      results: "Pacotes",
+      packageCount_one: "{{count}} pacote",
+      packageCount_other: "{{count}} pacotes",
       empty: "Nenhum pacote encontrado",
+      emptyTitle: "Nenhum pacote ainda",
+      emptyDescription:
+        "Escaneie seu primeiro pacote para começar a acompanhar as entregas.",
+      noResultsTitle: "Nenhum pacote encontrado",
+      noResultsDescription:
+        "Tente alterar a busca ou o filtro de status.",
     },
 
     actions: {

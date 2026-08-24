@@ -101,10 +101,24 @@ export const enUS = {
     },
 
     list: {
-      title: "Package List",
-      searchPlaceholder: "Search by code...",
+      title: "Packages",
+      headline: "Manage your packages",
+      description:
+        "Search, filter, and track all your packages in one place.",
+      searchPlaceholder: "Search by package code...",
+      filterByStatus: "Filter by status",
+      clearFilters: "Clear",
       all: "All",
+      results: "Packages",
+      packageCount_one: "{{count}} package",
+      packageCount_other: "{{count}} packages",
       empty: "No packages found",
+      emptyTitle: "No packages yet",
+      emptyDescription:
+        "Scan your first package to start tracking deliveries.",
+      noResultsTitle: "No matching packages",
+      noResultsDescription:
+        "Try changing the search or status filter.",
     },
 
     actions: {
