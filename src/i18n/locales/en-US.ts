@@ -192,12 +192,23 @@ export const enUS = {
   },
 
   scanner: {
-    title: "Scanner",
-    requestingPermission: "Requesting camera permission...",
+    title: "Scan package",
+    requestingPermission: "Checking camera permission...",
+    preparingCamera: "Preparing camera",
+    permissionTitle: "Camera access required",
     permissionRequired:
-      "Enable camera permission to scan packages.",
-    grantPermission: "Grant permission",
+      "Allow camera access to scan package QR codes and barcodes.",
+    grantPermission: "Allow camera access",
+    instructionTitle: "Point at the code",
+    instructionDescription:
+      "Position the QR code or barcode inside the highlighted area.",
+    sessionTitle: "Current session",
+    sessionCount_one: "{{count}} package scanned",
+    sessionCount_other: "{{count}} packages scanned",
     empty: "No packages scanned yet",
+    emptyTitle: "No packages scanned",
+    emptyDescription:
+      "Packages added during this session will appear here.",
   },
 
   accessibility: {
