@@ -80,7 +80,12 @@ export const ptBR = {
         "Leia QR Code ou código de barras para adicionar um pacote.",
       action: "Começar",
     },
-    quickActions: "Acesso rápido",
+    overview: "Visão geral",
+    stats: {
+      packages: "Pacotes",
+      pending: "Pendentes",
+    },
+    quickActions: "Ações",
     packageList: {
       title: "Todos os pacotes",
       description:
