@@ -24,6 +24,9 @@ function getBackgroundColor(
     case "neutral100":
       return Theme.colors.neutral[100];
 
+    case "primary600":
+      return Theme.colors.primary[600];
+
     case "neutral50":
     default:
       return Theme.colors.neutral[50];

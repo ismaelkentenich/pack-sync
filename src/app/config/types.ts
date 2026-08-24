@@ -4,6 +4,7 @@ import type { NavigatorScreenParams } from "@react-navigation/native";
 
 export type PackagesStackParamList = {
   [Routes.PackagesList]: undefined;
+
   [Routes.PackageDetails]: {
     pkg: Package;
   };
@@ -15,6 +16,8 @@ export type MainTabParamList = {
   [Routes.Packages]:
     | NavigatorScreenParams<PackagesStackParamList>
     | undefined;
+
+  [Routes.Menu]: undefined;
 };
 
 export type RootStackParamList = {

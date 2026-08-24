@@ -3,7 +3,7 @@ import type { StyleProp, ViewStyle } from "react-native";
 import type { Edge } from "react-native-safe-area-context";
 
 export type ScreenBackgroundVariant =
-  "neutral50" | "neutral100";
+  "neutral50" | "neutral100" | "primary600";
 
 export type ScreenContainerProps = {
   children: React.ReactNode;
