@@ -10,6 +10,6 @@ export type Package = {
   deliveryStatus: DeliveryStatus;
   clientCode: string;
   scanned_at: string;
-  sent_at?: string;
-  receiverName?: string;
+  sent_at?: string | null;
+  receiverName?: string | null;
 };
