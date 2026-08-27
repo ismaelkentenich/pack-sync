@@ -43,8 +43,7 @@ type StatusFilterOption = {
 export default function PackagesListScreen() {
   const { t } = useTranslation();
 
-  const navigation =
-    usePackagesNavigation<typeof Routes.PackagesList>();
+  const navigation = usePackagesNavigation();
 
   const userId = useAuthStore((state) => state.user?.id);
 

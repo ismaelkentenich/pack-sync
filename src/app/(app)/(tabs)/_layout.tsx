@@ -1,4 +1,4 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Tabs } from "expo-router";
 import {
   House,
   Menu,
@@ -6,23 +6,14 @@ import {
   ScanLine,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import HomeScreen from "@features/home/screens/Home";
-import MenuScreen from "@features/menu/screens/Menu";
-import ScanScreen from "@features/scanner/screens/Scanner";
 import { verticalScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
-import { Routes } from "../config/routes";
-import { PackagesStack } from "../stacks/PackagesStack";
-import type { MainTabParamList } from "../config/types";
 
-const Tab = createBottomTabNavigator<MainTabParamList>();
-
-export function MainTabs() {
+export default function MainTabsLayout() {
   const { t } = useTranslation();
 
   return (
-    <Tab.Navigator
-      initialRouteName={Routes.Home}
+    <Tabs
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -36,10 +27,7 @@ export function MainTabs() {
           borderTopColor: Theme.colors.neutral[200],
           backgroundColor: Theme.colors.neutral[50],
           shadowColor: Theme.colors.neutral[950],
-          shadowOffset: {
-            width: 0,
-            height: -2,
-          },
+          shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.04,
           shadowRadius: 6,
           elevation: 8,
@@ -49,22 +37,18 @@ export function MainTabs() {
           lineHeight: Theme.typography.lineHeight.xs,
           fontWeight: Theme.typography.weight.medium,
         },
-
         tabBarItemStyle: {
           paddingVertical: verticalScale(Theme.spacing.xxs),
         },
       }}
     >
-      <Tab.Screen
-        name={Routes.Home}
-        component={HomeScreen}
+      <Tabs.Screen
+        name="index"
         options={{
-          tabBarLabel: t("navigation.home"),
-
+          title: t("navigation.home"),
           tabBarAccessibilityLabel: t(
             "accessibility.navigation.home",
           ),
-
           tabBarIcon: ({ color, size, focused }) => (
             <House
               size={size}
@@ -74,17 +58,13 @@ export function MainTabs() {
           ),
         }}
       />
-
-      <Tab.Screen
-        name={Routes.Scan}
-        component={ScanScreen}
+      <Tabs.Screen
+        name="scanner"
         options={{
-          tabBarLabel: t("navigation.scan"),
-
+          title: t("navigation.scan"),
           tabBarAccessibilityLabel: t(
             "accessibility.navigation.scan",
           ),
-
           tabBarIcon: ({ color, size, focused }) => (
             <ScanLine
               size={size}
@@ -94,17 +74,13 @@ export function MainTabs() {
           ),
         }}
       />
-
-      <Tab.Screen
-        name={Routes.Packages}
-        component={PackagesStack}
+      <Tabs.Screen
+        name="packages"
         options={{
-          tabBarLabel: t("navigation.packages"),
-
+          title: t("navigation.packages"),
           tabBarAccessibilityLabel: t(
             "accessibility.navigation.packages",
           ),
-
           tabBarIcon: ({ color, size, focused }) => (
             <PackageSearch
               size={size}
@@ -114,17 +90,13 @@ export function MainTabs() {
           ),
         }}
       />
-
-      <Tab.Screen
-        name={Routes.Menu}
-        component={MenuScreen}
+      <Tabs.Screen
+        name="menu"
         options={{
-          tabBarLabel: t("navigation.menu"),
-
+          title: t("navigation.menu"),
           tabBarAccessibilityLabel: t(
             "accessibility.navigation.menu",
           ),
-
           tabBarIcon: ({ color, size, focused }) => (
             <Menu
               size={size}
@@ -134,6 +106,6 @@ export function MainTabs() {
           ),
         }}
       />
-    </Tab.Navigator>
+    </Tabs>
   );
 }

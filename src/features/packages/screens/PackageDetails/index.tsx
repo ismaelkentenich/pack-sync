@@ -1,8 +1,5 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import {
-  RouteProp,
-  useRoute,
-} from "@react-navigation/native";
+import { useLocalSearchParams } from "expo-router";
 import {
   CalendarDays,
   Package as PackageIcon,
@@ -11,7 +8,6 @@ import {
 import React, { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import { Routes } from "@app/config/routes";
 import { Badge } from "@components/primitives/Badge";
 import { Button } from "@components/primitives/Button";
 import { Card } from "@components/primitives/Card";
@@ -26,13 +22,6 @@ import {
 import Theme from "@theme/theme";
 import { formatDate } from "@utils/date";
 import { styles } from "./styles";
-import type { PackagesStackParamList } from "@app/config/types";
-
-type PackageDetailsRouteProp = RouteProp<
-  PackagesStackParamList,
-  typeof Routes.PackageDetails
->;
-
 export default function PackageDetailsScreen() {
   const { t, i18n } = useTranslation();
 
@@ -41,17 +30,11 @@ export default function PackageDetailsScreen() {
   const updateStatusModalRef =
     useRef<BottomSheetModal>(null);
 
-  const { params } = useRoute<PackageDetailsRouteProp>();
-
-  const { pkg } = params;
+  const { code } = useLocalSearchParams<{ code: string }>();
 
   const currentPackage = usePackageStore((state) =>
-    state.packages.find((item) => item.id === pkg.id),
+    state.packages.find((item) => item.code === code),
   );
-
-  const packageData = currentPackage ?? pkg;
-
-  const locale = i18n.resolvedLanguage ?? i18n.language;
 
   const handleOpenStatusModal = useCallback(() => {
     updateStatusModalRef.current?.present();
@@ -60,6 +43,14 @@ export default function PackageDetailsScreen() {
   const handleCloseStatusModal = useCallback(() => {
     updateStatusModalRef.current?.close();
   }, []);
+
+  if (!currentPackage) {
+    return null;
+  }
+
+  const packageData = currentPackage;
+
+  const locale = i18n.resolvedLanguage ?? i18n.language;
 
   const receiverName =
     packageData.receiverName?.trim() ||

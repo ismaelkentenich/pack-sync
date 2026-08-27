@@ -1,11 +1,27 @@
-import { useNavigation } from "@react-navigation/native";
-import type { MainTabParamList } from "@app/config/types";
-import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { useRouter } from "expo-router";
+import { Routes } from "@app/config/routes";
 
-export function useMainTabNavigation<
-  T extends keyof MainTabParamList,
->() {
-  return useNavigation<
-    BottomTabNavigationProp<MainTabParamList, T>
-  >();
+export function useMainTabNavigation() {
+  const router = useRouter();
+
+  return {
+    navigate: (
+      route:
+        | typeof Routes.Home
+        | typeof Routes.Scan
+        | typeof Routes.Packages
+        | typeof Routes.Menu,
+    ) => {
+      const pathname =
+        route === Routes.Home
+          ? "/"
+          : route === Routes.Scan
+            ? "/scanner"
+            : route === Routes.Packages
+              ? "/packages"
+              : "/menu";
+
+      router.navigate(pathname);
+    },
+  };
 }

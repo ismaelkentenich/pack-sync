@@ -1,11 +1,27 @@
-import { useNavigation } from "@react-navigation/native";
-import type { PackagesStackParamList } from "@app/config/types";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useRouter } from "expo-router";
+import { Routes } from "@app/config/routes";
+import type { Package } from "@features/packages/domain/package.types";
 
-export function usePackagesNavigation<
-  T extends keyof PackagesStackParamList,
->() {
-  return useNavigation<
-    NativeStackNavigationProp<PackagesStackParamList, T>
-  >();
+export function usePackagesNavigation() {
+  const router = useRouter();
+
+  return {
+    navigate: (
+      route:
+        | typeof Routes.PackagesList
+        | typeof Routes.PackageDetails,
+      params?: { pkg: Package },
+    ) => {
+      if (route === Routes.PackageDetails && params) {
+        router.navigate({
+          pathname: "/packages/[code]",
+          params: { code: params.pkg.code },
+        });
+
+        return;
+      }
+
+      router.navigate("/packages");
+    },
+  };
 }

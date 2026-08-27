@@ -20,8 +20,7 @@ import { styles } from "./styles";
 export default function SignupScreen() {
   const { t } = useTranslation();
 
-  const navigation =
-    useAuthNavigation<typeof Routes.SignUp>();
+  const navigation = useAuthNavigation();
 
   const signup = useAuthStore((state) => state.signup);
 

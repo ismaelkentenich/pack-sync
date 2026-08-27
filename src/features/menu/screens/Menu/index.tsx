@@ -15,8 +15,7 @@ import { styles } from "./styles";
 export default function MenuScreen() {
   const { t } = useTranslation();
 
-  const navigation =
-    useMainTabNavigation<typeof Routes.Menu>();
+  const navigation = useMainTabNavigation();
 
   const logout = useAuthStore((state) => state.logout);
 
