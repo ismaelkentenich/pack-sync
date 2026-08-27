@@ -4,12 +4,12 @@ import {
 } from "@testing-library/react-native";
 import { Header } from "../Header";
 
-const mockGoBack = jest.fn();
+const mockBack = jest.fn();
 const mockLogout = jest.fn();
 
-jest.mock("@react-navigation/native", () => ({
-  useNavigation: () => ({
-    goBack: mockGoBack,
+jest.mock("expo-router", () => ({
+  useRouter: () => ({
+    back: mockBack,
   }),
 }));
 
@@ -98,14 +98,14 @@ describe("Header", () => {
       ).toBeGreaterThan(0);
     });
 
-    it("calls navigation.goBack when back button is pressed", () => {
+    it("goes back when back button is pressed", () => {
       const { getByTestId } = render(
         <Header title="Packages" />,
       );
 
       fireEvent.press(getByTestId("headerBackButton"));
 
-      expect(mockGoBack).toHaveBeenCalledTimes(1);
+      expect(mockBack).toHaveBeenCalledTimes(1);
     });
 
     it("has button accessibility role", () => {

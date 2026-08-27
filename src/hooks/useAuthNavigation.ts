@@ -1,11 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
-import type { AuthStackParamList } from "@app/config/types";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useRouter } from "expo-router";
+import { Routes } from "@app/config/routes";
 
-export function useAuthNavigation<
-  T extends keyof AuthStackParamList,
->() {
-  return useNavigation<
-    NativeStackNavigationProp<AuthStackParamList, T>
-  >();
+export function useAuthNavigation() {
+  const router = useRouter();
+
+  return {
+    navigate: (
+      route: typeof Routes.Login | typeof Routes.SignUp,
+    ) =>
+      router.navigate(
+        route === Routes.Login ? "/" : "/sign-up",
+      ),
+  };
 }

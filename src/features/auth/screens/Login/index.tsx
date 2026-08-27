@@ -20,8 +20,7 @@ import { styles } from "./styles";
 export default function LoginScreen() {
   const { t } = useTranslation();
 
-  const navigation =
-    useAuthNavigation<typeof Routes.Login>();
+  const navigation = useAuthNavigation();
 
   const login = useAuthStore((state) => state.login);
 
