@@ -15,8 +15,7 @@ import { styles } from "./styles";
 export default function HomeScreen() {
   const { t } = useTranslation();
 
-  const navigation =
-    useMainTabNavigation<typeof Routes.Home>();
+  const navigation = useMainTabNavigation();
 
   const packagesCount = usePackageStore(
     (state) => state.packages.length,

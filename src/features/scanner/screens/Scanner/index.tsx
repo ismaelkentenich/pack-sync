@@ -1,11 +1,11 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useFocusEffect } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import {
   BarcodeScanningResult,
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
+import { useFocusEffect } from "expo-router";
 import {
   CameraOff,
   PackageSearch,
@@ -42,8 +42,7 @@ import type { ListRenderItemInfo } from "@shopify/flash-list";
 export default function ScanScreen() {
   const { t } = useTranslation();
 
-  const navigation =
-    useMainTabNavigation<typeof Routes.Scan>();
+  const navigation = useMainTabNavigation();
 
   const updateAllModalRef = useRef<BottomSheetModal>(null);
 

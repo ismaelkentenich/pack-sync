@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { ArrowLeft, LogOut } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -20,7 +20,7 @@ export function Header({
 }: HeaderProps) {
   const { t } = useTranslation();
 
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const logout = useAuthStore((state) => state.logout);
 
@@ -68,7 +68,7 @@ export function Header({
               "accessibility.header.back",
             )}
             activeOpacity={0.7}
-            onPress={() => navigation.goBack()}
+            onPress={() => router.back()}
             style={styles.backButton}
           >
             <ArrowLeft
