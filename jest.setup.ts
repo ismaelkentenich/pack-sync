@@ -1,3 +1,11 @@
+jest.mock("react-native-worklets", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  return require("react-native-worklets/src/mock");
+});
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require("react-native-reanimated").setUpTests();
+
 afterEach(() => {
   jest.useRealTimers();
 });

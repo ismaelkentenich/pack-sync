@@ -4,6 +4,7 @@ import {
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
+import { AnimatedCircleBackground } from "@components/primitives/AnimatedCircleBackground";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { Routes } from "@config/routes";
 import { HomeActionCard } from "@features/home/components/HomeActionCard";
@@ -41,12 +42,8 @@ export default function HomeScreen() {
       backgroundColorVariant="neutral100"
       contentContainerStyle={styles.screenContent}
       safeAreaEdges={["top"]}
-      // withSafeArea
     >
-      <View style={styles.circleLargeSecondary} />
-      <View style={styles.circleLargePrimary} />
-      <View style={styles.circleSmallPrimary} />
-      <View style={styles.circleSmallSecondary} />
+      <AnimatedCircleBackground />
 
       <View
         testID="homeIntroduction"
