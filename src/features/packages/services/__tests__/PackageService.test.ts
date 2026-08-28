@@ -389,20 +389,40 @@ describe("PackageService", () => {
         success: false,
       });
 
-      const result = await service.syncPackage(pkg);
-
-      expect(result.success).toBe(false);
-
-      expect(result.error?.code).toBe(
-        PackageErrorCode.SYNC_FAILED,
-      );
-
       expect(repository.markAsSent).not.toHaveBeenCalled();
 
       expect(pkg.deliveryStatus).toBe(
         DeliveryStatus.PENDING,
       );
 
+      expect(pkg.sent_at).toBeUndefined();
+    });
+
+    it("keeps the package pending when synchronization times out", async () => {
+      const pkg = createPackage({
+        id: "pkg-timeout-1",
+        code: "PKG-TIMEOUT",
+        deliveryStatus: DeliveryStatus.PENDING,
+        sent_at: undefined,
+      });
+
+      repository.findById.mockReturnValue(pkg);
+
+      // Simulates gateway aborting / failing due to timeout
+      syncGateway.send.mockResolvedValue({
+        success: false,
+      });
+
+      const result = await service.syncPackage(pkg);
+
+      expect(result.success).toBe(false);
+      expect(result.error?.code).toBe(
+        PackageErrorCode.SYNC_FAILED,
+      );
+      expect(repository.markAsSent).not.toHaveBeenCalled();
+      expect(pkg.deliveryStatus).toBe(
+        DeliveryStatus.PENDING,
+      );
       expect(pkg.sent_at).toBeUndefined();
     });
 
