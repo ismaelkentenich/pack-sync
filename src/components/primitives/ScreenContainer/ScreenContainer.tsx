@@ -7,7 +7,10 @@ import {
   StatusBar,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { Header } from "@components/composites/Header";
 import { useHeaderHeight } from "@contexts/HeaderHeightContext";
 import { useAppTheme } from "@theme/useAppTheme";
@@ -47,7 +50,7 @@ export function ScreenContainer({
   withStatusBar = true,
   statusBarColor,
   statusBarStyle = "dark-content",
-  withSafeArea = true,
+  withSafeArea = false,
   safeAreaEdges = ["bottom"],
   backgroundColorVariant = "neutral50",
   withGradientBackground = false,
@@ -57,6 +60,7 @@ export function ScreenContainer({
 }: ScreenContainerProps) {
   const { theme } = useAppTheme();
   const { setHeaderHeight } = useHeaderHeight();
+  const insets = useSafeAreaInsets();
 
   const [localHeaderHeight, setLocalHeaderHeight] =
     useState(0);
@@ -101,6 +105,10 @@ export function ScreenContainer({
       contentContainerStyle={[
         styles.scrollContent,
         contentContainerStyle,
+        {
+          paddingBottom: insets.bottom,
+          paddingTop: withHeader ? 0 : insets.top,
+        },
       ]}
       showsVerticalScrollIndicator={showVerticalScroll}
       keyboardShouldPersistTaps="handled"

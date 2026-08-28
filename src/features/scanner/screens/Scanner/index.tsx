@@ -331,7 +331,7 @@ export default function ScanScreen() {
       headerVariant="neutral"
       showBackButton={false}
       backgroundColorVariant="neutral100"
-      safeAreaEdges={["bottom"]}
+      withSafeArea={false}
     >
       <View
         testID="scannerContainer"
