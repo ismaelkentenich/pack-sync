@@ -2,7 +2,7 @@ import {
   fireEvent,
   render,
 } from "@testing-library/react-native";
-import Theme from "@theme/theme";
+import { lightTheme } from "@theme/appTheme";
 import { Button } from "../Button";
 
 describe("Button", () => {
@@ -179,39 +179,39 @@ describe("Button", () => {
     it.each([
       [
         "primary",
-        Theme.colors.neutral[900],
-        Theme.colors.neutral[900],
-        Theme.colors.neutral[0],
+        lightTheme.colors.action.primary.background,
+        lightTheme.colors.action.primary.background,
+        lightTheme.colors.action.primary.foreground,
       ],
       [
         "brand",
-        Theme.colors.primary[500],
-        Theme.colors.primary[500],
-        Theme.colors.neutral[0],
+        lightTheme.colors.action.brand.background,
+        lightTheme.colors.action.brand.background,
+        lightTheme.colors.action.brand.foreground,
       ],
       [
         "accent",
-        Theme.colors.secondary[400],
-        Theme.colors.secondary[400],
-        Theme.colors.neutral[900],
+        lightTheme.colors.action.accent.background,
+        lightTheme.colors.action.accent.background,
+        lightTheme.colors.action.accent.foreground,
       ],
       [
         "secondary",
-        Theme.colors.neutral[200],
-        Theme.colors.neutral[200],
-        Theme.colors.neutral[900],
+        lightTheme.colors.action.secondary.background,
+        lightTheme.colors.action.secondary.background,
+        lightTheme.colors.action.secondary.foreground,
       ],
       [
         "outline",
         "transparent",
-        Theme.colors.neutral[900],
-        Theme.colors.neutral[900],
+        lightTheme.colors.border.strong,
+        lightTheme.colors.text.primary,
       ],
       [
         "danger",
-        Theme.colors.error[500],
-        Theme.colors.error[500],
-        Theme.colors.neutral[0],
+        lightTheme.colors.action.danger.background,
+        lightTheme.colors.action.danger.background,
+        lightTheme.colors.action.danger.foreground,
       ],
     ] as const)(
       "applies the expected styles for %s",
@@ -246,12 +246,14 @@ describe("Button", () => {
       expect(
         getByTestId("buttonTouchableOpacity"),
       ).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[900],
-        borderColor: Theme.colors.neutral[900],
+        backgroundColor:
+          lightTheme.colors.action.primary.background,
+        borderColor:
+          lightTheme.colors.action.primary.background,
       });
 
       expect(getByTestId("buttonText")).toHaveStyle({
-        color: Theme.colors.neutral[0],
+        color: lightTheme.colors.action.primary.foreground,
       });
     });
   });
@@ -260,21 +262,21 @@ describe("Button", () => {
     it.each([
       [
         "sm",
-        Theme.sizing.control.sm,
-        Theme.typography.size.sm,
-        Theme.typography.lineHeight.sm,
+        lightTheme.sizing.control.sm,
+        lightTheme.typography.size.sm,
+        lightTheme.typography.lineHeight.sm,
       ],
       [
         "md",
-        Theme.sizing.control.md,
-        Theme.typography.size.md,
-        Theme.typography.lineHeight.md,
+        lightTheme.sizing.control.md,
+        lightTheme.typography.size.md,
+        lightTheme.typography.lineHeight.md,
       ],
       [
         "lg",
-        Theme.sizing.control.lg,
-        Theme.typography.size.lg,
-        Theme.typography.lineHeight.lg,
+        lightTheme.sizing.control.lg,
+        lightTheme.typography.size.lg,
+        lightTheme.typography.lineHeight.lg,
       ],
     ] as const)(
       "applies the expected styles for size %s",
@@ -304,12 +306,12 @@ describe("Button", () => {
       expect(
         getByTestId("buttonTouchableOpacity"),
       ).toHaveStyle({
-        height: Theme.sizing.control.md,
+        height: lightTheme.sizing.control.md,
       });
 
       expect(getByTestId("buttonText")).toHaveStyle({
-        fontSize: Theme.typography.size.md,
-        lineHeight: Theme.typography.lineHeight.md,
+        fontSize: lightTheme.typography.size.md,
+        lineHeight: lightTheme.typography.lineHeight.md,
       });
     });
   });
@@ -323,12 +325,14 @@ describe("Button", () => {
       expect(
         getByTestId("buttonTouchableOpacity"),
       ).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[300],
-        borderColor: Theme.colors.neutral[300],
+        backgroundColor:
+          lightTheme.colors.action.disabled.background,
+        borderColor:
+          lightTheme.colors.action.disabled.background,
       });
 
       expect(getByTestId("buttonText")).toHaveStyle({
-        color: Theme.colors.neutral[500],
+        color: lightTheme.colors.action.disabled.foreground,
       });
     });
 
@@ -340,12 +344,14 @@ describe("Button", () => {
       expect(
         getByTestId("buttonTouchableOpacity"),
       ).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[300],
-        borderColor: Theme.colors.neutral[300],
+        backgroundColor:
+          lightTheme.colors.action.disabled.background,
+        borderColor:
+          lightTheme.colors.action.disabled.background,
       });
 
       expect(getByTestId("buttonText")).toHaveStyle({
-        color: Theme.colors.neutral[500],
+        color: lightTheme.colors.action.disabled.foreground,
       });
     });
 
@@ -356,7 +362,10 @@ describe("Button", () => {
 
       expect(
         getByTestId("buttonActivityIndicator"),
-      ).toHaveProp("color", Theme.colors.neutral[500]);
+      ).toHaveProp(
+        "color",
+        lightTheme.colors.action.disabled.foreground,
+      );
     });
   });
 

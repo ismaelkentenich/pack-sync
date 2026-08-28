@@ -4,7 +4,7 @@ import {
 } from "@testing-library/react-native";
 import React, { type ReactNode } from "react";
 import { Platform, Text } from "react-native";
-import Theme from "@theme/theme";
+import { lightTheme } from "@theme/appTheme";
 import { ScreenContainer } from "../ScreenContainer";
 
 const mockSetHeaderHeight = jest.fn();
@@ -401,13 +401,15 @@ describe("ScreenContainer", () => {
       expect(
         getByTestId("screenContainerRoot"),
       ).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[50],
+        backgroundColor:
+          lightTheme.colors.background.default,
       });
 
       expect(
         getByTestId("screenContainerSafeArea"),
       ).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[50],
+        backgroundColor:
+          lightTheme.colors.background.default,
       });
     });
 
@@ -421,13 +423,35 @@ describe("ScreenContainer", () => {
       expect(
         getByTestId("screenContainerRoot"),
       ).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[100],
+        backgroundColor:
+          lightTheme.colors.background.subtle,
       });
 
       expect(
         getByTestId("screenContainerSafeArea"),
       ).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[100],
+        backgroundColor:
+          lightTheme.colors.background.subtle,
+      });
+    });
+
+    it("uses primary600 background when requested", () => {
+      const { getByTestId } = render(
+        <ScreenContainer backgroundColorVariant="primary600">
+          <Text>Content</Text>
+        </ScreenContainer>,
+      );
+
+      expect(
+        getByTestId("screenContainerRoot"),
+      ).toHaveStyle({
+        backgroundColor: lightTheme.colors.background.brand,
+      });
+
+      expect(
+        getByTestId("screenContainerSafeArea"),
+      ).toHaveStyle({
+        backgroundColor: lightTheme.colors.background.brand,
       });
     });
   });
@@ -472,7 +496,7 @@ describe("ScreenContainer", () => {
       const statusBar = UNSAFE_getByType(StatusBar);
 
       expect(statusBar.props.backgroundColor).toBe(
-        Theme.colors.primary[600],
+        lightTheme.colors.background.brand,
       );
     });
 
@@ -492,7 +516,7 @@ describe("ScreenContainer", () => {
       const statusBar = UNSAFE_getByType(StatusBar);
 
       expect(statusBar.props.backgroundColor).toBe(
-        Theme.colors.neutral[100],
+        lightTheme.colors.background.subtle,
       );
     });
 
@@ -596,7 +620,7 @@ describe("ScreenContainer", () => {
       expect(
         getByTestId("screenContainerGradient"),
       ).toHaveProp("colors", [
-        Theme.colors.primary[600],
+        lightTheme.colors.background.brand,
         "transparent",
       ]);
     });

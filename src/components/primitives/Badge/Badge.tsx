@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, View } from "react-native";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import { getBadgeColors } from "./utils/getBadgeColors";
 import { getBadgeSizeStyles } from "./utils/getBadgeSizeStyles";
@@ -14,7 +15,8 @@ export function Badge({
   testID,
   labelTestID,
 }: BadgeProps) {
-  const colors = getBadgeColors(variant);
+  const { theme } = useAppTheme();
+  const colors = getBadgeColors(variant, theme);
   const sizeStyles = getBadgeSizeStyles(size);
 
   return (

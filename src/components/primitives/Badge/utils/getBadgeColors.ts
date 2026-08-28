@@ -1,40 +1,44 @@
-import Theme from "@theme/theme";
+import { lightTheme } from "@theme/appTheme";
 import type { BadgeColors, BadgeVariant } from "../types";
-
-const badgeColors: Record<BadgeVariant, BadgeColors> = {
-  primary: {
-    backgroundColor: Theme.colors.primary[200],
-    textColor: Theme.colors.primary[900],
-  },
-
-  secondary: {
-    backgroundColor: Theme.colors.secondary[200],
-    textColor: Theme.colors.secondary[900],
-  },
-
-  neutral: {
-    backgroundColor: Theme.colors.neutral[200],
-    textColor: Theme.colors.neutral[800],
-  },
-
-  success: {
-    backgroundColor: Theme.colors.success[50],
-    textColor: Theme.colors.success[700],
-  },
-
-  warning: {
-    backgroundColor: Theme.colors.warning[50],
-    textColor: Theme.colors.warning[700],
-  },
-
-  error: {
-    backgroundColor: Theme.colors.error[50],
-    textColor: Theme.colors.error[700],
-  },
-};
+import type { AppTheme } from "@theme/types";
 
 export function getBadgeColors(
   variant: BadgeVariant,
+  theme: AppTheme = lightTheme,
 ): BadgeColors {
+  const { colors } = theme;
+
+  const badgeColors: Record<BadgeVariant, BadgeColors> = {
+    primary: {
+      backgroundColor: colors.surface.brandSubtle,
+      textColor: colors.text.brand,
+    },
+
+    secondary: {
+      backgroundColor: colors.surface.accentSubtle,
+      textColor: colors.text.primary,
+    },
+
+    neutral: {
+      backgroundColor: colors.surface.muted,
+      textColor: colors.text.primary,
+    },
+
+    success: {
+      backgroundColor: colors.status.success.background,
+      textColor: colors.status.success.foreground,
+    },
+
+    warning: {
+      backgroundColor: colors.status.warning.background,
+      textColor: colors.status.warning.foreground,
+    },
+
+    error: {
+      backgroundColor: colors.status.error.background,
+      textColor: colors.status.error.foreground,
+    },
+  };
+
   return badgeColors[variant];
 }

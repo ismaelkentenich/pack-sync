@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@components/composites/Header";
 import { useHeaderHeight } from "@contexts/HeaderHeightContext";
-import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import type {
   ScreenBackgroundVariant,
@@ -19,17 +19,18 @@ import type {
 
 function getBackgroundColor(
   variant: ScreenBackgroundVariant,
+  theme: ReturnType<typeof useAppTheme>["theme"],
 ): string {
   switch (variant) {
     case "neutral100":
-      return Theme.colors.neutral[100];
+      return theme.colors.background.subtle;
 
     case "primary600":
-      return Theme.colors.primary[600];
+      return theme.colors.background.brand;
 
     case "neutral50":
     default:
-      return Theme.colors.neutral[50];
+      return theme.colors.background.default;
   }
 }
 
@@ -54,6 +55,7 @@ export function ScreenContainer({
   contentContainerStyle,
   testID,
 }: ScreenContainerProps) {
+  const { theme } = useAppTheme();
   const { setHeaderHeight } = useHeaderHeight();
 
   const [localHeaderHeight, setLocalHeaderHeight] =
@@ -61,12 +63,13 @@ export function ScreenContainer({
 
   const backgroundColor = getBackgroundColor(
     backgroundColorVariant,
+    theme,
   );
 
   const headerBackgroundColor =
     headerVariant === "neutral"
       ? backgroundColor
-      : Theme.colors.primary[600];
+      : theme.colors.background.brand;
 
   const resolvedStatusBarColor =
     statusBarColor ?? headerBackgroundColor;
@@ -135,7 +138,7 @@ export function ScreenContainer({
           testID="screenContainerGradient"
           pointerEvents="none"
           colors={[
-            Theme.colors.primary[600],
+            theme.colors.background.brand,
             "transparent",
           ]}
           style={styles.background}

@@ -10,10 +10,11 @@ import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
 import { setupAllDatabases } from "@infrastructure/database/setup";
-import Theme from "@theme/theme";
 import { ThemeProvider } from "@theme/ThemeProvider";
+import { useAppTheme } from "@theme/useAppTheme";
 
 function RouterNavigation() {
+  const { theme } = useAppTheme();
   const isAuthenticated = useAuthStore(
     (state) => state.isAuthenticated,
   );
@@ -29,12 +30,12 @@ function RouterNavigation() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: Theme.colors.neutral[50],
+          backgroundColor: theme.colors.background.default,
         }}
       >
         <ActivityIndicator
           size="large"
-          color={Theme.colors.primary[600]}
+          color={theme.colors.icon.brand}
         />
       </View>
     );

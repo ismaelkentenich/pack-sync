@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import { getButtonColors } from "./utils/getButtonColors";
 import { getButtonFontSize } from "./utils/getButtonFontSize";
@@ -22,13 +23,18 @@ export function Button({
   testID,
   ...rest
 }: ButtonProps) {
+  const { theme } = useAppTheme();
   const height = getButtonHeight(size);
   const fontSize = getButtonFontSize(size);
   const lineHeight = getButtonLineHeight(size);
 
   const isDisabled = disabled || loading;
 
-  const colors = getButtonColors(variant, isDisabled);
+  const colors = getButtonColors(
+    variant,
+    theme,
+    isDisabled,
+  );
 
   return (
     <TouchableOpacity

@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react-native";
-import Theme from "@theme/theme";
+import { lightTheme } from "@theme/appTheme";
 import { Badge } from "../Badge";
 
 describe("Badge", () => {
@@ -45,11 +45,11 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        backgroundColor: Theme.colors.neutral[200],
+        backgroundColor: lightTheme.colors.surface.muted,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        color: Theme.colors.neutral[800],
+        color: lightTheme.colors.text.primary,
       });
     });
 
@@ -59,11 +59,12 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        backgroundColor: Theme.colors.primary[200],
+        backgroundColor:
+          lightTheme.colors.surface.brandSubtle,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        color: Theme.colors.primary[900],
+        color: lightTheme.colors.text.brand,
       });
     });
 
@@ -73,11 +74,12 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        backgroundColor: Theme.colors.secondary[200],
+        backgroundColor:
+          lightTheme.colors.surface.accentSubtle,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        color: Theme.colors.secondary[900],
+        color: lightTheme.colors.text.primary,
       });
     });
 
@@ -87,11 +89,12 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        backgroundColor: Theme.colors.success[50],
+        backgroundColor:
+          lightTheme.colors.status.success.background,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        color: Theme.colors.success[700],
+        color: lightTheme.colors.status.success.foreground,
       });
     });
 
@@ -101,11 +104,12 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        backgroundColor: Theme.colors.warning[50],
+        backgroundColor:
+          lightTheme.colors.status.warning.background,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        color: Theme.colors.warning[700],
+        color: lightTheme.colors.status.warning.foreground,
       });
     });
 
@@ -115,11 +119,12 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        backgroundColor: Theme.colors.error[50],
+        backgroundColor:
+          lightTheme.colors.status.error.background,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        color: Theme.colors.error[700],
+        color: lightTheme.colors.status.error.foreground,
       });
     });
   });
@@ -131,14 +136,14 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        paddingHorizontal: Theme.spacing.sm,
-        paddingVertical: Theme.spacing.xxs,
-        borderRadius: Theme.radius.sm,
+        paddingHorizontal: lightTheme.spacing.sm,
+        paddingVertical: lightTheme.spacing.xxs,
+        borderRadius: lightTheme.radius.sm,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        fontSize: Theme.typography.size.sm,
-        lineHeight: Theme.typography.lineHeight.sm,
+        fontSize: lightTheme.typography.size.sm,
+        lineHeight: lightTheme.typography.lineHeight.sm,
       });
     });
 
@@ -148,14 +153,14 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        paddingHorizontal: Theme.spacing.xs,
-        paddingVertical: Theme.spacing.xxs,
-        borderRadius: Theme.radius.xs,
+        paddingHorizontal: lightTheme.spacing.xs,
+        paddingVertical: lightTheme.spacing.xxs,
+        borderRadius: lightTheme.radius.xs,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        fontSize: Theme.typography.size.xs,
-        lineHeight: Theme.typography.lineHeight.xs,
+        fontSize: lightTheme.typography.size.xs,
+        lineHeight: lightTheme.typography.lineHeight.xs,
       });
     });
 
@@ -165,14 +170,14 @@ describe("Badge", () => {
       );
 
       expect(getByTestId("badgeRoot")).toHaveStyle({
-        paddingHorizontal: Theme.spacing.md,
-        paddingVertical: Theme.spacing.xs,
-        borderRadius: Theme.radius.md,
+        paddingHorizontal: lightTheme.spacing.md,
+        paddingVertical: lightTheme.spacing.xs,
+        borderRadius: lightTheme.radius.md,
       });
 
       expect(getByTestId("badgeText")).toHaveStyle({
-        fontSize: Theme.typography.size.md,
-        lineHeight: Theme.typography.lineHeight.md,
+        fontSize: lightTheme.typography.size.md,
+        lineHeight: lightTheme.typography.lineHeight.md,
       });
     });
   });

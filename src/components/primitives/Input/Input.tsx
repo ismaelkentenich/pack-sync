@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import { getInputColors } from "./utils/getInputColors";
 import type { InputProps, InputState } from "./types";
@@ -36,6 +37,7 @@ export function Input({
   ...rest
 }: InputProps) {
   const { t } = useTranslation();
+  const { theme } = useAppTheme();
 
   const [isFocused, setIsFocused] = useState(false);
 
@@ -69,7 +71,7 @@ export function Input({
     return "default";
   }, [editable, error, isFocused]);
 
-  const colors = getInputColors(state);
+  const colors = getInputColors(state, theme);
 
   const [labelAnimation] = useState(
     () => new Animated.Value(shouldFloatLabel ? 1 : 0),
@@ -148,8 +150,10 @@ export function Input({
               shouldFloatLabel ? placeholder : undefined
             }
             placeholderTextColor={colors.placeholderColor}
-            cursorColor={Theme.colors.primary[600]}
-            selectionColor={Theme.colors.primary[300]}
+            cursorColor={theme.colors.text.brand}
+            selectionColor={
+              theme.colors.surface.brandSubtle
+            }
             secureTextEntry={secure && !isPasswordVisible}
             style={[
               styles.input,
