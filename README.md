@@ -1,328 +1,736 @@
-# 📦 Pack Sync - App de Gestão de entregas e escaneamento de pacotes
+# 📦 PackSync
 
-Uma aplicação moderna React Native construída com Expo e TypeScript para escaneamento e gerenciamento de entregas de pacotes. Possui arquitetura offline-first com persistência SQLite, escaneamento em tempo real de códigos de barras/QR e integração webhook para notificações de entrega.
+PackSync is a React Native application for scanning, managing, and synchronizing delivery packages.
 
-## 🧩 Visão Geral do Projeto
+The project is built with **Expo**, **React Native**, and **TypeScript**, with an **offline-first** architecture backed by SQLite. Packages can be scanned and managed locally even without a network connection, then synchronized with a remote HTTP webhook when connectivity is available.
 
-O Pack Sync é uma solução completa de gerenciamento de pacotes desenvolvida para empresas de entrega e operações logísticas. A aplicação fornece:
+## Features
 
-- **📱 Compatibilidade multi-plataforma** - Construído com React Native e Expo para iOS e Android
-- **🔍 Escaneamento de Código de Barras & QR** - Identificação de pacotes em tempo real usando câmera do dispositivo
-- **💾 Persistência offline-first** - Banco de dados SQLite para armazenamento confiável sem dependência de internet
-- **🔄 Gerenciamento de Estado Global** - Zustand para gerenciamento eficiente e previsível de estado
-- **🌐 Integração com Webhook** - Notificações de entrega em tempo real para sistemas externos
-- **🔐 Autenticação Firebase** - Autenticação segura de usuários e gerenciamento de sessão
-- **📊 Rastreamento de Pacotes** - Rastreamento completo do ciclo de vida da entrega, da coleta à entrega
+- QR code and barcode scanning with `expo-camera`
+- Offline-first package storage with SQLite
+- Automatic synchronization of pending packages
+- Synchronization retry after network reconnection
+- Synchronization when the app returns to the foreground
+- Package status management
+- Firebase Authentication
+- Persisted authentication session
+- Multi-user package isolation
+- Expo Router navigation
+- Light and dark themes
+- Internationalization with i18next
+- Storybook for UI component development
+- Unit tests with Jest and React Native Testing Library
+- Pre-commit validation with Husky and lint-staged
 
-## ⚙️ Instruções de Instalação
+## Tech Stack
 
-### Pré-requisitos
+| Area                  | Technology                          |
+| --------------------- | ----------------------------------- |
+| Mobile                | React Native 0.86                   |
+| Framework             | Expo SDK 57                         |
+| Language              | TypeScript                          |
+| Navigation            | Expo Router                         |
+| State Management      | Zustand                             |
+| Local Database        | Expo SQLite                         |
+| Authentication        | Firebase Authentication             |
+| Camera / Scanner      | Expo Camera                         |
+| Network State         | React Native NetInfo                |
+| HTTP Sync             | Fetch API                           |
+| Internationalization  | i18next / react-i18next             |
+| Lists                 | Shopify FlashList                   |
+| UI Icons              | Lucide React Native                 |
+| Component Development | Storybook                           |
+| Testing               | Jest / React Native Testing Library |
+| Code Quality          | ESLint / Prettier / TypeScript      |
+| Git Hooks             | Husky / lint-staged                 |
 
-- **Node.js** (v18 ou superior)
-- **npm** ou **yarn**
-- **Expo CLI** (`npm install -g @expo/cli`)
-- **Android Studio** (para desenvolvimento Android)
-- **Xcode** (para desenvolvimento iOS - somente macOS)
+## Requirements
 
-### Configuração
+Before running the project, make sure you have:
 
-1. **Clone o repositório**
+- Node.js 20+
+- Yarn 1.22.x
+- Expo development environment
+- Xcode for iOS development
+- Android Studio for Android development
+- CocoaPods for native iOS dependencies
+- A Firebase project configured for authentication
 
-   ```bash
-   git clone https://github.com/ismaelkentenich/pack-sync.git
-   cd pack-sync
-   ```
+For camera and QR/barcode testing, using a physical device is recommended.
 
-2. **Instale as dependências**
+## Getting Started
 
-   ```bash
-   npm install
-   ```
-
-3. **Configure as variáveis de ambiente**
-   - Configure o arquivo `.env` com as variáveis necessárias
-   - Atualize a configuração do Firebase e URL do webhook no `.env`
-
-4. **Inicie o servidor de desenvolvimento**
-   ```bash
-   npm start
-   ```
-
-## 🚀 Como Executar o Projeto
-
-### Modo de Desenvolvimento
+### 1. Clone the repository
 
 ```bash
-# Inicia o servidor de desenvolvimento Expo
-npm start
-
-# Executa no Android (emulador ou dispositivo)
-npm run android
-
-# Executa no iOS (simulador ou dispositivo - somente macOS)
-npm run ios
-
+git clone https://github.com/ismaelkentenich/pack-sync.git
+cd pack-sync
 ```
 
-### Configuração do Ambiente
+### 2. Install dependencies
 
-A aplicação requer as seguintes variáveis de ambiente no seu arquivo `.env`:
+This project uses Yarn.
+
+```bash
+yarn install
+```
+
+### 3. Configure environment variables
+
+Create a `.env` file in the project root.
 
 ```env
-WEBSOCKET_URL=https://example.com/webhook/fake-webhook-id
-FIREBASE_API_KEY=fake-firebase-api-key
-FIREBASE_AUTH_DOMAIN=fake-project.firebaseapp.com
-FIREBASE_PROJECT_ID=fake-project
-FIREBASE_STORAGE_BUCKET=fake-project.firebasestorage.app
-FIREBASE_MESSAGING_SENDER_ID=000000000000
-FIREBASE_APP_ID=1:000000000000:web:0000000000000000000000
+WEBSOCKET_URL=https://your-webhook-endpoint.example/webhook/<id>
+
+FIREBASE_API_KEY=your-firebase-api-key
+FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+FIREBASE_APP_ID=your-app-id
 ```
 
-### Inicialização do Banco de Dados
+Replace the Firebase placeholders with the values from your Firebase project.
 
-O banco de dados SQLite é automaticamente inicializado no primeiro lançamento da aplicação. A configuração cria:
+### About `WEBSOCKET_URL`
 
-- Tabela **packages** para dados de pacotes
-- Tabela **user_sessions** para estado de autenticação
-- Migrações automáticas e atualizações de schema
+Despite its current name, `WEBSOCKET_URL` is **not a persistent WebSocket connection**.
 
-### Configuração de Teste do Webhook
+The application currently imports this environment variable in `WebhookPackageSyncGateway` and sends an HTTP `POST` request using `fetch`.
 
-1. Visite [https://webhook.site/](https://webhook.site/)
-2. Copie sua URL única do webhook
-3. Atualize `WEBSOCKET_URL` no seu arquivo `.env`
-4. Reinicie o servidor de desenvolvimento
-5. Teste a entrega do webhook através da funcionalidade "Sincronizar" da aplicação
+Therefore, the configured value must be an **HTTP webhook / synchronization endpoint**:
 
-## 🧱 Estrutura do Projeto
-
-A aplicação segue os princípios da Clean Architecture com uma estrutura de pastas bem organizada:
-
-```
-src/
-├── app/navigation/          # Configuração React Navigation e definições de rotas
-│   ├── AppStack.tsx        # Stack principal de navegação da aplicação
-│   ├── AuthStack.tsx       # Navegação do fluxo de autenticação
-│   └── types.ts           # Definições de tipos de navegação
-├── components/             # Componentes de UI reutilizáveis
-│   ├── Badge/             # Componentes de indicação de status
-│   ├── Button/            # Componentes de botão customizados
-│   ├── Card/              # Componentes de layout de card
-│   ├── Header/            # Componentes de cabeçalho de tela
-│   ├── Input/             # Componentes de entrada de formulário
-│   └── PackageCard/       # Componentes de exibição de pacotes
-├── features/              # Organização de telas baseada em funcionalidades
-│   ├── auth/screens/      # Telas de autenticação (login, cadastro)
-│   ├── home/screens/      # Telas de dashboard e início
-│   ├── packages/          # Funcionalidades de gerenciamento de pacotes
-│   │   ├── components/    # Componentes específicos de pacotes
-│   │   └── screens/       # Telas de listagem e detalhes de pacotes
-│   └── scanner/screens/   # Funcionalidade de escaneamento de código de barras
-├── hooks/                 # Custom React hooks
-│   ├── useAppNavigation.ts    # Utilitários de navegação
-│   ├── useNetworkSync.ts      # Gerenciamento de sincronização offline
-│   └── usePersistedAuth.ts    # Persistência de autenticação
-├── services/              # Camada de lógica de negócio
-│   ├── database/          # Operações do banco de dados SQLite
-│   │   └── packages/      # Camada de acesso a dados de pacotes
-│   ├── firebase/          # Configuração e serviços Firebase
-│   ├── packages/          # Lógica de negócio de pacotes
-│   └── webhook/           # Serviços de integração webhook
-├── store/                 # Gerenciamento de estado global Zustand
-│   ├── auth/              # Estado de autenticação
-│   └── packages/          # Estado de gerenciamento de pacotes
-├── theme/                 # Sistema de design e estilização
-├── types/                 # Definições de tipos TypeScript
-└── utils/                 # Funções auxiliares e utilitários
-    ├── date.ts           # Utilitários de formatação de data
-    ├── string.ts         # Helpers de manipulação de string
-    └── validators.ts     # Funções de validação de entrada
+```env
+WEBSOCKET_URL=https://your-webhook-endpoint.example/webhook/<id>
 ```
 
-### Responsabilidades da Arquitetura
+The URL is not tied to a specific provider. Any compatible HTTP endpoint that accepts the package synchronization request can be used.
 
-- **components/**: Componentes de UI reutilizáveis, somente de apresentação
-- **screens/**: Telas específicas de funcionalidades e layouts de página
-- **store/**: Estado global da aplicação usando Zustand
-- **services/**: Lógica de negócio, chamadas de API e processamento de dados
-- **hooks/**: Custom React hooks para lógica compartilhada
-- **utils/**: Funções auxiliares puras e utilitários
-- **navigation/**: Configuração React Navigation e roteamento
+For development and debugging, you can use a webhook receiver/inspector such as **DevToolLab Webhook Receiver & Inspector** to generate a temporary endpoint and inspect the requests sent by PackSync.
 
-## 💡 Decisões Técnicas
+The name is kept because it is the environment variable currently expected by the application.
 
-### Principais Escolhas Tecnológicas
+A future refactor could rename it to something clearer, such as:
 
-**SQLite para Persistência Offline**
+```env
+WEBHOOK_URL=...
+```
 
-- Escolhido para armazenamento confiável de dados offline-first
-- Permite funcionalidade completa da aplicação sem conectividade com internet
+or:
 
-**Zustand para Gerenciamento de Estado**
+```env
+PACKAGE_SYNC_URL=...
+```
 
-- Alternativa leve ao Redux com boilerplate mínimo
-- Design TypeScript-first com excelente inferência de tipos
-- API simples adequada para desenvolvimento React Native
-- Re-renderização eficiente com subscrições baseadas em seletores
+Changing the name requires updating the application imports and environment typings as well.
 
-**Expo Camera para Escaneamento**
+## Running the Application
 
-- Escaneamento cross-platform de códigos de barras e QR
-- Performance otimizada para escaneamento em tempo real
-- Tratamento integrado de permissões de câmera
-- Suporte para múltiplos formatos de código de barras
+Start the Expo development server:
 
-**Arquitetura Offline-First**
+```bash
+yarn start
+```
 
-- Banco de dados SQLite local como única fonte da verdade
-- Fila de sincronização em background para entrega de webhook
-- Tratamento elegante de problemas de conectividade de rede
-- Persistência de dados através das sessões da aplicação
+Run the native iOS development build:
 
-### Motivações e Experiências
+```bash
+yarn ios
+```
 
-Durante o desenvolvimento, busquei expandir minhas experiências técnicas e explorar novas abordagens fora das tecnologias que utilizo no dia a dia profissional.
+Run the native Android development build:
 
-Escolhi SQLite e Zustand para sair da zona de conforto e experimentar ferramentas diferentes do Redux, que é o gerenciador de estado que mais utilizo atualmente.
+```bash
+yarn android
+```
 
-Essa escolha me permitiu entender melhor os conceitos de persistência offline, arquitetura reativa leve e sincronização de dados, além de aprimorar minha visão sobre performance e simplicidade de estado em projetos React Native.
+Run the web version:
 
-## 🔗 Configuração do Webhook
+```bash
+yarn web
+```
 
-### Instruções de Configuração
+If environment variables were changed, restart Expo. Clearing the Metro cache can also help:
 
-1. **Criar um endpoint webhook**
-   - Visite [https://webhook.site/](https://webhook.site/)
-   - Copie sua URL única do webhook (ex: `https://webhook.site/abc123-def456`)
+```bash
+yarn start --clear
+```
 
-2. **Configurar a aplicação**
-   - Atualize `WEBSOCKET_URL` no seu arquivo `.env`
-   - Reinicie o servidor de desenvolvimento para aplicar as mudanças
+## Package Synchronization
 
-3. **Testar entrega do webhook**
-   - Escaneie um pacote na aplicação
-   - Mude seu status para "Entregue" e insira o nome do destinatário
-   - Toque no botão "Sincronizar"
-   - Observe o payload no webhook.site
+PackSync follows an offline-first synchronization model.
 
-### Estrutura do Payload do Webhook
+A package is stored locally in SQLite and contains both its business status and synchronization state.
 
-A aplicação envia a seguinte estrutura de payload JSON:
+The synchronization state is represented by values such as:
+
+- `pending`
+- `sent`
+
+When a package changes, its previous synchronization state is invalidated. The package becomes pending again and its previous `sent_at` timestamp is cleared.
+
+Conceptually:
+
+```text
+Package scanned or updated
+        │
+        ▼
+Saved locally in SQLite
+        │
+        ▼
+deliveryStatus = pending
+        │
+        ├── Offline ───────────────► Keep package locally
+        │
+        └── Online
+              │
+              ▼
+        HTTP POST to webhook
+              │
+        ┌─────┴─────┐
+        │           │
+     Success      Failure
+        │           │
+        ▼           ▼
+      sent        pending
+        │           │
+        ▼           └── Retry later
+   sent_at set
+```
+
+### Automatic synchronization
+
+The `useNetworkSync` hook automatically attempts to reconcile pending packages for the authenticated user.
+
+Synchronization can happen when:
+
+1. an authenticated session is restored while the device is online;
+2. the device reconnects after being offline;
+3. the application returns to the foreground and connectivity is available.
+
+Packages remain stored locally while offline.
+
+The synchronization logic also verifies that the authenticated user has not changed before reconciling packages.
+
+## Webhook Request
+
+Package synchronization is implemented by:
+
+```text
+src/infrastructure/webhook/WebhookPackageSyncGateway.ts
+```
+
+The gateway sends:
+
+```http
+POST <WEBSOCKET_URL>
+Content-Type: application/json
+```
+
+The request body follows this structure:
 
 ```json
 {
-  "code": "ABC123456",
-  "clientName": "João Silva",
-  "status": "Entregue",
-  "deliveryStatus": "sent",
-  "scanned_at": "2025-11-10T14:30:00.000Z"
+  "code": "PKG-001",
+  "clientName": "John Doe",
+  "status": "delivered",
+  "deliveryStatus": "pending",
+  "scanned_at": "2026-08-28T14:30:00.000Z"
 }
 ```
 
-**Descrição dos Campos:**
+`clientName` is only included for delivered packages and is derived from the receiver name.
 
-- `code`: Identificador do código de barras/QR do pacote
-- `clientName`: Nome do destinatário (incluído apenas quando status é "Entregue")
-- `status`: Status atual do pacote (veja definições de status abaixo)
-- `deliveryStatus`: Status de entrega do webhook (`pending` | `sent`)
-- `scanned_at`: Timestamp ISO de quando o pacote foi escaneado pela primeira vez
+The exact status values are defined by the package domain enums.
 
-## 📦 Explicação dos Status de Pacote e Entrega
+### Successful synchronization
 
-### Fluxo de Status do Pacote
+When the endpoint returns a successful HTTP response (`response.ok === true`), the package is marked as sent locally.
 
-**Coletado**
+The repository updates:
 
-- O pacote foi coletado do remetente
-- Status inicial quando o pacote entra no sistema
-- Pronto para processamento de trânsito
+```text
+deliveryStatus = sent
+sent_at = <current timestamp>
+```
 
-**Em rota de entrega**
+### Failed synchronization
 
-- O pacote está em trânsito para o destino final
-- Atribuído ao veículo/entregador de entrega
-- Entrega esperada dentro do prazo/dia atual
+If the endpoint returns a non-success HTTP status or the request fails because of a network error, synchronization is considered unsuccessful.
 
-**Entregue**
+The package remains pending so it can be retried later.
 
-- Pacote entregue com sucesso ao destinatário
-- Requer confirmação do nome do destinatário
-- Status final no ciclo de vida da entrega
+The gateway also logs HTTP and network failures using the `[PackageSync][Webhook]` prefix.
 
-### Estados de Status de Entrega
+## Testing the Webhook
 
-**pending**
+For local development, you do **not** need to use a specific webhook URL.
 
-- Dados do pacote ainda não enviados para webhook
-- Enfileirado para próxima operação de sincronização
-- Exibido com indicador pendente na UI
+You only need an HTTP endpoint capable of receiving the `POST` requests sent by PackSync.
 
-**sent**
+One option is the **DevToolLab Webhook Receiver & Inspector**:
 
-- Dados do pacote transmitidos com sucesso para webhook
-- Notificação de entrega confirmada enviada
-- Marcado com indicador de sucesso na aplicação
+```text
+https://devtoollab.com/tools/webhook-receiver
+```
 
-## 🔄 Fluxo de Uso da Aplicação
+It can generate a unique webhook URL that you can temporarily configure in PackSync.
 
-### Jornada Completa do Usuário
+For example, after generating an endpoint:
 
-1. **Autenticação**
-   - Lance a aplicação e navegue para a tela de login
-   - Insira credenciais de email e senha
-   - Autenticação bem-sucedida redireciona para o dashboard principal
+```env
+WEBSOCKET_URL=https://backend.devtoollab.com/webhook/<generated-id>
+```
 
-2. **Escaneamento de Pacotes**
-   - Navegue para a tela do scanner via navegação inferior
-   - Aponte a câmera do dispositivo para o código de barras/QR do pacote
-   - A aplicação detecta e processa automaticamente o código do pacote
-   - Pacote adicionado à sessão atual com status "Coletado"
+> `<generated-id>` is only an example placeholder. Use the URL generated for your own webhook session.
 
-3. **Gerenciamento de Status**
-   - Visualize pacotes escaneados na tela de lista de pacotes
-   - Toque no card do pacote para abrir modal de detalhes
-   - Use modal de atualização de status para alterar o status do pacote:
-     - Selecione "Em rota de entrega" para pacotes em trânsito
-     - Selecione "Entregue" para pacotes entregues
+### Testing with DevToolLab
 
-4. **Confirmação de Entrega**
-   - Ao marcar pacote como "Entregue":
-     - Insira o nome completo do destinatário na entrada de texto
-     - Confirme que os detalhes de entrega estão corretos
-     - Salve as alterações para atualizar o registro do pacote
+1. Open the DevToolLab Webhook Receiver & Inspector.
+2. Generate a webhook endpoint.
+3. Copy the generated URL.
+4. Add it to the PackSync `.env` file:
 
-5. **Gerenciamento de Pacotes**
-   - Visualize todos os pacotes em ordem cronológica
-   - Use funcionalidade de busca para encontrar pacotes específicos
-   - Filtre pacotes por status (Todos, Coletado, Em Trânsito, Entregue)
-   - Ordene pacotes por data de escaneamento ou status
+```env
+WEBSOCKET_URL=https://backend.devtoollab.com/webhook/<generated-id>
+```
 
-6. **Integração com Webhook**
-   - Sincronização de pacote individual:
-     - Abra detalhes do pacote
-     - Toque no botão "Sincronizar"
-     - Observe mudança de status de "pending" para "sent"
-   - Sincronização em lote:
-     - Use função "Enviar Todos" para pacotes da sessão atual
-     - Monitore progresso e confirme entrega bem-sucedida
+5. Restart Expo so the environment configuration is reloaded:
 
-7. **Gerenciamento de Sessão**
-   - Reinicie a sessão atual para limpar lista temporária de pacotes
-   - Mantenha histórico persistente de pacotes através das sessões
-   - Revise performance de entrega e estatísticas
+```bash
+yarn start --clear
+```
 
-## 🧭 Próximos Passos
+6. Sign in to PackSync.
+7. Scan or update a package.
+8. Allow the synchronization process to run.
+9. Return to the webhook inspector and inspect the HTTP request received from PackSync.
 
-- Implementar testes unitários para garantir estabilidade e confiabilidade nas principais funções e serviços
+A webhook inspector is useful for validating:
 
-- Implementar Storybook para componentes permitindo documentar visualmente os componentes e promover consistência no design
+- whether PackSync actually sent the request;
+- the HTTP method;
+- request headers;
+- the JSON payload;
+- timestamps;
+- package status values;
+- repeated synchronization attempts.
 
-- Atualizar os designs e refinar a UI seguindo boas práticas de UX e identidade visual
+### Testing the offline-first flow
 
-- Implementar webhook dinâmico, permitindo que o próprio usuário adicione seu endpoint webhook, com vinculação no banco de dados
+You can also use the webhook receiver while testing network recovery:
 
----
+1. Start the application while online.
+2. Disable the device network connection.
+3. Scan or update a package.
+4. Confirm that the package remains pending locally.
+5. Restore the network connection.
+6. PackSync should attempt to synchronize pending packages.
+7. Check the webhook receiver to verify the new request.
 
-## 📄 Licença
+### Using another backend
 
-Este projeto é privado e proprietário. Todos os direitos reservados.
+DevToolLab is only a convenient development/testing tool. It is **not a PackSync requirement**.
+
+You can configure any compatible backend:
+
+```env
+WEBSOCKET_URL=https://api.example.com/package-sync
+```
+
+For example, the endpoint could be provided by:
+
+- a custom REST API;
+- an API Gateway endpoint;
+- a serverless function;
+- an automation platform;
+- a webhook testing service;
+- a local backend exposed to the device.
+
+The endpoint must be reachable from the device running PackSync and accept the HTTP request expected by `WebhookPackageSyncGateway`.
+
+> Do not configure a `ws://` or `wss://` endpoint with the current implementation. Despite the `WEBSOCKET_URL` variable name, synchronization currently uses an HTTP request rather than the WebSocket protocol.
+
+## Authentication
+
+Authentication is implemented with Firebase Authentication.
+
+The Firebase configuration is loaded from environment variables:
+
+```env
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_APP_ID=
+```
+
+On React Native, authentication persistence uses AsyncStorage.
+
+The application restores the previous session during startup before enabling authenticated routes and package synchronization.
+
+## Local Database
+
+PackSync uses Expo SQLite for local persistence.
+
+The database is initialized when the application starts.
+
+The local persistence layer is responsible for:
+
+- storing scanned packages;
+- querying packages by authenticated user;
+- tracking package status;
+- tracking synchronization state;
+- recording scan timestamps;
+- recording successful synchronization timestamps;
+- invalidating synchronization state after package updates.
+
+This allows the core package workflow to continue while the device is offline.
+
+## Navigation
+
+The application uses **Expo Router** with file-based routing.
+
+The main route structure is:
+
+```text
+src/app/
+├── _layout.tsx
+├── (auth)/
+│   ├── _layout.tsx
+│   ├── index.tsx
+│   └── sign-up.tsx
+└── (app)/
+    ├── _layout.tsx
+    └── (tabs)/
+        ├── _layout.tsx
+        ├── index.tsx
+        ├── scanner.tsx
+        ├── menu.tsx
+        └── packages/
+            ├── _layout.tsx
+            ├── index.tsx
+            └── [code].tsx
+```
+
+Authenticated routes are protected from the root layout.
+
+The main tab navigation contains:
+
+- Home
+- Scan
+- Packages
+- Menu
+
+## Project Architecture
+
+The project is organized primarily by feature, with infrastructure concerns separated from application/domain code.
+
+```text
+src/
+├── app/                    # Expo Router routes and layouts
+├── components/
+│   ├── primitives/         # Reusable low-level UI components
+│   └── composites/         # Reusable composed UI components
+├── contexts/               # Shared React contexts
+├── features/
+│   ├── auth/               # Authentication feature
+│   ├── home/               # Home/dashboard feature
+│   ├── menu/               # Menu feature
+│   ├── packages/           # Package domain and management
+│   └── scanner/            # QR/barcode scanner
+├── hooks/                  # Shared hooks
+├── i18n/                   # Internationalization
+├── infrastructure/
+│   ├── database/           # SQLite persistence
+│   ├── firebase/           # Firebase infrastructure
+│   └── webhook/            # Package sync HTTP gateway
+├── store/                  # Shared application state
+├── test/                   # Shared test helpers
+└── theme/                  # Design tokens and themes
+```
+
+The package feature separates domain contracts from infrastructure implementations.
+
+For example:
+
+```text
+PackageService
+      │
+      ├── PackageRepository
+      │        │
+      │        └── SQLitePackageRepository
+      │
+      └── PackageSyncGateway
+               │
+               └── WebhookPackageSyncGateway
+```
+
+This keeps synchronization and persistence details outside the package domain contracts.
+
+## Scanner
+
+The scanner is implemented with `expo-camera`.
+
+It supports QR codes and compatible barcode formats recognized by Expo Camera.
+
+For the most realistic test environment:
+
+1. run PackSync on a physical Android or iOS device;
+2. grant camera permission;
+3. open the Scan tab;
+4. point the camera at a supported QR code or barcode;
+5. confirm that the package is persisted locally.
+
+## Storybook
+
+PackSync includes Storybook for developing and testing UI components independently from application screens.
+
+### Web Storybook
+
+```bash
+yarn storybook:web
+```
+
+Storybook will normally be available at:
+
+```text
+http://localhost:6006
+```
+
+### iOS Storybook
+
+```bash
+yarn storybook:ios
+```
+
+### Android Storybook
+
+```bash
+yarn storybook:android
+```
+
+### Regenerate React Native stories
+
+```bash
+yarn storybook-generate
+```
+
+### Build the web Storybook
+
+```bash
+yarn build-storybook
+```
+
+## Testing
+
+Run all unit tests:
+
+```bash
+yarn test
+```
+
+Watch mode:
+
+```bash
+yarn test:watch
+```
+
+Generate coverage:
+
+```bash
+yarn test:coverage
+```
+
+Run tests related to changed files:
+
+```bash
+yarn test:related
+```
+
+The project includes tests for areas such as:
+
+- package services;
+- SQLite repositories;
+- webhook synchronization;
+- network reconciliation;
+- package UI components;
+- domain utilities.
+
+## Code Quality
+
+Run ESLint:
+
+```bash
+yarn lint
+```
+
+Automatically fix supported lint issues:
+
+```bash
+yarn lint:fix
+```
+
+Run TypeScript validation:
+
+```bash
+yarn typecheck
+```
+
+Check formatting:
+
+```bash
+yarn format:check
+```
+
+Format the project:
+
+```bash
+yarn format
+```
+
+Run the complete validation pipeline:
+
+```bash
+yarn validate
+```
+
+The validation command runs:
+
+```text
+Prettier check
+    ↓
+ESLint
+    ↓
+TypeScript
+    ↓
+Jest
+```
+
+For commit validation:
+
+```bash
+yarn validate:commit
+```
+
+## Development Build
+
+Because PackSync uses native Expo modules, development builds are recommended for full native testing.
+
+Generate native projects when necessary:
+
+```bash
+yarn prebuild
+```
+
+Then run:
+
+```bash
+yarn ios
+```
+
+or:
+
+```bash
+yarn android
+```
+
+Avoid running `expo prebuild` unnecessarily if you have manual native changes that have not been accounted for in Expo configuration.
+
+## Troubleshooting
+
+### Environment variable changes are not reflected
+
+Restart Metro with a clean cache:
+
+```bash
+yarn start --clear
+```
+
+For native development builds, rebuilding the application may also be necessary.
+
+### Packages are not synchronizing
+
+Check:
+
+- the device has internet connectivity;
+- `WEBSOCKET_URL` exists in `.env`;
+- the configured endpoint accepts HTTP `POST` requests;
+- the authenticated session is valid;
+- the package has `deliveryStatus = pending`;
+- Metro logs for messages beginning with `[PackageSync]`.
+
+### Webhook returns an HTTP error
+
+`WebhookPackageSyncGateway` logs HTTP failures with:
+
+```text
+[PackageSync][Webhook] request:http-error
+```
+
+The log contains information such as:
+
+- package ID;
+- package code;
+- HTTP status.
+
+### Network request fails
+
+Network-level failures are logged with:
+
+```text
+[PackageSync][Webhook] request:network-error
+```
+
+The package remains pending and can be retried when connectivity is restored.
+
+### Scanner does not work
+
+Check:
+
+- camera permission was granted;
+- the device has a usable camera;
+- the barcode format is supported by Expo Camera;
+- the application is running in an environment with camera support.
+
+A physical device is recommended for scanner testing.
+
+## Useful Commands
+
+| Command                  | Description                          |
+| ------------------------ | ------------------------------------ |
+| `yarn start`             | Start Expo                           |
+| `yarn ios`               | Run iOS development build            |
+| `yarn android`           | Run Android development build        |
+| `yarn web`               | Run Expo Web                         |
+| `yarn prebuild`          | Generate native projects             |
+| `yarn lint`              | Run ESLint                           |
+| `yarn lint:fix`          | Fix supported ESLint issues          |
+| `yarn typecheck`         | Run TypeScript checks                |
+| `yarn format`            | Format source files                  |
+| `yarn format:check`      | Validate formatting                  |
+| `yarn test`              | Run Jest                             |
+| `yarn test:watch`        | Run Jest in watch mode               |
+| `yarn test:coverage`     | Generate test coverage               |
+| `yarn validate`          | Run the complete validation pipeline |
+| `yarn storybook:web`     | Start Storybook for web              |
+| `yarn storybook:ios`     | Run Storybook on iOS                 |
+| `yarn storybook:android` | Run Storybook on Android             |
+| `yarn build-storybook`   | Build Storybook                      |
+
+## Security Notes
+
+Do not commit production secrets or private environment configuration.
+
+The `.env` file should remain outside version control.
+
+Although Firebase client configuration is normally shipped with client applications, access must still be protected with correctly configured Firebase Authentication and backend security rules.
+
+Webhook URLs can also provide access to external integrations. Treat production synchronization endpoints as environment-specific configuration and avoid exposing them unnecessarily.
+
+Webhook receiver URLs generated by third-party tools should be treated as temporary development configuration. Do not commit generated endpoint IDs or production synchronization URLs to the repository.
+
+## License
+
+This project is currently maintained as a private/personal project unless otherwise specified.
