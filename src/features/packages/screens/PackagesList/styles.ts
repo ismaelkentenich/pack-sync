@@ -42,6 +42,50 @@ export const styles = StyleSheet.create({
     lineHeight: Theme.typography.lineHeight.md,
   },
 
+  syncBanner: {
+    marginHorizontal: horizontalScale(Theme.spacing.md),
+    padding: moderateScale(Theme.spacing.md),
+    borderRadius: moderateScale(Theme.radius.xl),
+    backgroundColor: Theme.colors.secondary[100],
+    borderWidth: 1,
+    borderColor: Theme.colors.secondary[300],
+    gap: verticalScale(Theme.spacing.sm),
+  },
+
+  syncBannerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: horizontalScale(Theme.spacing.sm),
+  },
+
+  syncBannerIconContainer: {
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(Theme.radius.lg),
+    backgroundColor: Theme.colors.secondary[200],
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  syncBannerTextContainer: {
+    flex: 1,
+    minWidth: 0,
+    gap: verticalScale(Theme.spacing.xxxs),
+  },
+
+  syncBannerTitle: {
+    color: Theme.colors.neutral[900],
+    fontSize: Theme.typography.size.sm,
+    lineHeight: Theme.typography.lineHeight.sm,
+    fontWeight: Theme.typography.weight.bold,
+  },
+
+  syncBannerDescription: {
+    color: Theme.colors.neutral[700],
+    fontSize: Theme.typography.size.xs,
+    lineHeight: Theme.typography.lineHeight.xs,
+  },
+
   controls: {
     gap: verticalScale(Theme.spacing.xl),
   },

@@ -114,6 +114,8 @@ export const ptBR = {
       notAvailable: "Não informado",
       actions: "Ações",
       changeStatus: "Alterar status",
+      syncNow: "Sincronizar pacote",
+      syncing: "Sincronizando...",
     },
 
     list: {
@@ -128,6 +130,14 @@ export const ptBR = {
       results: "Pacotes",
       packageCount_one: "{{count}} pacote",
       packageCount_other: "{{count}} pacotes",
+      syncBannerTitle_one:
+        "{{count}} pacote pendente de sincronização",
+      syncBannerTitle_other:
+        "{{count}} pacotes pendentes de sincronização",
+      syncBannerDescription:
+        "Envie as alterações salvas localmente para o servidor.",
+      syncButton: "Sincronizar agora",
+      syncing: "Sincronizando...",
       empty: "Nenhum pacote encontrado",
       emptyTitle: "Nenhum pacote ainda",
       emptyDescription:
