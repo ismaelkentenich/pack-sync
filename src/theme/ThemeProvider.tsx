@@ -48,7 +48,7 @@ function resolveTheme(
 
 export function ThemeProvider({
   children,
-  initialPreference = "dark",
+  initialPreference = "system",
 }: ThemeProviderProps) {
   const systemColorScheme = useColorScheme();
 

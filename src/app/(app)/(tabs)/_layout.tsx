@@ -8,25 +8,28 @@ import {
 import { useTranslation } from "react-i18next";
 import { verticalScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 
 export default function MainTabsLayout() {
   const { t } = useTranslation();
+  const { theme } = useAppTheme();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: Theme.colors.primary[600],
-        tabBarInactiveTintColor: Theme.colors.neutral[500],
+        tabBarActiveTintColor: theme.colors.icon.brand,
+        tabBarInactiveTintColor:
+          theme.colors.icon.secondary,
         tabBarStyle: {
           height: verticalScale(100),
           paddingTop: verticalScale(Theme.spacing.xs),
           paddingBottom: verticalScale(Theme.spacing.xxxl),
           borderTopWidth: 1,
-          borderTopColor: Theme.colors.neutral[200],
-          backgroundColor: Theme.colors.neutral[50],
-          shadowColor: Theme.colors.neutral[950],
+          borderTopColor: theme.colors.border.subtle,
+          backgroundColor: theme.colors.surface.default,
+          shadowColor: theme.colors.background.inverse,
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.04,
           shadowRadius: 6,
