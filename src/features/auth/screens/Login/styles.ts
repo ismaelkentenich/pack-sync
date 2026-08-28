@@ -26,28 +26,6 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
   },
 
-  decorationLarge: {
-    position: "absolute",
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    right: -110,
-    top: -70,
-    backgroundColor: Theme.colors.secondary[400],
-    opacity: 0.18,
-  },
-
-  decorationSmall: {
-    position: "absolute",
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    left: -55,
-    bottom: 30,
-    backgroundColor: Theme.colors.primary[200],
-    opacity: 0.22,
-  },
-
   brandContainer: {
     alignItems: "center",
     gap: Theme.spacing.sm,

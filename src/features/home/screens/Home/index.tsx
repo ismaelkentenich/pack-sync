@@ -45,7 +45,7 @@ export default function HomeScreen() {
       contentContainerStyle={styles.screenContent}
       safeAreaEdges={["top"]}
     >
-      <AnimatedCircleBackground />
+      <AnimatedCircleBackground variant="default" />
 
       <View
         testID="homeIntroduction"

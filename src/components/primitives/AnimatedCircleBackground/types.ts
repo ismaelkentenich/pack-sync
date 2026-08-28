@@ -15,7 +15,17 @@ export type AnimatedCircleConfig = {
   scaleTo?: number;
 };
 
+export type AnimatedCircleVariant =
+  | "default"
+  | "dense"
+  | "subtle"
+  | "energetic"
+  | "floating"
+  | "minimal"
+  | "hero";
+
 export type AnimatedCircleBackgroundProps = {
+  variant?: AnimatedCircleVariant;
   circles?: AnimatedCircleConfig[];
   testID?: string;
 };

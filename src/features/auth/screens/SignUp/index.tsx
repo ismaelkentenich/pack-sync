@@ -2,6 +2,7 @@ import { ArrowLeft, Package } from "lucide-react-native";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
+import { AnimatedCircleBackground } from "@components/primitives/AnimatedCircleBackground/AnimatedCircleBackground";
 import { Button } from "@components/primitives/Button";
 import { Input } from "@components/primitives/Input";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
@@ -103,9 +104,7 @@ export default function SignupScreen() {
         pointerEvents="none"
         style={styles.decoration}
       >
-        <View style={styles.decorationLarge} />
-
-        <View style={styles.decorationSmall} />
+        <AnimatedCircleBackground variant="dense" />
       </View>
 
       <View testID="signupContent" style={styles.container}>

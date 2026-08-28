@@ -1,7 +1,6 @@
 import { Text, View } from "react-native";
 import Theme from "@theme/theme";
 import { AnimatedCircleBackground } from "./AnimatedCircleBackground";
-import type { AnimatedCircleConfig } from "./types";
 import type {
   Meta,
   StoryObj,
@@ -33,7 +32,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => (
     <View style={{ flex: 1 }}>
-      <AnimatedCircleBackground />
+      <AnimatedCircleBackground variant="default" />
 
       <View
         style={{
@@ -51,7 +50,7 @@ export const Default: Story = {
             textAlign: "center",
           }}
         >
-          Animated Background
+          Default (6 Circles)
         </Text>
 
         <Text
@@ -62,130 +61,58 @@ export const Default: Story = {
             textAlign: "center",
           }}
         >
-          The circles should move independently.
+          Balanced distribution of primary and secondary
+          orbs.
         </Text>
       </View>
     </View>
   ),
 };
 
-const subtleCircles: AnimatedCircleConfig[] = [
-  {
-    id: "subtle-primary",
-    size: 280,
-    top: 60,
-    left: -160,
-    color: Theme.colors.primary[600],
-    opacity: 0.08,
-    translateX: 60,
-    translateY: 50,
-    duration: 12000,
-    scaleFrom: 1,
-    scaleTo: 1.08,
-  },
-  {
-    id: "subtle-secondary",
-    size: 220,
-    bottom: 60,
-    right: -110,
-    color: Theme.colors.secondary[400],
-    opacity: 0.1,
-    translateX: -50,
-    translateY: -80,
-    duration: 15000,
-    delay: 1200,
-    scaleFrom: 0.96,
-    scaleTo: 1.06,
-  },
-];
+export const Dense: Story = {
+  render: () => (
+    <View style={{ flex: 1 }}>
+      <AnimatedCircleBackground variant="dense" />
+
+      <View
+        style={{
+          flex: 1,
+          padding: 24,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "700",
+            color: Theme.colors.neutral[900],
+            textAlign: "center",
+          }}
+        >
+          Dense Constellation (12 Circles)
+        </Text>
+
+        <Text
+          style={{
+            marginTop: 8,
+            fontSize: 16,
+            color: Theme.colors.neutral[600],
+            textAlign: "center",
+          }}
+        >
+          Rich multi-layered background with large orbs,
+          medium satellites, and subtle particles.
+        </Text>
+      </View>
+    </View>
+  ),
+};
 
 export const Subtle: Story = {
   render: () => (
     <View style={{ flex: 1 }}>
-      <AnimatedCircleBackground circles={subtleCircles} />
-
-      <View
-        style={{
-          flex: 1,
-          padding: 24,
-          justifyContent: "center",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 28,
-            fontWeight: "700",
-            color: Theme.colors.neutral[900],
-          }}
-        >
-          Subtle variation
-        </Text>
-
-        <Text
-          style={{
-            marginTop: 8,
-            fontSize: 16,
-            color: Theme.colors.neutral[600],
-          }}
-        >
-          Lower opacity and slower movement for screens with
-          more content.
-        </Text>
-      </View>
-    </View>
-  ),
-};
-
-const energeticCircles: AnimatedCircleConfig[] = [
-  {
-    id: "energetic-large",
-    size: 320,
-    top: -100,
-    left: -130,
-    color: Theme.colors.primary[600],
-    opacity: 0.22,
-    translateX: 140,
-    translateY: 120,
-    duration: 7000,
-    scaleFrom: 0.9,
-    scaleTo: 1.2,
-  },
-  {
-    id: "energetic-medium",
-    size: 170,
-    top: 300,
-    right: -50,
-    color: Theme.colors.secondary[400],
-    opacity: 0.3,
-    translateX: -120,
-    translateY: 100,
-    duration: 6500,
-    delay: 600,
-    scaleFrom: 0.85,
-    scaleTo: 1.18,
-  },
-  {
-    id: "energetic-small",
-    size: 80,
-    bottom: 130,
-    left: 50,
-    color: Theme.colors.primary[400],
-    opacity: 0.26,
-    translateX: 130,
-    translateY: -100,
-    duration: 5500,
-    delay: 1200,
-    scaleFrom: 0.8,
-    scaleTo: 1.2,
-  },
-];
-
-export const Energetic: Story = {
-  render: () => (
-    <View style={{ flex: 1 }}>
-      <AnimatedCircleBackground
-        circles={energeticCircles}
-      />
+      <AnimatedCircleBackground variant="subtle" />
 
       <View
         style={{
@@ -203,7 +130,7 @@ export const Energetic: Story = {
             textAlign: "center",
           }}
         >
-          More movement
+          Subtle Ambient (4 Circles)
         </Text>
 
         <Text
@@ -214,8 +141,168 @@ export const Energetic: Story = {
             textAlign: "center",
           }}
         >
-          Useful for validating animation amplitude and
-          different durations.
+          Low opacity and slow organic breathing for
+          content-heavy screens.
+        </Text>
+      </View>
+    </View>
+  ),
+};
+
+export const Energetic: Story = {
+  render: () => (
+    <View style={{ flex: 1 }}>
+      <AnimatedCircleBackground variant="energetic" />
+
+      <View
+        style={{
+          flex: 1,
+          padding: 24,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "700",
+            color: Theme.colors.neutral[900],
+            textAlign: "center",
+          }}
+        >
+          Energetic Dynamic (8 Circles)
+        </Text>
+
+        <Text
+          style={{
+            marginTop: 8,
+            fontSize: 16,
+            color: Theme.colors.neutral[600],
+            textAlign: "center",
+          }}
+        >
+          High amplitude motion and pulsing scales for high
+          energy views.
+        </Text>
+      </View>
+    </View>
+  ),
+};
+
+export const Floating: Story = {
+  render: () => (
+    <View style={{ flex: 1 }}>
+      <AnimatedCircleBackground variant="floating" />
+
+      <View
+        style={{
+          flex: 1,
+          padding: 24,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "700",
+            color: Theme.colors.neutral[900],
+            textAlign: "center",
+          }}
+        >
+          Floating Bubbles (10 Circles)
+        </Text>
+
+        <Text
+          style={{
+            marginTop: 8,
+            fontSize: 16,
+            color: Theme.colors.neutral[600],
+            textAlign: "center",
+          }}
+        >
+          Upward drifting floating bubbles with staggered
+          delays.
+        </Text>
+      </View>
+    </View>
+  ),
+};
+
+export const Minimal: Story = {
+  render: () => (
+    <View style={{ flex: 1 }}>
+      <AnimatedCircleBackground variant="minimal" />
+
+      <View
+        style={{
+          flex: 1,
+          padding: 24,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "700",
+            color: Theme.colors.neutral[900],
+            textAlign: "center",
+          }}
+        >
+          Minimal Duo (2 Large Orbs)
+        </Text>
+
+        <Text
+          style={{
+            marginTop: 8,
+            fontSize: 16,
+            color: Theme.colors.neutral[600],
+            textAlign: "center",
+          }}
+        >
+          Clean, modern corner accent orbs for an editorial
+          look.
+        </Text>
+      </View>
+    </View>
+  ),
+};
+
+export const Hero: Story = {
+  render: () => (
+    <View style={{ flex: 1 }}>
+      <AnimatedCircleBackground variant="hero" />
+
+      <View
+        style={{
+          flex: 1,
+          padding: 24,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "700",
+            color: Theme.colors.neutral[900],
+            textAlign: "center",
+          }}
+        >
+          Hero Spotlight (5 Circles)
+        </Text>
+
+        <Text
+          style={{
+            marginTop: 8,
+            fontSize: 16,
+            color: Theme.colors.neutral[600],
+            textAlign: "center",
+          }}
+        >
+          Concentrated near the top and center for landing
+          and header areas.
         </Text>
       </View>
     </View>
@@ -225,7 +312,7 @@ export const Energetic: Story = {
 export const BehindContent: Story = {
   render: () => (
     <View style={{ flex: 1 }}>
-      <AnimatedCircleBackground />
+      <AnimatedCircleBackground variant="dense" />
 
       <View
         style={{
@@ -271,8 +358,8 @@ export const BehindContent: Story = {
               color: Theme.colors.neutral[50],
             }}
           >
-            Validate how the animated background behaves
-            behind real interface content.
+            Validate how the dense animated background
+            behaves behind real interface content.
           </Text>
         </View>
       </View>
