@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react-native";
 import { Text, View } from "react-native";
 import { Card } from "@components/primitives/Card";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import { getHomeActionCardColors } from "./utils/getHomeActionCardColors";
 import { getHomeActionCardSizeStyles } from "./utils/getHomeActionCardSizeStyles";
@@ -27,7 +28,8 @@ export function HomeActionCard({
   actionStyle,
   actionTextStyle,
 }: HomeActionCardProps) {
-  const colors = getHomeActionCardColors(variant);
+  const { theme } = useAppTheme();
+  const colors = getHomeActionCardColors(variant, theme);
 
   const sizeStyles = getHomeActionCardSizeStyles(size);
 

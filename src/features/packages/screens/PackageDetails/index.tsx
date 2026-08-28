@@ -22,11 +22,13 @@ import {
   translatePackageStatus,
 } from "@features/packages/utils/packageTranslations";
 import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 import { formatDate } from "@utils/date";
 import { styles } from "./styles";
 
 export default function PackageDetailsScreen() {
   const { t, i18n } = useTranslation();
+  const { theme } = useAppTheme();
 
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -107,12 +109,18 @@ export default function PackageDetailsScreen() {
           >
             <View
               testID="packageDetailsIconContainer"
-              style={styles.iconContainer}
+              style={[
+                styles.iconContainer,
+                {
+                  backgroundColor:
+                    theme.colors.surface.subtle,
+                },
+              ]}
             >
               <PackageIcon
                 testID="packageDetailsIcon"
                 size={Theme.sizing.icon.md}
-                color={Theme.colors.primary[600]}
+                color={theme.colors.icon.brand}
               />
             </View>
 
@@ -121,14 +129,20 @@ export default function PackageDetailsScreen() {
                 testID="packageDetailsCode"
                 accessibilityRole="header"
                 numberOfLines={2}
-                style={styles.code}
+                style={[
+                  styles.code,
+                  { color: theme.colors.text.primary },
+                ]}
               >
                 {packageData.code}
               </Text>
 
               <Text
                 testID="packageDetailsDescription"
-                style={styles.description}
+                style={[
+                  styles.description,
+                  { color: theme.colors.text.secondary },
+                ]}
               >
                 {t("packages.details.description")}
               </Text>
@@ -139,13 +153,24 @@ export default function PackageDetailsScreen() {
         <Card
           testID="packageDetailsStatusCard"
           touchable={false}
-          style={styles.statusCard}
+          style={[
+            styles.statusCard,
+            {
+              backgroundColor: theme.colors.surface.default,
+              borderColor: theme.colors.border.subtle,
+            },
+          ]}
         >
           <View
             testID="packageDetailsStatusItem"
             style={styles.statusItem}
           >
-            <Text style={styles.statusLabel}>
+            <Text
+              style={[
+                styles.statusLabel,
+                { color: theme.colors.text.secondary },
+              ]}
+            >
               {t("packages.details.currentStatus")}
             </Text>
 
@@ -160,13 +185,25 @@ export default function PackageDetailsScreen() {
             />
           </View>
 
-          <View style={styles.statusDivider} />
+          <View
+            style={[
+              styles.statusDivider,
+              {
+                backgroundColor: theme.colors.border.subtle,
+              },
+            ]}
+          />
 
           <View
             testID="packageDetailsDeliveryItem"
             style={styles.statusItem}
           >
-            <Text style={styles.statusLabel}>
+            <Text
+              style={[
+                styles.statusLabel,
+                { color: theme.colors.text.secondary },
+              ]}
+            >
               {t("packages.details.synchronization")}
             </Text>
 
@@ -188,7 +225,10 @@ export default function PackageDetailsScreen() {
         >
           <Text
             testID="packageDetailsInformationTitle"
-            style={styles.sectionTitle}
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text.primary },
+            ]}
           >
             {t("packages.details.information")}
           </Text>
@@ -196,55 +236,102 @@ export default function PackageDetailsScreen() {
           <Card
             testID="packageDetailsInformationCard"
             touchable={false}
-            style={styles.informationCard}
+            style={[
+              styles.informationCard,
+              {
+                backgroundColor:
+                  theme.colors.surface.default,
+                borderColor: theme.colors.border.subtle,
+              },
+            ]}
           >
             <View
               testID="packageDetailsCodeInfo"
               style={styles.informationRow}
             >
-              <View style={styles.informationIconContainer}>
+              <View
+                style={[
+                  styles.informationIconContainer,
+                  {
+                    backgroundColor:
+                      theme.colors.surface.subtle,
+                  },
+                ]}
+              >
                 <PackageIcon
                   size={Theme.sizing.icon.sm}
-                  color={Theme.colors.primary[600]}
+                  color={theme.colors.icon.brand}
                 />
               </View>
 
               <View style={styles.informationContent}>
-                <Text style={styles.informationLabel}>
+                <Text
+                  style={[
+                    styles.informationLabel,
+                    { color: theme.colors.text.tertiary },
+                  ]}
+                >
                   {t("packages.details.code")}
                 </Text>
 
                 <Text
                   testID="packageDetailsCodeValue"
                   selectable
-                  style={styles.informationValue}
+                  style={[
+                    styles.informationValue,
+                    { color: theme.colors.text.primary },
+                  ]}
                 >
                   {packageData.code}
                 </Text>
               </View>
             </View>
 
-            <View style={styles.informationDivider} />
+            <View
+              style={[
+                styles.informationDivider,
+                {
+                  backgroundColor:
+                    theme.colors.border.subtle,
+                },
+              ]}
+            />
 
             <View
               testID="packageDetailsScannedAtInfo"
               style={styles.informationRow}
             >
-              <View style={styles.informationIconContainer}>
+              <View
+                style={[
+                  styles.informationIconContainer,
+                  {
+                    backgroundColor:
+                      theme.colors.surface.subtle,
+                  },
+                ]}
+              >
                 <CalendarDays
                   size={Theme.sizing.icon.sm}
-                  color={Theme.colors.primary[600]}
+                  color={theme.colors.icon.brand}
                 />
               </View>
 
               <View style={styles.informationContent}>
-                <Text style={styles.informationLabel}>
+                <Text
+                  style={[
+                    styles.informationLabel,
+                    { color: theme.colors.text.tertiary },
+                  ]}
+                >
                   {t("packages.details.scannedAt")}
                 </Text>
 
                 <Text
                   testID="packageDetailsScannedAtValue"
-                  style={styles.informationValue}
+                  style={[
+                    styles.informationValue,
+                    { color: theme.colors.text.primary },
+                  ]}
                 >
                   {formatDate(
                     packageData.scanned_at,
@@ -254,21 +341,42 @@ export default function PackageDetailsScreen() {
               </View>
             </View>
 
-            <View style={styles.informationDivider} />
+            <View
+              style={[
+                styles.informationDivider,
+                {
+                  backgroundColor:
+                    theme.colors.border.subtle,
+                },
+              ]}
+            />
 
             <View
               testID="packageDetailsReceiverInfo"
               style={styles.informationRow}
             >
-              <View style={styles.informationIconContainer}>
+              <View
+                style={[
+                  styles.informationIconContainer,
+                  {
+                    backgroundColor:
+                      theme.colors.surface.subtle,
+                  },
+                ]}
+              >
                 <UserRound
                   size={Theme.sizing.icon.sm}
-                  color={Theme.colors.primary[600]}
+                  color={theme.colors.icon.brand}
                 />
               </View>
 
               <View style={styles.informationContent}>
-                <Text style={styles.informationLabel}>
+                <Text
+                  style={[
+                    styles.informationLabel,
+                    { color: theme.colors.text.tertiary },
+                  ]}
+                >
                   {t("packages.details.receiver")}
                 </Text>
 
@@ -276,8 +384,11 @@ export default function PackageDetailsScreen() {
                   testID="packageDetailsReceiverValue"
                   style={[
                     styles.informationValue,
-                    !packageData.receiverName &&
+                    { color: theme.colors.text.primary },
+                    !packageData.receiverName && [
                       styles.informationValueMuted,
+                      { color: theme.colors.text.disabled },
+                    ],
                   ]}
                 >
                   {receiverName}
@@ -293,7 +404,10 @@ export default function PackageDetailsScreen() {
         >
           <Text
             testID="packageDetailsActionsTitle"
-            style={styles.sectionTitle}
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text.primary },
+            ]}
           >
             {t("packages.details.actions")}
           </Text>

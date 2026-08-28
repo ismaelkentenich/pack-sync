@@ -34,6 +34,7 @@ import { translatePackageStatus } from "@features/packages/utils/packageTranslat
 import { usePackagesNavigation } from "@hooks/usePackagesNavigation";
 import { moderateScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import type { Package } from "@features/packages/domain/package.types";
 import type { ListRenderItemInfo } from "@shopify/flash-list";
@@ -45,6 +46,7 @@ type StatusFilterOption = {
 
 export default function PackagesListScreen() {
   const { t } = useTranslation();
+  const { theme } = useAppTheme();
 
   const navigation = usePackagesNavigation();
 
@@ -235,7 +237,19 @@ export default function PackagesListScreen() {
           onPress={() => setStatusFilter(option.value)}
           style={[
             styles.filterChip,
-            isActive && styles.filterChipActive,
+            {
+              backgroundColor: theme.colors.surface.default,
+              borderColor: theme.colors.border.subtle,
+            },
+            isActive && [
+              styles.filterChipActive,
+              {
+                backgroundColor:
+                  theme.colors.action.brand.background,
+                borderColor:
+                  theme.colors.action.brand.background,
+              },
+            ],
           ]}
         >
           <Text
@@ -244,7 +258,14 @@ export default function PackagesListScreen() {
             }`}
             style={[
               styles.filterChipText,
-              isActive && styles.filterChipTextActive,
+              { color: theme.colors.text.secondary },
+              isActive && [
+                styles.filterChipTextActive,
+                {
+                  color:
+                    theme.colors.action.brand.foreground,
+                },
+              ],
             ]}
           >
             {option.label}
@@ -252,7 +273,7 @@ export default function PackagesListScreen() {
         </TouchableOpacity>
       );
     },
-    [isAllStatus, setStatusFilter, statusFilter],
+    [isAllStatus, setStatusFilter, statusFilter, theme],
   );
 
   const renderItem = useCallback(
@@ -289,7 +310,10 @@ export default function PackagesListScreen() {
         >
           <Text
             testID="packagesListDescription"
-            style={styles.description}
+            style={[
+              styles.description,
+              { color: theme.colors.text.secondary },
+            ]}
           >
             {t("packages.list.description")}
           </Text>
@@ -298,20 +322,40 @@ export default function PackagesListScreen() {
         {pendingCount > 0 ? (
           <View
             testID="packagesListSyncBanner"
-            style={styles.syncBanner}
+            style={[
+              styles.syncBanner,
+              {
+                backgroundColor:
+                  theme.colors.surface.accentSubtle,
+                borderColor: theme.colors.border.brand,
+              },
+            ]}
           >
             <View style={styles.syncBannerHeader}>
-              <View style={styles.syncBannerIconContainer}>
+              <View
+                style={[
+                  styles.syncBannerIconContainer,
+                  {
+                    backgroundColor:
+                      theme.colors.surface.accent,
+                  },
+                ]}
+              >
                 <CloudUpload
                   size={moderateScale(22)}
-                  color={Theme.colors.secondary[700]}
+                  color={
+                    theme.colors.action.brand.foreground
+                  }
                 />
               </View>
 
               <View style={styles.syncBannerTextContainer}>
                 <Text
                   testID="packagesListSyncBannerTitle"
-                  style={styles.syncBannerTitle}
+                  style={[
+                    styles.syncBannerTitle,
+                    { color: theme.colors.text.primary },
+                  ]}
                 >
                   {t("packages.list.syncBannerTitle", {
                     count: pendingCount,
@@ -320,7 +364,10 @@ export default function PackagesListScreen() {
 
                 <Text
                   testID="packagesListSyncBannerDescription"
-                  style={styles.syncBannerDescription}
+                  style={[
+                    styles.syncBannerDescription,
+                    { color: theme.colors.text.secondary },
+                  ]}
                 >
                   {t("packages.list.syncBannerDescription")}
                 </Text>
@@ -369,7 +416,10 @@ export default function PackagesListScreen() {
             <View style={styles.filtersHeader}>
               <Text
                 testID="packagesListFiltersLabel"
-                style={styles.filtersLabel}
+                style={[
+                  styles.filtersLabel,
+                  { color: theme.colors.text.secondary },
+                ]}
               >
                 {t("packages.list.filterByStatus")}
               </Text>
@@ -384,7 +434,10 @@ export default function PackagesListScreen() {
                 >
                   <Text
                     testID="packagesListClearFiltersText"
-                    style={styles.clearFiltersText}
+                    style={[
+                      styles.clearFiltersText,
+                      { color: theme.colors.text.brand },
+                    ]}
                   >
                     {t("packages.list.clearFilters")}
                   </Text>
@@ -410,14 +463,20 @@ export default function PackagesListScreen() {
         >
           <Text
             testID="packagesListResultsTitle"
-            style={styles.resultsTitle}
+            style={[
+              styles.resultsTitle,
+              { color: theme.colors.text.primary },
+            ]}
           >
             {t("packages.list.results")}
           </Text>
 
           <Text
             testID="packagesListResultsCount"
-            style={styles.resultsCount}
+            style={[
+              styles.resultsCount,
+              { color: theme.colors.text.tertiary },
+            ]}
           >
             {t("packages.list.packageCount", {
               count: filteredData.length,
@@ -438,6 +497,7 @@ export default function PackagesListScreen() {
       setSearchTerm,
       statusOptions,
       t,
+      theme,
     ],
   );
 
@@ -450,25 +510,37 @@ export default function PackagesListScreen() {
         >
           <View
             testID="packagesListEmptyIconContainer"
-            style={styles.emptyIconContainer}
+            style={[
+              styles.emptyIconContainer,
+              {
+                backgroundColor:
+                  theme.colors.surface.subtle,
+              },
+            ]}
           >
             <PackageSearch
               testID="packagesListEmptyIcon"
               size={moderateScale(Theme.sizing.icon.lg)}
-              color={Theme.colors.primary[600]}
+              color={theme.colors.icon.brand}
             />
           </View>
 
           <Text
             testID="packagesListEmptyTitle"
-            style={styles.emptyTitle}
+            style={[
+              styles.emptyTitle,
+              { color: theme.colors.text.primary },
+            ]}
           >
             {t("packages.list.emptyTitle")}
           </Text>
 
           <Text
             testID="packagesListEmptyDescription"
-            style={styles.emptyDescription}
+            style={[
+              styles.emptyDescription,
+              { color: theme.colors.text.secondary },
+            ]}
           >
             {t("packages.list.emptyDescription")}
           </Text>
@@ -483,25 +555,36 @@ export default function PackagesListScreen() {
       >
         <View
           testID="packagesListNoResultsIconContainer"
-          style={styles.emptyIconContainer}
+          style={[
+            styles.emptyIconContainer,
+            {
+              backgroundColor: theme.colors.surface.subtle,
+            },
+          ]}
         >
           <SearchX
             testID="packagesListNoResultsIcon"
             size={moderateScale(Theme.sizing.icon.lg)}
-            color={Theme.colors.primary[600]}
+            color={theme.colors.icon.brand}
           />
         </View>
 
         <Text
           testID="packagesListNoResultsTitle"
-          style={styles.emptyTitle}
+          style={[
+            styles.emptyTitle,
+            { color: theme.colors.text.primary },
+          ]}
         >
           {t("packages.list.noResultsTitle")}
         </Text>
 
         <Text
           testID="packagesListNoResultsDescription"
-          style={styles.emptyDescription}
+          style={[
+            styles.emptyDescription,
+            { color: theme.colors.text.secondary },
+          ]}
         >
           {t("packages.list.noResultsDescription")}
         </Text>
@@ -512,11 +595,20 @@ export default function PackagesListScreen() {
             accessibilityRole="button"
             activeOpacity={0.72}
             onPress={handleClearFilters}
-            style={styles.emptyClearButton}
+            style={[
+              styles.emptyClearButton,
+              {
+                backgroundColor:
+                  theme.colors.surface.subtle,
+              },
+            ]}
           >
             <Text
               testID="packagesListNoResultsClearText"
-              style={styles.emptyClearButtonText}
+              style={[
+                styles.emptyClearButtonText,
+                { color: theme.colors.text.brand },
+              ]}
             >
               {t("packages.list.clearFilters")}
             </Text>
@@ -524,7 +616,13 @@ export default function PackagesListScreen() {
         ) : null}
       </View>
     );
-  }, [handleClearFilters, hasFilters, packages.length, t]);
+  }, [
+    handleClearFilters,
+    hasFilters,
+    packages.length,
+    t,
+    theme,
+  ]);
 
   return (
     <ScreenContainer

@@ -11,10 +11,12 @@ import { HomeActionCard } from "@features/home/components/HomeActionCard";
 import { HomeStats } from "@features/home/components/HomeStats";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 
 export default function HomeScreen() {
   const { t } = useTranslation();
+  const { theme } = useAppTheme();
 
   const navigation = useMainTabNavigation();
 
@@ -51,7 +53,10 @@ export default function HomeScreen() {
       >
         <Text
           testID="homeHeadline"
-          style={styles.headline}
+          style={[
+            styles.headline,
+            { color: theme.colors.text.primary },
+          ]}
           accessibilityRole="header"
         >
           {t("home.headline")}
@@ -78,7 +83,10 @@ export default function HomeScreen() {
       <View testID="homeOverview" style={styles.section}>
         <Text
           testID="homeOverviewTitle"
-          style={styles.sectionTitle}
+          style={[
+            styles.sectionTitle,
+            { color: theme.colors.text.primary },
+          ]}
         >
           {t("home.overview")}
         </Text>
@@ -106,7 +114,10 @@ export default function HomeScreen() {
       >
         <Text
           testID="homeQuickActionsTitle"
-          style={styles.sectionTitle}
+          style={[
+            styles.sectionTitle,
+            { color: theme.colors.text.primary },
+          ]}
         >
           {t("home.quickActions")}
         </Text>

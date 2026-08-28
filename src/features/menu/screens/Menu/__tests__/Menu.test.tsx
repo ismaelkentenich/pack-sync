@@ -28,14 +28,19 @@ jest.mock("@hooks/useMainTabNavigation", () => ({
   }),
 }));
 
-jest.mock("@theme/useAppTheme", () => ({
-  useAppTheme: () => ({
-    preference: "system",
-    setPreference: mockSetPreference,
-    resolvedTheme: "light",
-    theme: {},
-  }),
-}));
+jest.mock("@theme/useAppTheme", () => {
+  const { lightTheme } = jest.requireActual(
+    "../../../../../theme/appTheme",
+  );
+  return {
+    useAppTheme: () => ({
+      preference: "system",
+      setPreference: mockSetPreference,
+      resolvedTheme: "light",
+      theme: lightTheme,
+    }),
+  };
+});
 
 jest.mock("@features/auth/store/useAuthStore", () => ({
   useAuthStore: (

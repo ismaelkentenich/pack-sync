@@ -18,7 +18,6 @@ import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { MenuItem } from "@features/menu/components/MenuItem";
 import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
 import { moderateScale } from "@theme/responsiveScale";
-import Theme from "@theme/theme";
 import { type ThemePreference } from "@theme/ThemeProvider";
 import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
@@ -30,7 +29,8 @@ export default function MenuScreen() {
 
   const logout = useAuthStore((state) => state.logout);
 
-  const { preference, setPreference } = useAppTheme();
+  const { theme, preference, setPreference } =
+    useAppTheme();
 
   const currentLanguage =
     i18n.resolvedLanguage ?? i18n.language ?? "pt-BR";
@@ -75,6 +75,15 @@ export default function MenuScreen() {
     [currentLanguage, i18n],
   );
 
+  const themedCardStyle = {
+    backgroundColor: theme.colors.surface.default,
+    borderColor: theme.colors.border.subtle,
+  };
+
+  const themedSeparatorStyle = {
+    backgroundColor: theme.colors.border.subtle,
+  };
+
   return (
     <ScreenContainer
       testID="menuScreen"
@@ -90,18 +99,26 @@ export default function MenuScreen() {
         <View style={styles.header}>
           <Text
             testID="menuSubtitle"
-            style={styles.subtitle}
+            style={[
+              styles.subtitle,
+              { color: theme.colors.text.secondary },
+            ]}
           >
             {t("menu.subtitle")}
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text.secondary },
+            ]}
+          >
             {t("menu.sections.operations")}
           </Text>
 
-          <View style={styles.menuCard}>
+          <View style={[styles.menuCard, themedCardStyle]}>
             <MenuItem
               testID="menuScanItem"
               title={t("menu.items.scan.title")}
@@ -113,7 +130,12 @@ export default function MenuScreen() {
               onPress={handleOpenScanner}
             />
 
-            <View style={styles.separator} />
+            <View
+              style={[
+                styles.separator,
+                themedSeparatorStyle,
+              ]}
+            />
 
             <MenuItem
               testID="menuPackagesItem"
@@ -131,33 +153,54 @@ export default function MenuScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text.secondary },
+            ]}
+          >
             {t("menu.sections.preferences")}
           </Text>
 
-          <View style={styles.menuCard}>
+          <View style={[styles.menuCard, themedCardStyle]}>
             <View
               testID="menuThemePreference"
               style={styles.preferenceItem}
             >
               <View style={styles.preferenceHeader}>
                 <View
-                  style={styles.preferenceIconContainer}
+                  style={[
+                    styles.preferenceIconContainer,
+                    {
+                      backgroundColor:
+                        theme.colors.surface.subtle,
+                    },
+                  ]}
                 >
                   <Palette
                     size={moderateScale(20)}
-                    color={Theme.colors.primary[600]}
+                    color={theme.colors.icon.brand}
                   />
                 </View>
 
                 <View
                   style={styles.preferenceTextContainer}
                 >
-                  <Text style={styles.preferenceTitle}>
+                  <Text
+                    style={[
+                      styles.preferenceTitle,
+                      { color: theme.colors.text.primary },
+                    ]}
+                  >
                     {t("menu.items.theme.title")}
                   </Text>
                   <Text
-                    style={styles.preferenceDescription}
+                    style={[
+                      styles.preferenceDescription,
+                      {
+                        color: theme.colors.text.secondary,
+                      },
+                    ]}
                   >
                     {t("menu.items.theme.description")}
                   </Text>
@@ -166,7 +209,13 @@ export default function MenuScreen() {
 
               <View
                 testID="menuThemeSegmented"
-                style={styles.segmentedContainer}
+                style={[
+                  styles.segmentedContainer,
+                  {
+                    backgroundColor:
+                      theme.colors.surface.subtle,
+                  },
+                ]}
                 accessibilityRole="radiogroup"
               >
                 <TouchableOpacity
@@ -180,8 +229,13 @@ export default function MenuScreen() {
                   }}
                   style={[
                     styles.segmentedButton,
-                    preference === "system" &&
+                    preference === "system" && [
                       styles.segmentedButtonActive,
+                      {
+                        backgroundColor:
+                          theme.colors.surface.default,
+                      },
+                    ],
                   ]}
                   onPress={() =>
                     handleSelectTheme("system")
@@ -192,15 +246,20 @@ export default function MenuScreen() {
                     size={moderateScale(14)}
                     color={
                       preference === "system"
-                        ? Theme.colors.primary[600]
-                        : Theme.colors.neutral[500]
+                        ? theme.colors.icon.brand
+                        : theme.colors.icon.secondary
                     }
                   />
                   <Text
                     style={[
                       styles.segmentedButtonText,
-                      preference === "system" &&
+                      {
+                        color: theme.colors.text.secondary,
+                      },
+                      preference === "system" && [
                         styles.segmentedButtonTextActive,
+                        { color: theme.colors.text.brand },
+                      ],
                     ]}
                   >
                     {t("menu.items.theme.system")}
@@ -218,8 +277,13 @@ export default function MenuScreen() {
                   }}
                   style={[
                     styles.segmentedButton,
-                    preference === "light" &&
+                    preference === "light" && [
                       styles.segmentedButtonActive,
+                      {
+                        backgroundColor:
+                          theme.colors.surface.default,
+                      },
+                    ],
                   ]}
                   onPress={() => handleSelectTheme("light")}
                   activeOpacity={0.7}
@@ -228,15 +292,20 @@ export default function MenuScreen() {
                     size={moderateScale(14)}
                     color={
                       preference === "light"
-                        ? Theme.colors.primary[600]
-                        : Theme.colors.neutral[500]
+                        ? theme.colors.icon.brand
+                        : theme.colors.icon.secondary
                     }
                   />
                   <Text
                     style={[
                       styles.segmentedButtonText,
-                      preference === "light" &&
+                      {
+                        color: theme.colors.text.secondary,
+                      },
+                      preference === "light" && [
                         styles.segmentedButtonTextActive,
+                        { color: theme.colors.text.brand },
+                      ],
                     ]}
                   >
                     {t("menu.items.theme.light")}
@@ -254,8 +323,13 @@ export default function MenuScreen() {
                   }}
                   style={[
                     styles.segmentedButton,
-                    preference === "dark" &&
+                    preference === "dark" && [
                       styles.segmentedButtonActive,
+                      {
+                        backgroundColor:
+                          theme.colors.surface.default,
+                      },
+                    ],
                   ]}
                   onPress={() => handleSelectTheme("dark")}
                   activeOpacity={0.7}
@@ -264,15 +338,20 @@ export default function MenuScreen() {
                     size={moderateScale(14)}
                     color={
                       preference === "dark"
-                        ? Theme.colors.primary[600]
-                        : Theme.colors.neutral[500]
+                        ? theme.colors.icon.brand
+                        : theme.colors.icon.secondary
                     }
                   />
                   <Text
                     style={[
                       styles.segmentedButtonText,
-                      preference === "dark" &&
+                      {
+                        color: theme.colors.text.secondary,
+                      },
+                      preference === "dark" && [
                         styles.segmentedButtonTextActive,
+                        { color: theme.colors.text.brand },
+                      ],
                     ]}
                   >
                     {t("menu.items.theme.dark")}
@@ -281,7 +360,12 @@ export default function MenuScreen() {
               </View>
             </View>
 
-            <View style={styles.separator} />
+            <View
+              style={[
+                styles.separator,
+                themedSeparatorStyle,
+              ]}
+            />
 
             <View
               testID="menuLanguagePreference"
@@ -289,22 +373,38 @@ export default function MenuScreen() {
             >
               <View style={styles.preferenceHeader}>
                 <View
-                  style={styles.preferenceIconContainer}
+                  style={[
+                    styles.preferenceIconContainer,
+                    {
+                      backgroundColor:
+                        theme.colors.surface.subtle,
+                    },
+                  ]}
                 >
                   <Languages
                     size={moderateScale(20)}
-                    color={Theme.colors.primary[600]}
+                    color={theme.colors.icon.brand}
                   />
                 </View>
 
                 <View
                   style={styles.preferenceTextContainer}
                 >
-                  <Text style={styles.preferenceTitle}>
+                  <Text
+                    style={[
+                      styles.preferenceTitle,
+                      { color: theme.colors.text.primary },
+                    ]}
+                  >
                     {t("menu.items.language.title")}
                   </Text>
                   <Text
-                    style={styles.preferenceDescription}
+                    style={[
+                      styles.preferenceDescription,
+                      {
+                        color: theme.colors.text.secondary,
+                      },
+                    ]}
                   >
                     {t("menu.items.language.description")}
                   </Text>
@@ -313,7 +413,13 @@ export default function MenuScreen() {
 
               <View
                 testID="menuLanguageSegmented"
-                style={styles.segmentedContainer}
+                style={[
+                  styles.segmentedContainer,
+                  {
+                    backgroundColor:
+                      theme.colors.surface.subtle,
+                  },
+                ]}
                 accessibilityRole="radiogroup"
               >
                 <TouchableOpacity
@@ -328,8 +434,13 @@ export default function MenuScreen() {
                   }}
                   style={[
                     styles.segmentedButton,
-                    currentLanguage.startsWith("pt") &&
+                    currentLanguage.startsWith("pt") && [
                       styles.segmentedButtonActive,
+                      {
+                        backgroundColor:
+                          theme.colors.surface.default,
+                      },
+                    ],
                   ]}
                   onPress={() =>
                     handleSelectLanguage("pt-BR")
@@ -339,8 +450,13 @@ export default function MenuScreen() {
                   <Text
                     style={[
                       styles.segmentedButtonText,
-                      currentLanguage.startsWith("pt") &&
+                      {
+                        color: theme.colors.text.secondary,
+                      },
+                      currentLanguage.startsWith("pt") && [
                         styles.segmentedButtonTextActive,
+                        { color: theme.colors.text.brand },
+                      ],
                     ]}
                   >
                     {t("menu.items.language.ptBR")}
@@ -359,8 +475,13 @@ export default function MenuScreen() {
                   }}
                   style={[
                     styles.segmentedButton,
-                    currentLanguage.startsWith("en") &&
+                    currentLanguage.startsWith("en") && [
                       styles.segmentedButtonActive,
+                      {
+                        backgroundColor:
+                          theme.colors.surface.default,
+                      },
+                    ],
                   ]}
                   onPress={() =>
                     handleSelectLanguage("en-US")
@@ -370,8 +491,13 @@ export default function MenuScreen() {
                   <Text
                     style={[
                       styles.segmentedButtonText,
-                      currentLanguage.startsWith("en") &&
+                      {
+                        color: theme.colors.text.secondary,
+                      },
+                      currentLanguage.startsWith("en") && [
                         styles.segmentedButtonTextActive,
+                        { color: theme.colors.text.brand },
+                      ],
                     ]}
                   >
                     {t("menu.items.language.enUS")}
@@ -383,11 +509,16 @@ export default function MenuScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text.secondary },
+            ]}
+          >
             {t("menu.sections.account")}
           </Text>
 
-          <View style={styles.menuCard}>
+          <View style={[styles.menuCard, themedCardStyle]}>
             <MenuItem
               testID="menuLogoutItem"
               title={t("menu.items.logout.title")}

@@ -40,6 +40,7 @@ import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
 import { useShowAlert } from "@store/useAlertStore";
 import { moderateScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import type { Package } from "@features/packages/domain/package.types";
 import type { ListRenderItemInfo } from "@shopify/flash-list";
@@ -48,6 +49,7 @@ const SAME_CODE_SUPPRESSION_MS = 1500;
 
 export default function ScanScreen() {
   const { t } = useTranslation();
+  const { theme } = useAppTheme();
 
   const navigation = useMainTabNavigation();
 
@@ -345,26 +347,44 @@ export default function ScanScreen() {
           testID="scannerPermissionLoading"
           style={styles.permissionContainer}
         >
-          <View style={styles.permissionIconContainer}>
+          <View
+            style={[
+              styles.permissionIconContainer,
+              {
+                backgroundColor:
+                  theme.colors.surface.subtle,
+              },
+            ]}
+          >
             <ScanLine
               size={moderateScale(Theme.sizing.icon.lg)}
-              color={Theme.colors.primary[600]}
+              color={theme.colors.icon.brand}
             />
           </View>
 
           <View style={styles.permissionTextContainer}>
-            <Text style={styles.permissionTitle}>
+            <Text
+              style={[
+                styles.permissionTitle,
+                { color: theme.colors.text.primary },
+              ]}
+            >
               {t("scanner.preparingCamera")}
             </Text>
 
-            <Text style={styles.permissionDescription}>
+            <Text
+              style={[
+                styles.permissionDescription,
+                { color: theme.colors.text.secondary },
+              ]}
+            >
               {t("scanner.requestingPermission")}
             </Text>
           </View>
 
           <ActivityIndicator
             size="large"
-            color={Theme.colors.primary[600]}
+            color={theme.colors.icon.brand}
           />
         </View>
       </ScreenContainer>
@@ -391,19 +411,37 @@ export default function ScanScreen() {
           testID="scannerPermissionDenied"
           style={styles.permissionContainer}
         >
-          <View style={styles.permissionIconContainer}>
+          <View
+            style={[
+              styles.permissionIconContainer,
+              {
+                backgroundColor:
+                  theme.colors.surface.subtle,
+              },
+            ]}
+          >
             <CameraOff
               size={moderateScale(Theme.sizing.icon.lg)}
-              color={Theme.colors.primary[600]}
+              color={theme.colors.icon.brand}
             />
           </View>
 
           <View style={styles.permissionTextContainer}>
-            <Text style={styles.permissionTitle}>
+            <Text
+              style={[
+                styles.permissionTitle,
+                { color: theme.colors.text.primary },
+              ]}
+            >
               {t("scanner.permissionTitle")}
             </Text>
 
-            <Text style={styles.permissionDescription}>
+            <Text
+              style={[
+                styles.permissionDescription,
+                { color: theme.colors.text.secondary },
+              ]}
+            >
               {canAskAgain
                 ? t("scanner.permissionRequired")
                 : t(
@@ -530,21 +568,45 @@ export default function ScanScreen() {
 
           <View
             testID="scannerInstruction"
-            style={styles.instructionContainer}
+            style={[
+              styles.instructionContainer,
+              {
+                backgroundColor:
+                  theme.colors.surface.subtle,
+              },
+            ]}
           >
-            <View style={styles.instructionIconContainer}>
+            <View
+              style={[
+                styles.instructionIconContainer,
+                {
+                  backgroundColor:
+                    theme.colors.surface.default,
+                },
+              ]}
+            >
               <ScanLine
                 size={moderateScale(Theme.sizing.icon.sm)}
-                color={Theme.colors.primary[600]}
+                color={theme.colors.icon.brand}
               />
             </View>
 
             <View style={styles.instructionContent}>
-              <Text style={styles.instructionTitle}>
+              <Text
+                style={[
+                  styles.instructionTitle,
+                  { color: theme.colors.text.primary },
+                ]}
+              >
                 {t("scanner.instructionTitle")}
               </Text>
 
-              <Text style={styles.instructionDescription}>
+              <Text
+                style={[
+                  styles.instructionDescription,
+                  { color: theme.colors.text.secondary },
+                ]}
+              >
                 {t("scanner.instructionDescription")}
               </Text>
             </View>
@@ -559,14 +621,20 @@ export default function ScanScreen() {
             <View>
               <Text
                 testID="scannerSessionTitle"
-                style={styles.sessionTitle}
+                style={[
+                  styles.sessionTitle,
+                  { color: theme.colors.text.primary },
+                ]}
               >
                 {t("scanner.sessionTitle")}
               </Text>
 
               <Text
                 testID="scannerSessionCount"
-                style={styles.sessionCount}
+                style={[
+                  styles.sessionCount,
+                  { color: theme.colors.text.tertiary },
+                ]}
               >
                 {t("scanner.sessionCount", {
                   count: sessionCount,
@@ -583,11 +651,15 @@ export default function ScanScreen() {
                 onPress={openUpdateAllModal}
                 style={[
                   styles.updateAllButton,
-
                   isSyncingSession && styles.actionDisabled,
                 ]}
               >
-                <Text style={styles.updateAllText}>
+                <Text
+                  style={[
+                    styles.updateAllText,
+                    { color: theme.colors.text.brand },
+                  ]}
+                >
                   {t("packages.actions.updateAll")}
                 </Text>
               </TouchableOpacity>
@@ -630,18 +702,36 @@ export default function ScanScreen() {
               testID="scannerEmptyState"
               style={styles.emptyState}
             >
-              <View style={styles.emptyIconContainer}>
+              <View
+                style={[
+                  styles.emptyIconContainer,
+                  {
+                    backgroundColor:
+                      theme.colors.surface.subtle,
+                  },
+                ]}
+              >
                 <PackageSearch
                   size={moderateScale(Theme.sizing.icon.lg)}
-                  color={Theme.colors.primary[600]}
+                  color={theme.colors.icon.brand}
                 />
               </View>
 
-              <Text style={styles.emptyTitle}>
+              <Text
+                style={[
+                  styles.emptyTitle,
+                  { color: theme.colors.text.primary },
+                ]}
+              >
                 {t("scanner.emptyTitle")}
               </Text>
 
-              <Text style={styles.emptyDescription}>
+              <Text
+                style={[
+                  styles.emptyDescription,
+                  { color: theme.colors.text.secondary },
+                ]}
+              >
                 {t("scanner.emptyDescription")}
               </Text>
             </View>
