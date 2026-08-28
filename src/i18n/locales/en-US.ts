@@ -226,6 +226,9 @@ export const enUS = {
     emptyTitle: "No packages scanned",
     emptyDescription:
       "Packages added during this session will appear here.",
+    turnTorchOn: "Turn on flashlight",
+    turnTorchOff: "Turn off flashlight",
+    toggleTorch: "Toggle flashlight",
   },
 
   accessibility: {

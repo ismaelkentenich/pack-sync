@@ -394,4 +394,56 @@ describe("ScanScreen - Camera Permissions", () => {
     );
     expect(mockClearFeedback).toHaveBeenCalled();
   });
+
+  it("renders torch toggle button and toggles flashlight state with haptic feedback", () => {
+    (useCameraPermissions as jest.Mock).mockReturnValue([
+      {
+        granted: true,
+        canAskAgain: true,
+        status: "granted",
+      },
+      mockRequestPermission,
+    ]);
+
+    const { getByTestId } = render(<ScanScreen />);
+
+    const torchButton = getByTestId("scannerTorchButton");
+    const camera = getByTestId("scannerCamera");
+
+    expect(camera).toHaveProp("enableTorch", false);
+    expect(torchButton).toHaveProp("accessibilityState", {
+      checked: false,
+    });
+    expect(torchButton).toHaveProp(
+      "accessibilityLabel",
+      "scanner.turnTorchOn",
+    );
+
+    // Turn torch on
+    fireEvent.press(torchButton);
+
+    expect(Haptics.impactAsync).toHaveBeenCalledWith(
+      Haptics.ImpactFeedbackStyle.Light,
+    );
+    expect(camera).toHaveProp("enableTorch", true);
+    expect(torchButton).toHaveProp("accessibilityState", {
+      checked: true,
+    });
+    expect(torchButton).toHaveProp(
+      "accessibilityLabel",
+      "scanner.turnTorchOff",
+    );
+
+    // Turn torch off
+    fireEvent.press(torchButton);
+
+    expect(camera).toHaveProp("enableTorch", false);
+    expect(torchButton).toHaveProp("accessibilityState", {
+      checked: false,
+    });
+    expect(torchButton).toHaveProp(
+      "accessibilityLabel",
+      "scanner.turnTorchOn",
+    );
+  });
 });
