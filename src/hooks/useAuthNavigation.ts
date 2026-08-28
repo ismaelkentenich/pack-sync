@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Routes } from "@app/config/routes";
+import { Routes } from "@config/routes";
 
 export function useAuthNavigation() {
   const router = useRouter();

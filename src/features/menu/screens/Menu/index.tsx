@@ -5,8 +5,8 @@ import {
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import { Routes } from "@app/config/routes";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
+import { Routes } from "@config/routes";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { MenuItem } from "@features/menu/components/MenuItem";
 import { useMainTabNavigation } from "@hooks/useMainTabNavigation";

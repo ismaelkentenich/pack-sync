@@ -2,7 +2,7 @@ import {
   fireEvent,
   render,
 } from "@testing-library/react-native";
-import { Routes } from "@app/config/routes";
+import { Routes } from "@config/routes";
 import HomeScreen from "../index";
 
 const mockNavigate = jest.fn();

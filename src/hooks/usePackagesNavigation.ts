@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Routes } from "@app/config/routes";
+import { Routes } from "@config/routes";
 import type { Package } from "@features/packages/domain/package.types";
 
 export function usePackagesNavigation() {

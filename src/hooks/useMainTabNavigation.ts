@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Routes } from "@app/config/routes";
+import { Routes } from "@config/routes";
 
 export function useMainTabNavigation() {
   const router = useRouter();
