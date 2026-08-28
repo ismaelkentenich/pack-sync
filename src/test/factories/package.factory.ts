@@ -14,6 +14,7 @@ export function createPackage(
     deliveryStatus: DeliveryStatus.PENDING,
     clientCode: "user-1",
     scanned_at: "2026-08-22T12:00:00.000Z",
+    syncVersion: 1,
     ...overrides,
   };
 }

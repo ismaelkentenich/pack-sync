@@ -276,7 +276,9 @@ describe("PackageService", () => {
     });
 
     it("marks as sent only after the persisted snapshot is synchronized", async () => {
-      const pkg = createPackage();
+      const pkg = createPackage({
+        syncVersion: 1,
+      });
 
       repository.findById.mockReturnValue(pkg);
 
@@ -293,6 +295,85 @@ describe("PackageService", () => {
       expect(repository.markAsSent).toHaveBeenCalledWith(
         "1",
         "user-1",
+        1,
+      );
+    });
+
+    it("captures syncVersion before POST and passes it to markAsSent", async () => {
+      const pkg = createPackage({
+        syncVersion: 3,
+      });
+
+      repository.findById.mockReturnValue(pkg);
+
+      syncGateway.send.mockResolvedValue({
+        success: true,
+      });
+
+      const result = await service.syncPackage(pkg);
+
+      expect(result.success).toBe(true);
+      expect(syncGateway.send).toHaveBeenCalledWith(pkg);
+      expect(repository.markAsSent).toHaveBeenCalledWith(
+        "1",
+        "user-1",
+        3,
+      );
+    });
+
+    it("prevents stale sync confirmation when a mutation occurs during in-flight network sync", async () => {
+      const initialPackage = createPackage({
+        id: "1",
+        status: PackageStatus.COLLECTED,
+        deliveryStatus: DeliveryStatus.PENDING,
+        syncVersion: 1,
+      });
+
+      repository.findById.mockReturnValue(initialPackage);
+
+      const deferred = createDeferred<{
+        success: boolean;
+      }>();
+
+      syncGateway.send.mockReturnValue(deferred.promise);
+
+      const syncPromise =
+        service.syncPackage(initialPackage);
+
+      expect(repository.findById).toHaveBeenCalledWith(
+        "1",
+        "user-1",
+      );
+      expect(syncGateway.send).toHaveBeenCalledWith(
+        initialPackage,
+      );
+
+      service.changePackageStatus(
+        "1",
+        "user-1",
+        PackageStatus.DELIVERED,
+        "Carlos",
+      );
+
+      expect(repository.updateStatus).toHaveBeenCalledWith(
+        "1",
+        "user-1",
+        PackageStatus.DELIVERED,
+        "Carlos",
+      );
+
+      deferred.resolve({
+        success: true,
+      });
+
+      const result = await syncPromise;
+
+      expect(result.success).toBe(true);
+
+      expect(repository.markAsSent).toHaveBeenCalledWith(
+        "1",
+        "user-1",
+        1,
       );
     });
 
@@ -616,16 +697,18 @@ describe("PackageService", () => {
       expect(repository.markAsSent).toHaveBeenCalledWith(
         "1",
         "user-1",
+        1,
       );
 
       expect(repository.markAsSent).toHaveBeenCalledWith(
         "3",
         "user-1",
+        1,
       );
 
       expect(
         repository.markAsSent,
-      ).not.toHaveBeenCalledWith(2, "user-1");
+      ).not.toHaveBeenCalledWith("2", "user-1", 1);
     });
   });
 

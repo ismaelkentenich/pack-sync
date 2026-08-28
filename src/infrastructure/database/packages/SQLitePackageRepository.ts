@@ -71,9 +71,10 @@ export class SQLitePackageRepository implements PackageRepository {
         status,
         deliveryStatus,
         clientCode,
-        scanned_at
+        scanned_at,
+        syncVersion
       )
-      VALUES (?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?)
     `,
       [
         pkg.code,
@@ -81,6 +82,7 @@ export class SQLitePackageRepository implements PackageRepository {
         pkg.deliveryStatus,
         pkg.clientCode,
         pkg.scanned_at,
+        pkg.syncVersion ?? 1,
       ],
     );
 
@@ -108,7 +110,8 @@ export class SQLitePackageRepository implements PackageRepository {
         SET status = ?,
             receiverName = ?,
             deliveryStatus = ?,
-            sent_at = NULL
+            sent_at = NULL,
+            syncVersion = COALESCE(syncVersion, 1) + 1
         WHERE id = ?
           AND clientCode = ?
       `,
@@ -122,19 +125,43 @@ export class SQLitePackageRepository implements PackageRepository {
     );
   }
 
-  markAsSent(id: string, userId: string): void {
+  markAsSent(
+    id: string,
+    userId: string,
+    syncVersion?: number,
+  ): void {
     const sentAt = new Date().toISOString();
 
-    packagesDb.runSync(
-      `
-        UPDATE packages
-        SET deliveryStatus = ?,
-            sent_at = ?
-        WHERE id = ?
-          AND clientCode = ?
-      `,
-      [DeliveryStatus.SENT, sentAt, id, userId],
-    );
+    if (syncVersion !== undefined) {
+      packagesDb.runSync(
+        `
+          UPDATE packages
+          SET deliveryStatus = ?,
+              sent_at = ?
+          WHERE id = ?
+            AND clientCode = ?
+            AND syncVersion = ?
+        `,
+        [
+          DeliveryStatus.SENT,
+          sentAt,
+          id,
+          userId,
+          syncVersion,
+        ],
+      );
+    } else {
+      packagesDb.runSync(
+        `
+          UPDATE packages
+          SET deliveryStatus = ?,
+              sent_at = ?
+          WHERE id = ?
+            AND clientCode = ?
+        `,
+        [DeliveryStatus.SENT, sentAt, id, userId],
+      );
+    }
   }
 
   countByDeliveryStatus(
@@ -185,7 +212,8 @@ export class SQLitePackageRepository implements PackageRepository {
             SET status = ?,
                 receiverName = ?,
                 deliveryStatus = ?,
-                sent_at = NULL
+                sent_at = NULL,
+                syncVersion = COALESCE(syncVersion, 1) + 1
             WHERE id = ?
               AND clientCode = ?
           `,

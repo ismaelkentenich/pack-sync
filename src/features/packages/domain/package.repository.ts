@@ -25,7 +25,11 @@ export interface PackageRepository {
     receiverName?: string,
   ): void;
 
-  markAsSent(id: string, userId: string): void;
+  markAsSent(
+    id: string,
+    userId: string,
+    syncVersion?: number,
+  ): void;
 
   countByDeliveryStatus(
     userId: string,

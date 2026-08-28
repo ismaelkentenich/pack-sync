@@ -1,4 +1,5 @@
 import { packagesDb } from "./index";
+import { migrateToAddSyncVersion } from "./migrations/migrateToAddSyncVersion";
 import { migrateToMultiUserIdentity } from "./migrations/migrateToMultiUserIdentity";
 import {
   createPackagesIndexes,
@@ -55,8 +56,12 @@ export function setupPackagesDatabase(): void {
 
   const databaseVersion = getDatabaseVersion();
 
-  if (databaseVersion < PACKAGES_SCHEMA_VERSION) {
+  if (databaseVersion < 1) {
     migrateToMultiUserIdentity();
+  }
+
+  if (databaseVersion < 2) {
+    migrateToAddSyncVersion();
   }
 
   createPackagesIndexes();
