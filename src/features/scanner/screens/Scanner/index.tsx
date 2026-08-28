@@ -19,6 +19,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
+  Linking,
   Text,
   TouchableOpacity,
   View,
@@ -190,6 +191,17 @@ export default function ScanScreen() {
     t,
   ]);
 
+  useEffect(() => {
+    if (
+      permission &&
+      !permission.granted &&
+      permission.canAskAgain &&
+      permission.status === "undetermined"
+    ) {
+      requestPermission();
+    }
+  }, [permission, requestPermission]);
+
   useFocusEffect(
     useCallback(() => {
       resetSession();
@@ -240,6 +252,13 @@ export default function ScanScreen() {
   }
 
   if (!permission.granted) {
+    const canAskAgain = permission.canAskAgain;
+    const handlePermissionPress = canAskAgain
+      ? requestPermission
+      : () => {
+          Linking.openSettings();
+        };
+
     return (
       <ScreenContainer
         testID="scannerScreen"
@@ -265,15 +284,23 @@ export default function ScanScreen() {
             </Text>
 
             <Text style={styles.permissionDescription}>
-              {t("scanner.permissionRequired")}
+              {canAskAgain
+                ? t("scanner.permissionRequired")
+                : t(
+                    "scanner.permissionRequiredPermanently",
+                  )}
             </Text>
           </View>
 
           <View style={styles.permissionButton}>
             <Button
               testID="scannerGrantPermissionButton"
-              title={t("scanner.grantPermission")}
-              onPress={requestPermission}
+              title={
+                canAskAgain
+                  ? t("scanner.grantPermission")
+                  : t("scanner.openSettings")
+              }
+              onPress={handlePermissionPress}
             />
           </View>
         </View>

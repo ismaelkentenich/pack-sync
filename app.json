@@ -10,14 +10,18 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ismael.packsync",
-      "icon": "./src/assets/icon.png"
+      "icon": "./src/assets/icon.png",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow Pack Sync to access your camera to scan package barcodes."
+      }
     },
     "android": {
       "package": "com.ismael.packsync",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#6F5BD2"
-      }
+      },
+      "permissions": ["android.permission.CAMERA"]
     },
     "extra": {
       "eas": {
@@ -41,7 +45,13 @@
       ],
       "expo-localization",
       "@react-native-community/datetimepicker",
-      "expo-router"
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to scan package barcodes."
+        }
+      ]
     ]
   }
 }
