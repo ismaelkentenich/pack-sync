@@ -5,6 +5,7 @@ import {
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
+import * as Haptics from "expo-haptics";
 import { useFocusEffect } from "expo-router";
 import {
   CameraOff,
@@ -118,6 +119,18 @@ export default function ScanScreen() {
         console.warn("[Scanner] ignored: already scanned", {
           data,
         });
+
+        Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Warning,
+        );
+
+        showAlert(
+          translatePackageFeedback(t, {
+            key: "packages.feedback.alreadyScanned",
+          }),
+          "info",
+        );
+
         return;
       }
 
@@ -132,7 +145,7 @@ export default function ScanScreen() {
         });
       }
     },
-    [scanPackage, userId],
+    [scanPackage, showAlert, t, userId],
   );
 
   const handleSyncSession = useCallback(() => {
@@ -181,6 +194,10 @@ export default function ScanScreen() {
 
   useEffect(() => {
     if (feedback.success) {
+      Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success,
+      );
+
       showAlert(
         translatePackageFeedback(t, feedback.success),
         "success",
@@ -192,6 +209,10 @@ export default function ScanScreen() {
     }
 
     if (feedback.error) {
+      Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Error,
+      );
+
       showAlert(
         translatePackageFeedback(t, feedback.error),
         "error",
