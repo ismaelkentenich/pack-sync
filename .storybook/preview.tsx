@@ -1,6 +1,5 @@
 import "@i18n/index";
 
-import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import { useWindowDimensions, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -24,16 +23,14 @@ function StorybookContainer({
     >
       <SafeAreaProvider>
         <HeaderHeightProvider>
-          <NavigationContainer>
-            <View
-              style={{
-                width,
-                height,
-              }}
-            >
-              {children}
-            </View>
-          </NavigationContainer>
+          <View
+            style={{
+              width,
+              height,
+            }}
+          >
+            {children}
+          </View>
         </HeaderHeightProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

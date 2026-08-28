@@ -1,6 +1,5 @@
 import "@i18n/index";
 
-import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -18,15 +17,13 @@ const preview: Preview = {
       >
         <SafeAreaProvider>
           <HeaderHeightProvider>
-            <NavigationContainer>
-              <View
-                style={{
-                  flex: 1,
-                }}
-              >
-                <Story />
-              </View>
-            </NavigationContainer>
+            <View
+              style={{
+                flex: 1,
+              }}
+            >
+              <Story />
+            </View>
           </HeaderHeightProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
