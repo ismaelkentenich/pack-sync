@@ -6,6 +6,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import type { HeaderProps } from "./types";
 
@@ -19,6 +20,7 @@ export function Header({
   style,
 }: HeaderProps) {
   const { t } = useTranslation();
+  const { theme } = useAppTheme();
 
   const router = useRouter();
 
@@ -27,16 +29,16 @@ export function Header({
   const isNeutral = variant === "neutral";
 
   const backgroundColor = isNeutral
-    ? Theme.colors.neutral[100]
-    : Theme.colors.primary[600];
+    ? theme.colors.background.subtle
+    : theme.colors.background.brand;
 
   const foregroundColor = isNeutral
-    ? Theme.colors.neutral[900]
-    : Theme.colors.neutral[50];
+    ? theme.colors.text.primary
+    : theme.colors.text.inverse;
 
   const actionColor = isNeutral
-    ? Theme.colors.primary[600]
-    : Theme.colors.neutral[50];
+    ? theme.colors.icon.brand
+    : theme.colors.icon.inverse;
 
   return (
     <SafeAreaView
