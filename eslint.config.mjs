@@ -21,6 +21,7 @@ export default [
       "android/**",
       "ios/**",
       ".rnstorybook/storybook.requires.ts",
+      "expo-env.d.ts",
     ],
   },
   {
@@ -59,7 +60,7 @@ export default [
       },
 
       "import/internal-regex":
-        "^@(app|assets|components|contexts|features|hooks|utils|theme|store|infrastructure|i18n|types|test)(/|$)",
+        "^@(app|assets|components|config|contexts|features|hooks|i18n|infrastructure|store|test|theme|types|utils)(/|$)",
     },
 
     rules: {
