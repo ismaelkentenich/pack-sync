@@ -1,6 +1,6 @@
 import { setupPackagesDatabase } from "./packages/setup";
 
-export function setupAllDatabases(): void {
+export async function setupAllDatabases(): Promise<void> {
   setupPackagesDatabase();
 
   console.log(
