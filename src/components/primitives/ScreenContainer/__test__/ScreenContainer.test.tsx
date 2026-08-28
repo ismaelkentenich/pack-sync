@@ -79,6 +79,12 @@ jest.mock("react-native-safe-area-context", () => {
         },
         children,
       ),
+    useSafeAreaInsets: () => ({
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    }),
   };
 });
 
@@ -248,9 +254,25 @@ describe("ScreenContainer", () => {
   });
 
   describe("safe area", () => {
-    it("uses safe area by default", () => {
+    it("disables safe area by default", () => {
       const { getByTestId, queryByTestId } = render(
         <ScreenContainer>
+          <Text>Content</Text>
+        </ScreenContainer>,
+      );
+
+      expect(
+        getByTestId("screenContainerUnsafeArea"),
+      ).toBeTruthy();
+
+      expect(
+        queryByTestId("screenContainerSafeArea"),
+      ).toBeNull();
+    });
+
+    it("enables safe area when withSafeArea is true", () => {
+      const { getByTestId, queryByTestId } = render(
+        <ScreenContainer withSafeArea>
           <Text>Content</Text>
         </ScreenContainer>,
       );
@@ -264,9 +286,9 @@ describe("ScreenContainer", () => {
       ).toBeNull();
     });
 
-    it("uses bottom safe-area edge by default", () => {
+    it("uses bottom safe-area edge by default when withSafeArea is true", () => {
       const { getByTestId } = render(
-        <ScreenContainer>
+        <ScreenContainer withSafeArea>
           <Text>Content</Text>
         </ScreenContainer>,
       );
@@ -276,9 +298,12 @@ describe("ScreenContainer", () => {
       ).toHaveProp("edges", ["bottom"]);
     });
 
-    it("accepts custom safe-area edges", () => {
+    it("accepts custom safe-area edges when withSafeArea is true", () => {
       const { getByTestId } = render(
-        <ScreenContainer safeAreaEdges={["top", "bottom"]}>
+        <ScreenContainer
+          withSafeArea
+          safeAreaEdges={["top", "bottom"]}
+        >
           <Text>Content</Text>
         </ScreenContainer>,
       );
@@ -288,7 +313,7 @@ describe("ScreenContainer", () => {
       ).toHaveProp("edges", ["top", "bottom"]);
     });
 
-    it("can disable safe area", () => {
+    it("can explicitly disable safe area", () => {
       const { getByTestId, queryByTestId } = render(
         <ScreenContainer withSafeArea={false}>
           <Text>Content</Text>
@@ -406,7 +431,7 @@ describe("ScreenContainer", () => {
       });
 
       expect(
-        getByTestId("screenContainerSafeArea"),
+        getByTestId("screenContainerUnsafeArea"),
       ).toHaveStyle({
         backgroundColor:
           lightTheme.colors.background.default,
@@ -428,7 +453,7 @@ describe("ScreenContainer", () => {
       });
 
       expect(
-        getByTestId("screenContainerSafeArea"),
+        getByTestId("screenContainerUnsafeArea"),
       ).toHaveStyle({
         backgroundColor:
           lightTheme.colors.background.subtle,
@@ -447,6 +472,23 @@ describe("ScreenContainer", () => {
       ).toHaveStyle({
         backgroundColor: lightTheme.colors.background.brand,
       });
+
+      expect(
+        getByTestId("screenContainerUnsafeArea"),
+      ).toHaveStyle({
+        backgroundColor: lightTheme.colors.background.brand,
+      });
+    });
+
+    it("applies background to safe area when withSafeArea is true", () => {
+      const { getByTestId } = render(
+        <ScreenContainer
+          withSafeArea
+          backgroundColorVariant="primary600"
+        >
+          <Text>Content</Text>
+        </ScreenContainer>,
+      );
 
       expect(
         getByTestId("screenContainerSafeArea"),
@@ -642,6 +684,7 @@ describe("ScreenContainer", () => {
     it("applies custom container styles with safe area", () => {
       const { getByTestId } = render(
         <ScreenContainer
+          withSafeArea
           style={{
             paddingTop: 20,
           }}

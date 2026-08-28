@@ -440,7 +440,7 @@ export default function PackagesListScreen() {
       showBackButton={false}
       headerVariant="neutral"
       backgroundColorVariant="neutral100"
-      safeAreaEdges={["bottom"]}
+      withSafeArea={false}
     >
       <FlashList
         testID="packagesListFlashList"
@@ -450,6 +450,7 @@ export default function PackagesListScreen() {
         ListHeaderComponent={listHeader}
         ListEmptyComponent={emptyState}
         contentContainerStyle={styles.listContent}
+        style={styles.container}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

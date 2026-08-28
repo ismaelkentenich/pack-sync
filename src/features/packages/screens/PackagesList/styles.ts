@@ -7,11 +7,13 @@ import {
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
   listContent: {
     flexGrow: 1,
-    paddingTop: verticalScale(Theme.spacing.md),
     paddingBottom: verticalScale(Theme.spacing.xxxl),
-    backgroundColor: Theme.colors.neutral[100],
   },
 
   listHeader: {

@@ -41,6 +41,7 @@ export default function HomeScreen() {
       backgroundColorVariant="neutral100"
       contentContainerStyle={styles.screenContent}
       safeAreaEdges={["top"]}
+      // withSafeArea
     >
       <View style={styles.circleLargeSecondary} />
       <View style={styles.circleLargePrimary} />
