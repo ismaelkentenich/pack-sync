@@ -9,6 +9,8 @@ import * as Haptics from "expo-haptics";
 import { useFocusEffect } from "expo-router";
 import {
   CameraOff,
+  Flashlight,
+  FlashlightOff,
   PackageSearch,
   ScanLine,
 } from "lucide-react-native";
@@ -16,6 +18,7 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useState,
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -89,9 +92,29 @@ export default function ScanScreen() {
   const [permission, requestPermission] =
     useCameraPermissions();
 
+  const [isTorchOn, setIsTorchOn] = useState(false);
+
   const sessionCount = currentSessionPackages.length;
 
   const hasPackages = sessionCount > 0;
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsTorchOn(false);
+      };
+    }, []),
+  );
+
+  const handleToggleTorch = useCallback(() => {
+    setIsTorchOn((prev) => {
+      const next = !prev;
+      void Haptics.impactAsync(
+        Haptics.ImpactFeedbackStyle.Light,
+      );
+      return next;
+    });
+  }, []);
 
   const openUpdateAllModal = useCallback(() => {
     updateAllModalRef.current?.present();
@@ -370,11 +393,41 @@ export default function ScanScreen() {
               testID="scannerCamera"
               style={styles.camera}
               facing="back"
+              enableTorch={isTorchOn}
               barcodeScannerSettings={{
                 barcodeTypes: ["qr", "ean13", "code128"],
               }}
               onBarcodeScanned={handleBarCodeScanned}
             />
+
+            <TouchableOpacity
+              testID="scannerTorchButton"
+              accessibilityRole="button"
+              accessibilityLabel={
+                isTorchOn
+                  ? t("scanner.turnTorchOff")
+                  : t("scanner.turnTorchOn")
+              }
+              accessibilityState={{ checked: isTorchOn }}
+              style={[
+                styles.torchButton,
+                isTorchOn && styles.torchButtonActive,
+              ]}
+              onPress={handleToggleTorch}
+              activeOpacity={0.75}
+            >
+              {isTorchOn ? (
+                <Flashlight
+                  size={moderateScale(20)}
+                  color={Theme.colors.neutral[900]}
+                />
+              ) : (
+                <FlashlightOff
+                  size={moderateScale(20)}
+                  color={Theme.colors.neutral[0]}
+                />
+              )}
+            </TouchableOpacity>
 
             <View
               pointerEvents="none"

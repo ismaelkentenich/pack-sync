@@ -228,6 +228,9 @@ export const ptBR = {
     emptyTitle: "Nenhum pacote escaneado",
     emptyDescription:
       "Os pacotes adicionados nesta sessão aparecerão aqui.",
+    turnTorchOn: "Ativar lanterna",
+    turnTorchOff: "Desativar lanterna",
+    toggleTorch: "Alternar lanterna",
   },
 
   accessibility: {

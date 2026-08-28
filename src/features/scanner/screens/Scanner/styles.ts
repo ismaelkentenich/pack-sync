@@ -36,6 +36,26 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
+  torchButton: {
+    position: "absolute",
+    top: verticalScale(Theme.spacing.xs),
+    right: horizontalScale(Theme.spacing.xs),
+    zIndex: 10,
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+  },
+
+  torchButtonActive: {
+    backgroundColor: Theme.colors.secondary[400],
+    borderColor: Theme.colors.secondary[300],
+  },
+
   overlay: {
     position: "absolute",
     top: 0,
