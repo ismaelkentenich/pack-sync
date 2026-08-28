@@ -317,6 +317,26 @@ describe("PackageCard", () => {
         getByTestId("packageCardUpdateButton"),
       ).toBeTruthy();
     });
+
+    it("renders remove button when showRemoveButton is true and onPressRemove is provided", () => {
+      const onPressRemove = jest.fn();
+
+      const { getByTestId } = render(
+        <PackageCard
+          item={mockPackage}
+          showRemoveButton
+          onPressRemove={onPressRemove}
+        />,
+      );
+
+      const removeBtn = getByTestId(
+        "packageCardRemoveButton",
+      );
+      expect(removeBtn).toBeTruthy();
+
+      fireEvent.press(removeBtn);
+      expect(onPressRemove).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("status combinations", () => {

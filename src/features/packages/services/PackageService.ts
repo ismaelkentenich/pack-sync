@@ -87,6 +87,10 @@ export class PackageService {
     );
   }
 
+  deletePackage(id: string, userId: string): void {
+    this.packageRepository.delete(id, userId);
+  }
+
   syncPackage(pkg: Package): Promise<ServiceResult> {
     const packageId = pkg.id;
 

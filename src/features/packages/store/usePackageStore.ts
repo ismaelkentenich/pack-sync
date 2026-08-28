@@ -1,5 +1,8 @@
 import { create } from "zustand";
-import { PackageStatus } from "@features/packages/domain/package.enums";
+import {
+  DeliveryStatus,
+  PackageStatus,
+} from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { packageService } from "@features/packages/package.dependencies";
 import {
@@ -50,6 +53,8 @@ type PackageState = {
     status: PackageStatus,
     receiverName?: string,
   ) => MutationResult;
+
+  removeFromSession: (pkg: Package, userId: string) => void;
 
   resetSession: () => void;
 
@@ -509,6 +514,41 @@ export const usePackageStore = create<PackageState>(
 
         get().loadPackages(userId);
       }
+    },
+
+    removeFromSession: (pkg, userId) => {
+      if (pkg.id) {
+        try {
+          packageService.deletePackage(pkg.id, userId);
+        } catch (error) {
+          console.error(
+            "[PackageStore] removeFromSession:error",
+            {
+              id: pkg.id,
+              error,
+            },
+          );
+        }
+      }
+
+      set((state) => ({
+        currentSessionPackages:
+          state.currentSessionPackages.filter((p) =>
+            pkg.id ? p.id !== pkg.id : p.code !== pkg.code,
+          ),
+        packages: state.packages.filter((p) =>
+          pkg.id ? p.id !== pkg.id : p.code !== pkg.code,
+        ),
+        pendingCount: Math.max(
+          0,
+          state.pendingCount -
+            (pkg.deliveryStatus === DeliveryStatus.PENDING
+              ? 1
+              : 0),
+        ),
+      }));
+
+      get().loadPackages(userId);
     },
 
     resetSession: () => {

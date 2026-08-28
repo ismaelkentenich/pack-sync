@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { moderateScale } from "@theme/responsiveScale";
 import Theme from "@theme/theme";
 
 export const styles = StyleSheet.create({
@@ -32,6 +33,15 @@ export const styles = StyleSheet.create({
     fontSize: Theme.typography.size.sm,
     lineHeight: Theme.typography.lineHeight.md,
     fontWeight: Theme.typography.weight.semibold,
+  },
+
+  removeButton: {
+    width: moderateScale(36),
+    height: moderateScale(36),
+    borderRadius: moderateScale(Theme.radius.md),
+    backgroundColor: Theme.colors.error[50],
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   buttonContainer: {

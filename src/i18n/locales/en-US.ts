@@ -152,6 +152,7 @@ export const enUS = {
       syncPackages: "Sync packages",
       viewAll: "View all packages",
       updateAndSync: "Update and sync",
+      removeFromSession: "Remove from session",
     },
 
     status: {
