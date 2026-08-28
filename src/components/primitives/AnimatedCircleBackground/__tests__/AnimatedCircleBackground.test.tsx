@@ -216,6 +216,140 @@ describe("AnimatedCircleBackground", () => {
     });
   });
 
+  it("renders the dense variant with 12 circles", () => {
+    const { getByTestId } = render(
+      <AnimatedCircleBackground variant="dense" />,
+    );
+
+    expect(
+      getByTestId(
+        "animatedCircle-dense-orb-1",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+
+    expect(
+      getByTestId(
+        "animatedCircle-dense-orb-2",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+
+    expect(
+      getByTestId(
+        "animatedCircle-dense-orb-3",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+
+    expect(
+      getByTestId(
+        "animatedCircle-dense-particle-3",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+  });
+
+  it("renders the subtle variant", () => {
+    const { getByTestId } = render(
+      <AnimatedCircleBackground variant="subtle" />,
+    );
+
+    expect(
+      getByTestId(
+        "animatedCircle-subtle-primary-1",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+
+    expect(
+      getByTestId(
+        "animatedCircle-subtle-secondary-1",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+  });
+
+  it("renders the energetic variant with active circles", () => {
+    const { getByTestId } = render(
+      <AnimatedCircleBackground variant="energetic" />,
+    );
+
+    expect(
+      getByTestId(
+        "animatedCircle-energetic-large-1",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+
+    expect(
+      getByTestId(
+        "animatedCircle-energetic-particle-2",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+  });
+
+  it("renders the floating variant with floating bubble circles", () => {
+    const { getByTestId } = render(
+      <AnimatedCircleBackground variant="floating" />,
+    );
+
+    expect(
+      getByTestId(
+        "animatedCircle-floating-bubble-1",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+
+    expect(
+      getByTestId(
+        "animatedCircle-floating-bubble-10",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+  });
+
+  it("renders the minimal variant with 2 large corner orbs", () => {
+    const { getByTestId } = render(
+      <AnimatedCircleBackground variant="minimal" />,
+    );
+
+    expect(
+      getByTestId(
+        "animatedCircle-minimal-top",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+
+    expect(
+      getByTestId(
+        "animatedCircle-minimal-bottom",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+  });
+
+  it("renders the hero spotlight variant", () => {
+    const { getByTestId } = render(
+      <AnimatedCircleBackground variant="hero" />,
+    );
+
+    expect(
+      getByTestId(
+        "animatedCircle-hero-orb-main",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+
+    expect(
+      getByTestId(
+        "animatedCircle-hero-particle",
+        hiddenElementsOptions,
+      ),
+    ).toBeTruthy();
+  });
+
   it("is hidden from the accessibility tree", () => {
     const { getByTestId } = render(
       <AnimatedCircleBackground />,
