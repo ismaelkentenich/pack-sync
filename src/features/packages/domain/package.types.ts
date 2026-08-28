@@ -12,4 +12,5 @@ export type Package = {
   scanned_at: string;
   sent_at?: string | null;
   receiverName?: string | null;
+  syncVersion?: number;
 };

@@ -249,13 +249,14 @@ describe("SQLitePackageRepository", () => {
   });
 
   describe("create", () => {
-    it("persists the package with its user identity", () => {
+    it("persists the package with its user identity and initial syncVersion", () => {
       const pkg: Package = {
         code: "PKG-001",
         status: PackageStatus.COLLECTED,
         deliveryStatus: DeliveryStatus.PENDING,
         clientCode: "user-1",
         scanned_at: "2026-08-22T12:00:00.000Z",
+        syncVersion: 1,
       };
 
       const persistedPackage: Package = {
@@ -277,6 +278,7 @@ describe("SQLitePackageRepository", () => {
           DeliveryStatus.PENDING,
           "user-1",
           "2026-08-22T12:00:00.000Z",
+          1,
         ],
       );
 
@@ -330,7 +332,7 @@ describe("SQLitePackageRepository", () => {
   });
 
   describe("updateStatus", () => {
-    it("invalidates the previous synchronization state atomically", () => {
+    it("invalidates the previous synchronization state and increments syncVersion atomically", () => {
       repository.updateStatus(
         "10",
         "user-1",
@@ -346,6 +348,9 @@ describe("SQLitePackageRepository", () => {
       expect(sql).toContain("receiverName = ?");
       expect(sql).toContain("deliveryStatus = ?");
       expect(sql).toContain("sent_at = NULL");
+      expect(sql).toContain(
+        "syncVersion = COALESCE(syncVersion, 1) + 1",
+      );
       expect(sql).toContain("clientCode = ?");
 
       expect(params).toEqual([
@@ -398,8 +403,8 @@ describe("SQLitePackageRepository", () => {
   });
 
   describe("markAsSent", () => {
-    it("marks the package as sent for the correct user", () => {
-      repository.markAsSent("10", "user-1");
+    it("marks the package as sent conditionally for the exact syncVersion", () => {
+      repository.markAsSent("10", "user-1", 1);
 
       expect(runSyncMock).toHaveBeenCalledTimes(1);
 
@@ -409,6 +414,7 @@ describe("SQLitePackageRepository", () => {
       expect(sql).toContain("sent_at = ?");
       expect(sql).toContain("WHERE id = ?");
       expect(sql).toContain("clientCode = ?");
+      expect(sql).toContain("syncVersion = ?");
 
       expect(Array.isArray(params)).toBe(true);
 
@@ -418,11 +424,12 @@ describe("SQLitePackageRepository", () => {
         );
       }
 
-      expect(params).toHaveLength(4);
+      expect(params).toHaveLength(5);
 
       expect(params[0]).toBe(DeliveryStatus.SENT);
       expect(params[2]).toBe("10");
       expect(params[3]).toBe("user-1");
+      expect(params[4]).toBe(1);
 
       const sentAt = params[1];
 
@@ -433,6 +440,31 @@ describe("SQLitePackageRepository", () => {
       }
 
       expect(Number.isNaN(Date.parse(sentAt))).toBe(false);
+    });
+
+    it("marks the package as sent without syncVersion when not specified", () => {
+      repository.markAsSent("10", "user-1");
+
+      expect(runSyncMock).toHaveBeenCalledTimes(1);
+
+      const [sql, params] = runSyncMock.mock.calls[0];
+
+      expect(sql).toContain("deliveryStatus = ?");
+      expect(sql).toContain("sent_at = ?");
+      expect(sql).toContain("WHERE id = ?");
+      expect(sql).toContain("clientCode = ?");
+      expect(Array.isArray(params)).toBe(true);
+
+      if (!Array.isArray(params)) {
+        throw new Error(
+          "Expected SQLite bind params to be an array",
+        );
+      }
+
+      expect(params).toHaveLength(4);
+      expect(params[0]).toBe(DeliveryStatus.SENT);
+      expect(params[2]).toBe("10");
+      expect(params[3]).toBe("user-1");
     });
   });
 
@@ -502,7 +534,7 @@ describe("SQLitePackageRepository", () => {
       expect(runSyncMock).toHaveBeenCalledTimes(3);
     });
 
-    it("invalidates synchronization for every package in the batch", () => {
+    it("invalidates synchronization and increments syncVersion for every package in the batch", () => {
       repository.batchUpdateStatus(
         ["1", "2"],
         "user-1",
@@ -512,7 +544,9 @@ describe("SQLitePackageRepository", () => {
 
       expect(runSyncMock).toHaveBeenNthCalledWith(
         1,
-        expect.stringContaining("sent_at = NULL"),
+        expect.stringContaining(
+          "syncVersion = COALESCE(syncVersion, 1) + 1",
+        ),
         [
           PackageStatus.DELIVERED,
           "Maria",
@@ -524,7 +558,9 @@ describe("SQLitePackageRepository", () => {
 
       expect(runSyncMock).toHaveBeenNthCalledWith(
         2,
-        expect.stringContaining("sent_at = NULL"),
+        expect.stringContaining(
+          "syncVersion = COALESCE(syncVersion, 1) + 1",
+        ),
         [
           PackageStatus.DELIVERED,
           "Maria",

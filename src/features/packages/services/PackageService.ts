@@ -171,6 +171,8 @@ export class PackageService {
         };
       }
 
+      const syncVersion = packageToSync.syncVersion ?? 1;
+
       const result =
         await this.packageSyncGateway.send(packageToSync);
 
@@ -189,6 +191,7 @@ export class PackageService {
       this.packageRepository.markAsSent(
         packageId,
         packageToSync.clientCode,
+        syncVersion,
       );
 
       return {
