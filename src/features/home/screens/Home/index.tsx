@@ -4,8 +4,8 @@ import {
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import { Routes } from "@app/config/routes";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
+import { Routes } from "@config/routes";
 import { HomeActionCard } from "@features/home/components/HomeActionCard";
 import { HomeStats } from "@features/home/components/HomeStats";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
