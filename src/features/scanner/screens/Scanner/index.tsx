@@ -101,20 +101,36 @@ export default function ScanScreen() {
   }, []);
 
   const handleBarCodeScanned = useCallback(
-    (result: BarcodeScanningResult) => {
+    async (result: BarcodeScanningResult) => {
       if (!userId) {
+        console.warn("[Scanner] ignored: userId missing");
         return;
       }
 
       const data = result.data.trim();
 
-      if (!data || scannedCodesRef.current.has(data)) {
+      if (!data) {
+        console.warn("[Scanner] ignored: empty barcode");
+        return;
+      }
+
+      if (scannedCodesRef.current.has(data)) {
+        console.warn("[Scanner] ignored: already scanned", {
+          data,
+        });
         return;
       }
 
       scannedCodesRef.current.add(data);
 
-      scanPackage(data, userId);
+      try {
+        await scanPackage(data, userId);
+      } catch (error) {
+        console.error("[Scanner] scanPackage failed", {
+          code: data,
+          error,
+        });
+      }
     },
     [scanPackage, userId],
   );
