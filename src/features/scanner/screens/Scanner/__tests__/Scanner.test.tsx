@@ -351,8 +351,33 @@ describe("ScanScreen - Camera Permissions", () => {
       "user-123",
     );
 
-    // Second scan with same code
+    // Second scan with same code immediately (continuous presence) -> silently suppressed!
     (Haptics.notificationAsync as jest.Mock).mockClear();
+
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-123",
+      type: "qr",
+    });
+
+    expect(
+      Haptics.notificationAsync,
+    ).not.toHaveBeenCalled();
+    expect(mockShowAlert).not.toHaveBeenCalled();
+
+    // Scan a different code immediately -> allowed without delay!
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-456",
+      type: "qr",
+    });
+
+    expect(mockScanPackage).toHaveBeenCalledWith(
+      "PKG-456",
+      "user-123",
+    );
+
+    // Re-introducing the first code (PKG-123) after another code -> triggers warning ONCE
+    (Haptics.notificationAsync as jest.Mock).mockClear();
+    mockShowAlert.mockClear();
 
     await fireEvent(camera, "barcodeScanned", {
       data: "PKG-123",
