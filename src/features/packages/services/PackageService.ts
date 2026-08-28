@@ -216,11 +216,21 @@ export class PackageService {
 
       if (result.success) {
         sent += 1;
+
         continue;
       }
 
       failed += 1;
       failedPackages.push(pkg);
+
+      console.error(
+        "[PackageSync][Service] sendMultiplePackages:item-failed",
+        {
+          id: pkg.id,
+          code: pkg.code,
+          error: result.error,
+        },
+      );
     }
 
     return {
@@ -275,6 +285,13 @@ export class PackageService {
       );
 
     if (pendingPackages.length === 0) {
+      console.log(
+        "[PackageSync][Service] performPendingSync:nothing-to-sync",
+        {
+          userId,
+        },
+      );
+
       return {
         success: true,
         data: 0,
@@ -285,10 +302,12 @@ export class PackageService {
 
     for (const pkg of pendingPackages) {
       const result = await this.syncPackage(pkg);
+
       if (result.success) {
         syncedCount += 1;
       }
     }
+
     return {
       success: true,
       data: syncedCount,

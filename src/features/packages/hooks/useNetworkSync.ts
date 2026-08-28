@@ -23,11 +23,22 @@ export function useNetworkSync(userId?: string) {
       if (disposed) {
         return;
       }
+
       const currentUserId =
         useAuthStore.getState().user?.id;
+
       if (currentUserId !== userId) {
+        console.warn(
+          "[PackageSync][Network] skipped-user-changed",
+          {
+            expectedUserId: userId,
+            currentUserId,
+          },
+        );
+
         return;
       }
+
       syncPendingPackages(userId);
     };
 

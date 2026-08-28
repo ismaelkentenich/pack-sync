@@ -179,10 +179,15 @@ export const usePackageStore = create<PackageState>(
           },
         });
       } catch (error) {
+        console.error("[PackageStore] scanPackage:error", {
+          code,
+          userId,
+          error,
+        });
+
         set({
           feedback: {
             loading: false,
-
             error: getPackageErrorFeedback(error),
           },
         });
@@ -282,6 +287,16 @@ export const usePackageStore = create<PackageState>(
         currentSessionPackages.length === 0 ||
         isSyncingSession
       ) {
+        console.warn(
+          "[PackageSync][Store] sendAllCurrentSessionPackages:ignored",
+          {
+            reason:
+              currentSessionPackages.length === 0
+                ? "empty-session"
+                : "already-syncing",
+          },
+        );
+
         return;
       }
 
@@ -346,7 +361,15 @@ export const usePackageStore = create<PackageState>(
                 },
           },
         });
-      } catch {
+      } catch (error) {
+        console.error(
+          "[PackageSync][Store] sendAllCurrentSessionPackages:error",
+          {
+            userId,
+            error,
+          },
+        );
+
         set({
           feedback: {
             loading: false,
@@ -455,6 +478,13 @@ export const usePackageStore = create<PackageState>(
 
     syncPendingPackages: async (userId) => {
       if (get().isSyncingPending) {
+        console.warn(
+          "[PackageSync][Store] syncPendingPackages:ignored-already-syncing",
+          {
+            userId,
+          },
+        );
+
         return;
       }
 
@@ -464,6 +494,14 @@ export const usePackageStore = create<PackageState>(
 
       try {
         await packageService.syncPendingPackages(userId);
+      } catch (error) {
+        console.error(
+          "[PackageSync][Store] syncPendingPackages:error",
+          {
+            userId,
+            error,
+          },
+        );
       } finally {
         set({
           isSyncingPending: false,
