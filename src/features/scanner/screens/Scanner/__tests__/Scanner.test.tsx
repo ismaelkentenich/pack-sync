@@ -77,6 +77,10 @@ jest.mock("@store/useAlertStore", () => ({
     }),
 }));
 
+const mockRemoveFromSession = jest.fn();
+
+let mockCurrentSessionPackages: unknown[] = [];
+
 let mockFeedback: {
   success: {
     key: string;
@@ -97,23 +101,25 @@ jest.mock(
     usePackageStore: (
       selector: (state: {
         isSyncingSession: boolean;
-        currentSessionPackages: unknown[];
+        currentSessionPackages: typeof mockCurrentSessionPackages;
         feedback: typeof mockFeedback;
         scanPackage: typeof mockScanPackage;
         loadPackages: typeof mockLoadPackages;
         resetSession: typeof mockResetSession;
         clearFeedback: typeof mockClearFeedback;
+        removeFromSession: typeof mockRemoveFromSession;
         sendAllCurrentSessionPackages: typeof mockSendAllCurrentSessionPackages;
       }) => unknown,
     ) =>
       selector({
         isSyncingSession: false,
-        currentSessionPackages: [],
+        currentSessionPackages: mockCurrentSessionPackages,
         feedback: mockFeedback,
         scanPackage: mockScanPackage,
         loadPackages: mockLoadPackages,
         resetSession: mockResetSession,
         clearFeedback: mockClearFeedback,
+        removeFromSession: mockRemoveFromSession,
         sendAllCurrentSessionPackages:
           mockSendAllCurrentSessionPackages,
       }),
@@ -123,6 +129,10 @@ jest.mock(
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
+    i18n: {
+      language: "pt-BR",
+      resolvedLanguage: "pt-BR",
+    },
   }),
 }));
 
@@ -163,13 +173,35 @@ jest.mock("@gorhom/bottom-sheet", () => ({
   BottomSheetModal: "BottomSheetModal",
 }));
 
-jest.mock("@shopify/flash-list", () => ({
-  FlashList: "FlashList",
-}));
+jest.mock("@shopify/flash-list", () => {
+  const React = jest.requireActual("react");
+  const { View } = jest.requireActual("react-native");
+
+  return {
+    FlashList: ({
+      data,
+      renderItem,
+    }: {
+      data?: unknown[];
+      renderItem: ({
+        item,
+      }: {
+        item: unknown;
+      }) => React.ReactNode;
+    }) => (
+      <View testID="flashListRoot">
+        {data?.map((item, index) => (
+          <View key={index}>{renderItem({ item })}</View>
+        ))}
+      </View>
+    ),
+  };
+});
 
 describe("ScanScreen - Camera Permissions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCurrentSessionPackages = [];
     mockFeedback = { success: null, error: null };
     jest
       .spyOn(Linking, "openSettings")
@@ -444,6 +476,49 @@ describe("ScanScreen - Camera Permissions", () => {
     expect(torchButton).toHaveProp(
       "accessibilityLabel",
       "scanner.turnTorchOn",
+    );
+  });
+
+  it("renders session packages and allows quick removal with haptics", () => {
+    (useCameraPermissions as jest.Mock).mockReturnValue([
+      {
+        granted: true,
+        canAskAgain: true,
+        status: "granted",
+      },
+      mockRequestPermission,
+    ]);
+
+    const sessionPkg = {
+      id: "pkg-1",
+      code: "PKG-123",
+      clientCode: "user-123",
+      status: "Coletado",
+      deliveryStatus: "pending",
+      scanned_at: "2026-08-28T12:00:00Z",
+    };
+
+    mockCurrentSessionPackages = [sessionPkg];
+
+    const { getByTestId } = render(<ScanScreen />);
+
+    expect(
+      getByTestId("scannerSessionItem-pkg-1"),
+    ).toBeTruthy();
+
+    const removeBtn = getByTestId(
+      "packageCardRemoveButton",
+    );
+    expect(removeBtn).toBeTruthy();
+
+    fireEvent.press(removeBtn);
+
+    expect(Haptics.impactAsync).toHaveBeenCalledWith(
+      Haptics.ImpactFeedbackStyle.Light,
+    );
+    expect(mockRemoveFromSession).toHaveBeenCalledWith(
+      sessionPkg,
+      "user-123",
     );
   });
 });

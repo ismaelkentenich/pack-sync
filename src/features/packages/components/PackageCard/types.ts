@@ -5,6 +5,8 @@ export type PackageCardProps = {
   onPress?: () => void;
   showButtons?: boolean;
   onPressUpdate?: () => void;
+  showRemoveButton?: boolean;
+  onPressRemove?: () => void;
   pressable?: boolean;
   testID?: string;
 };

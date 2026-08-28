@@ -154,6 +154,7 @@ export const ptBR = {
       syncPackages: "Sincronizar pacotes",
       viewAll: "Ver todos os pacotes",
       updateAndSync: "Atualizar e sincronizar",
+      removeFromSession: "Remover da sessão",
     },
 
     status: {

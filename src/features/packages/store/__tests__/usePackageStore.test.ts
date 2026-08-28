@@ -15,6 +15,7 @@ jest.mock(
       getPendingCount: jest.fn(),
       scanPackage: jest.fn(),
       changePackageStatus: jest.fn(),
+      deletePackage: jest.fn(),
       syncPackage: jest.fn(),
       syncPendingPackages: jest.fn(),
       sendMultiplePackages: jest.fn(),
@@ -781,6 +782,37 @@ describe("usePackageStore", () => {
       expect(
         packageServiceMock.getPendingCount,
       ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("removeFromSession", () => {
+    it("deletes package from service, updates currentSessionPackages, packages and reloads", () => {
+      const pkg = createPackage({
+        id: "pkg-1",
+        code: "PKG-001",
+      });
+
+      usePackageStore.setState({
+        packages: [pkg],
+        currentSessionPackages: [pkg],
+        pendingCount: 1,
+      });
+
+      usePackageStore
+        .getState()
+        .removeFromSession(pkg, "user-1");
+
+      expect(
+        packageServiceMock.deletePackage,
+      ).toHaveBeenCalledWith("pkg-1", "user-1");
+
+      expect(
+        packageServiceMock.getAllPackages,
+      ).toHaveBeenCalledWith("user-1");
+
+      expect(
+        packageServiceMock.getPendingCount,
+      ).toHaveBeenCalledWith("user-1");
     });
   });
 });

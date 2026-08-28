@@ -81,6 +81,10 @@ export default function ScanScreen() {
     (state) => state.resetSession,
   );
 
+  const removeFromSession = usePackageStore(
+    (state) => state.removeFromSession,
+  );
+
   const clearFeedback = usePackageStore(
     (state) => state.clearFeedback,
   );
@@ -188,6 +192,23 @@ export default function ScanScreen() {
     navigation.navigate(Routes.Packages);
   }, [navigation]);
 
+  const handleRemoveFromSession = useCallback(
+    (pkg: Package) => {
+      if (!userId) {
+        return;
+      }
+
+      Haptics.impactAsync(
+        Haptics.ImpactFeedbackStyle.Light,
+      );
+
+      scannedCodesRef.current.delete(pkg.code);
+
+      removeFromSession(pkg, userId);
+    },
+    [removeFromSession, userId],
+  );
+
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<Package>) => (
       <View
@@ -196,10 +217,17 @@ export default function ScanScreen() {
         }`}
         style={styles.cardWrapper}
       >
-        <PackageCard item={item} pressable={false} />
+        <PackageCard
+          item={item}
+          pressable={false}
+          showRemoveButton
+          onPressRemove={() =>
+            handleRemoveFromSession(item)
+          }
+        />
       </View>
     ),
-    [],
+    [handleRemoveFromSession],
   );
 
   const keyExtractor = useCallback(

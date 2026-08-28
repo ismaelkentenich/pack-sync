@@ -796,4 +796,15 @@ describe("PackageService", () => {
       expect(repository.markAsSent).not.toHaveBeenCalled();
     });
   });
+
+  describe("deletePackage", () => {
+    it("delegates package deletion to repository", () => {
+      service.deletePackage("pkg-1", "user-1");
+
+      expect(repository.delete).toHaveBeenCalledWith(
+        "pkg-1",
+        "user-1",
+      );
+    });
+  });
 });

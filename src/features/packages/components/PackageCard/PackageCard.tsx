@@ -1,6 +1,7 @@
+import { Trash2 } from "lucide-react-native";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { Badge } from "@components/primitives/Badge";
 import { Button } from "@components/primitives/Button";
 import { Card } from "@components/primitives/Card";
@@ -8,6 +9,8 @@ import {
   translateDeliveryStatus,
   translatePackageStatus,
 } from "@features/packages/utils/packageTranslations";
+import { moderateScale } from "@theme/responsiveScale";
+import Theme from "@theme/theme";
 import { formatDate } from "@utils/date";
 import { styles } from "./styles";
 import type { PackageCardProps } from "./types";
@@ -17,12 +20,14 @@ export function PackageCard({
   onPress,
   showButtons = false,
   onPressUpdate,
+  showRemoveButton = false,
+  onPressRemove,
   pressable = true,
   testID,
 }: PackageCardProps) {
   const { t, i18n } = useTranslation();
 
-  const locale = i18n.resolvedLanguage ?? i18n.language;
+  const locale = i18n?.resolvedLanguage ?? i18n?.language;
 
   return (
     <Card
@@ -91,6 +96,25 @@ export function PackageCard({
           {formatDate(item.scanned_at, locale)}
         </Text>
       </View>
+
+      {showRemoveButton && onPressRemove ? (
+        <TouchableOpacity
+          testID="packageCardRemoveButton"
+          accessibilityRole="button"
+          accessibilityLabel={t(
+            "packages.actions.removeFromSession",
+          )}
+          onPress={onPressRemove}
+          hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          style={styles.removeButton}
+          activeOpacity={0.7}
+        >
+          <Trash2
+            size={moderateScale(18)}
+            color={Theme.colors.error[500]}
+          />
+        </TouchableOpacity>
+      ) : null}
 
       {showButtons ? (
         <View
