@@ -169,20 +169,6 @@ export const usePackageStore = create<PackageState>(
         }));
 
         get().loadPackages(userId);
-
-        set({
-          feedback: {
-            loading: false,
-
-            success: {
-              key: "packages.feedback.scannedSuccessfully",
-
-              params: {
-                code,
-              },
-            },
-          },
-        });
       } catch (error) {
         console.error("[PackageStore] scanPackage:error", {
           code,
