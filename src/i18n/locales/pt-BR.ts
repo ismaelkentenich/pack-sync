@@ -255,6 +255,11 @@ export const ptBR = {
       scan: "Abrir scanner de pacotes",
       packages: "Abrir lista de pacotes",
       logout: "Sair da conta",
+      themeSystem: "Selecionar tema do sistema",
+      themeLight: "Selecionar tema claro",
+      themeDark: "Selecionar tema escuro",
+      languagePtBR: "Selecionar idioma português",
+      languageEnUS: "Selecionar idioma inglês",
     },
   },
 
@@ -263,6 +268,7 @@ export const ptBR = {
     subtitle: "Acesse as principais funções do Pack Sync.",
     sections: {
       operations: "Operações",
+      preferences: "Preferências",
       account: "Conta",
     },
     items: {
@@ -275,6 +281,19 @@ export const ptBR = {
         title: "Lista de pacotes",
         description:
           "Consulte e gerencie os pacotes escaneados.",
+      },
+      theme: {
+        title: "Tema",
+        description: "Aparência visual do aplicativo",
+        system: "Sistema",
+        light: "Claro",
+        dark: "Escuro",
+      },
+      language: {
+        title: "Idioma",
+        description: "Idioma da interface",
+        ptBR: "Português",
+        enUS: "English",
       },
       logout: {
         title: "Sair",

@@ -253,6 +253,11 @@ export const enUS = {
       scan: "Open package scanner",
       packages: "Open package list",
       logout: "Log out",
+      themeSystem: "Select system theme",
+      themeLight: "Select light theme",
+      themeDark: "Select dark theme",
+      languagePtBR: "Select Portuguese language",
+      languageEnUS: "Select English language",
     },
   },
 
@@ -261,6 +266,7 @@ export const enUS = {
     subtitle: "Access the main Pack Sync features.",
     sections: {
       operations: "Operations",
+      preferences: "Preferences",
       account: "Account",
     },
     items: {
@@ -271,6 +277,19 @@ export const enUS = {
       packages: {
         title: "Package list",
         description: "View and manage scanned packages.",
+      },
+      theme: {
+        title: "Theme",
+        description: "Application visual appearance",
+        system: "System",
+        light: "Light",
+        dark: "Dark",
+      },
+      language: {
+        title: "Language",
+        description: "Interface language",
+        ptBR: "Português",
+        enUS: "English",
       },
       logout: {
         title: "Log out",
