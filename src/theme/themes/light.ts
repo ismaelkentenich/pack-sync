@@ -4,23 +4,23 @@ import { palette } from "../foundations/colors";
 export const lightColors = {
   background: {
     default: palette.neutral[0],
-    subtle: palette.neutral[50],
+    subtle: palette.neutral[100],
     muted: palette.neutral[200],
     inverse: palette.neutral[900],
-    brand: palette.ultramarine[500],
-    accent: palette.golden[400],
+    brand: palette.royalBlue[600],
+    accent: palette.teal[500],
   },
 
   surface: {
     default: palette.neutral[0],
-    subtle: palette.neutral[100],
+    subtle: palette.neutral[50],
     muted: palette.neutral[200],
 
-    brand: palette.ultramarine[500],
-    brandSubtle: palette.ultramarine[50],
+    brand: palette.royalBlue[600],
+    brandSubtle: palette.royalBlue[50],
 
-    accent: palette.golden[400],
-    accentSubtle: palette.golden[50],
+    accent: palette.teal[500],
+    accentSubtle: palette.teal[50],
 
     inverse: palette.neutral[900],
 
@@ -36,7 +36,7 @@ export const lightColors = {
     disabled: palette.neutral[400],
 
     inverse: palette.neutral[0],
-    brand: palette.ultramarine[600],
+    brand: palette.royalBlue[600],
 
     success: palette.green[700],
     warning: palette.amber[700],
@@ -48,7 +48,7 @@ export const lightColors = {
     secondary: palette.neutral[600],
     disabled: palette.neutral[400],
     inverse: palette.neutral[0],
-    brand: palette.ultramarine[500],
+    brand: palette.royalBlue[600],
   },
 
   border: {
@@ -56,7 +56,7 @@ export const lightColors = {
     subtle: palette.neutral[200],
     strong: palette.neutral[700],
 
-    brand: palette.ultramarine[500],
+    brand: palette.royalBlue[600],
     error: palette.red[500],
   },
 
@@ -67,13 +67,13 @@ export const lightColors = {
     },
 
     brand: {
-      background: palette.ultramarine[500],
+      background: palette.royalBlue[600],
       foreground: palette.neutral[0],
     },
 
     accent: {
-      background: palette.golden[400],
-      foreground: palette.neutral[900],
+      background: palette.teal[500],
+      foreground: palette.neutral[0],
     },
 
     secondary: {
@@ -109,8 +109,8 @@ export const lightColors = {
     },
 
     info: {
-      background: palette.ultramarine[50],
-      foreground: palette.ultramarine[700],
+      background: palette.royalBlue[50],
+      foreground: palette.royalBlue[700],
     },
   },
 } as const satisfies ThemeColors;

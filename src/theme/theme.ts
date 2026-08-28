@@ -6,8 +6,8 @@ import { typography } from "./foundations/typography";
 
 const Theme = {
   colors: {
-    primary: palette.ultramarine,
-    secondary: palette.golden,
+    primary: palette.royalBlue,
+    secondary: palette.teal,
     neutral: palette.neutral,
     success: palette.green,
     warning: palette.amber,

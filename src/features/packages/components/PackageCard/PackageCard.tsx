@@ -10,7 +10,7 @@ import {
   translatePackageStatus,
 } from "@features/packages/utils/packageTranslations";
 import { moderateScale } from "@theme/responsiveScale";
-import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 import { formatDate } from "@utils/date";
 import { styles } from "./styles";
 import type { PackageCardProps } from "./types";
@@ -26,6 +26,7 @@ export function PackageCard({
   testID,
 }: PackageCardProps) {
   const { t, i18n } = useTranslation();
+  const { theme } = useAppTheme();
 
   const locale = i18n?.resolvedLanguage ?? i18n?.language;
 
@@ -42,7 +43,10 @@ export function PackageCard({
       >
         <Text
           testID="packageCardCode"
-          style={styles.codeText}
+          style={[
+            styles.codeText,
+            { color: theme.colors.text.primary },
+          ]}
         >
           {t("packages.code")}: {item.code}
         </Text>
@@ -53,7 +57,10 @@ export function PackageCard({
         >
           <Text
             testID="packageCardStatusLabel"
-            style={styles.text}
+            style={[
+              styles.text,
+              { color: theme.colors.text.secondary },
+            ]}
           >
             {t("packages.packageStatus")}:
           </Text>
@@ -72,7 +79,10 @@ export function PackageCard({
         >
           <Text
             testID="packageCardDeliveryLabel"
-            style={styles.text}
+            style={[
+              styles.text,
+              { color: theme.colors.text.secondary },
+            ]}
           >
             {t("packages.deliveryStatusLabel")}:
           </Text>
@@ -90,7 +100,10 @@ export function PackageCard({
 
         <Text
           testID="packageCardScannedAt"
-          style={styles.text}
+          style={[
+            styles.text,
+            { color: theme.colors.text.tertiary },
+          ]}
         >
           {t("packages.scannedAt")}:{" "}
           {formatDate(item.scanned_at, locale)}
@@ -106,12 +119,18 @@ export function PackageCard({
           )}
           onPress={onPressRemove}
           hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-          style={styles.removeButton}
+          style={[
+            styles.removeButton,
+            {
+              backgroundColor:
+                theme.colors.status.error.background,
+            },
+          ]}
           activeOpacity={0.7}
         >
           <Trash2
             size={moderateScale(18)}
-            color={Theme.colors.error[500]}
+            color={theme.colors.status.error.foreground}
           />
         </TouchableOpacity>
       ) : null}

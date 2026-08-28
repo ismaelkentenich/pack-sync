@@ -3,12 +3,12 @@ import { ThemeColors } from "../types";
 
 export const darkColors = {
   background: {
-    default: palette.neutral[900],
-    subtle: palette.neutral[950],
-    muted: palette.neutral[800],
+    default: palette.neutral[950],
+    subtle: "#0D1627",
+    muted: "#132038",
     inverse: palette.neutral[0],
-    brand: palette.ultramarine[500],
-    accent: palette.golden[400],
+    brand: palette.royalBlue[600],
+    accent: palette.teal[500],
   },
 
   surface: {
@@ -16,17 +16,17 @@ export const darkColors = {
     subtle: palette.neutral[800],
     muted: palette.neutral[700],
 
-    brand: palette.ultramarine[500],
-    brandSubtle: palette.ultramarine[900],
+    brand: palette.royalBlue[600],
+    brandSubtle: "rgba(30, 64, 175, 0.25)",
 
-    accent: palette.golden[400],
-    accentSubtle: palette.golden[900],
+    accent: palette.teal[500],
+    accentSubtle: "rgba(23, 135, 155, 0.25)",
 
     inverse: palette.neutral[0],
 
-    success: palette.neutral[800],
-    warning: palette.neutral[800],
-    error: palette.neutral[800],
+    success: "rgba(35, 155, 86, 0.20)",
+    warning: "rgba(217, 133, 0, 0.20)",
+    error: "rgba(192, 57, 43, 0.25)",
   },
 
   text: {
@@ -35,29 +35,29 @@ export const darkColors = {
     tertiary: palette.neutral[500],
     disabled: palette.neutral[600],
 
-    inverse: palette.neutral[900],
-    brand: palette.ultramarine[300],
+    inverse: palette.neutral[0],
+    brand: palette.royalBlue[300],
 
-    success: palette.green[500],
-    warning: palette.amber[500],
-    error: palette.red[500],
+    success: "#4ADE80",
+    warning: "#FBBF24",
+    error: "#F87171",
   },
 
   icon: {
     primary: palette.neutral[50],
     secondary: palette.neutral[400],
     disabled: palette.neutral[600],
-    inverse: palette.neutral[900],
-    brand: palette.ultramarine[300],
+    inverse: palette.neutral[0],
+    brand: palette.royalBlue[300],
   },
 
   border: {
     default: palette.neutral[700],
-    subtle: palette.neutral[800],
+    subtle: "#152A45",
     strong: palette.neutral[400],
 
-    brand: palette.ultramarine[400],
-    error: palette.red[500],
+    brand: palette.royalBlue[400],
+    error: palette.brickRed[400],
   },
 
   action: {
@@ -67,13 +67,13 @@ export const darkColors = {
     },
 
     brand: {
-      background: palette.ultramarine[500],
+      background: palette.royalBlue[600],
       foreground: palette.neutral[0],
     },
 
     accent: {
-      background: palette.golden[400],
-      foreground: palette.neutral[900],
+      background: palette.teal[500],
+      foreground: palette.neutral[0],
     },
 
     secondary: {
@@ -94,23 +94,23 @@ export const darkColors = {
 
   status: {
     success: {
-      background: palette.neutral[800],
-      foreground: palette.green[500],
+      background: "rgba(35, 155, 86, 0.20)",
+      foreground: "#4ADE80",
     },
 
     warning: {
-      background: palette.neutral[800],
-      foreground: palette.amber[500],
+      background: "rgba(217, 133, 0, 0.20)",
+      foreground: "#FBBF24",
     },
 
     error: {
-      background: palette.neutral[800],
-      foreground: palette.red[500],
+      background: "rgba(192, 57, 43, 0.25)",
+      foreground: "#F87171",
     },
 
     info: {
-      background: palette.ultramarine[900],
-      foreground: palette.ultramarine[300],
+      background: "rgba(30, 64, 175, 0.25)",
+      foreground: palette.royalBlue[300],
     },
   },
 } as const satisfies ThemeColors;

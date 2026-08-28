@@ -58,7 +58,7 @@ export function ScreenContainer({
   contentContainerStyle,
   testID,
 }: ScreenContainerProps) {
-  const { theme } = useAppTheme();
+  const { theme, resolvedTheme } = useAppTheme();
   const { setHeaderHeight } = useHeaderHeight();
   const insets = useSafeAreaInsets();
 
@@ -77,6 +77,11 @@ export function ScreenContainer({
 
   const resolvedStatusBarColor =
     statusBarColor ?? headerBackgroundColor;
+
+  const resolvedStatusBarStyle =
+    resolvedTheme === "dark"
+      ? "light-content"
+      : statusBarStyle;
 
   const handleHeaderLayout = useCallback(
     (
@@ -168,7 +173,7 @@ export function ScreenContainer({
       {withStatusBar ? (
         <StatusBar
           backgroundColor={resolvedStatusBarColor}
-          barStyle={statusBarStyle}
+          barStyle={resolvedStatusBarStyle}
           translucent={false}
         />
       ) : null}

@@ -1,4 +1,5 @@
 import { Text, View } from "react-native";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import { getStatColors } from "./utils/getStatColors";
 import type { HomeStatItem, HomeStatsProps } from "./types";
@@ -10,9 +11,10 @@ function HomeStatCard({
   item: HomeStatItem;
   index: number;
 }) {
+  const { theme } = useAppTheme();
   const variant = item.variant ?? "neutral";
 
-  const colors = getStatColors(variant);
+  const colors = getStatColors(variant, theme);
 
   return (
     <View

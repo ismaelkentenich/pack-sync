@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 import Theme from "@theme/theme";
+import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
 import type { MenuItemProps } from "./types";
 
@@ -14,9 +15,11 @@ export function MenuItem({
   testID,
   accessibilityLabel,
 }: MenuItemProps) {
+  const { theme } = useAppTheme();
+
   const iconColor = destructive
-    ? Theme.colors.error[500]
-    : Theme.colors.primary[600];
+    ? theme.colors.status.error.foreground
+    : theme.colors.icon.brand;
 
   return (
     <TouchableOpacity
@@ -30,7 +33,11 @@ export function MenuItem({
       <View
         style={[
           styles.iconContainer,
-          destructive && styles.destructiveIconContainer,
+          {
+            backgroundColor: destructive
+              ? theme.colors.status.error.background
+              : theme.colors.surface.subtle,
+          },
         ]}
       >
         <Icon
@@ -44,14 +51,23 @@ export function MenuItem({
         <Text
           style={[
             styles.title,
-            destructive && styles.destructiveTitle,
+            {
+              color: destructive
+                ? theme.colors.status.error.foreground
+                : theme.colors.text.primary,
+            },
           ]}
         >
           {title}
         </Text>
 
         {description ? (
-          <Text style={styles.description}>
+          <Text
+            style={[
+              styles.description,
+              { color: theme.colors.text.secondary },
+            ]}
+          >
             {description}
           </Text>
         ) : null}
@@ -60,7 +76,7 @@ export function MenuItem({
       {showChevron ? (
         <ChevronRight
           size={Theme.sizing.icon.sm}
-          color={Theme.colors.neutral[400]}
+          color={theme.colors.icon.secondary}
           strokeWidth={2}
         />
       ) : null}
