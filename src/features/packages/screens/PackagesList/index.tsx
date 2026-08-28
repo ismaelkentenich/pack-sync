@@ -1,6 +1,8 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
+import * as Haptics from "expo-haptics";
 import {
+  CloudUpload,
   PackageSearch,
   SearchX,
 } from "lucide-react-native";
@@ -19,6 +21,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Button } from "@components/primitives/Button";
 import { Input } from "@components/primitives/Input";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { Routes } from "@config/routes";
@@ -69,6 +72,18 @@ export default function PackagesListScreen() {
 
   const loadPackages = usePackageStore(
     (state) => state.loadPackages,
+  );
+
+  const pendingCount = usePackageStore(
+    (state) => state.pendingCount,
+  );
+
+  const isSyncingPending = usePackageStore(
+    (state) => state.isSyncingPending,
+  );
+
+  const syncPendingPackages = usePackageStore(
+    (state) => state.syncPendingPackages,
   );
 
   const updateStatusModalRef =
@@ -129,6 +144,25 @@ export default function PackagesListScreen() {
     loadPackages(userId);
   }, [loadPackages, userId]);
 
+  const handleSyncPending = useCallback(async () => {
+    if (!userId || isSyncingPending) {
+      return;
+    }
+
+    void Haptics.impactAsync(
+      Haptics.ImpactFeedbackStyle.Light,
+    );
+
+    try {
+      await syncPendingPackages(userId);
+    } catch (error) {
+      console.error(
+        "[PackagesList] syncPending error",
+        error,
+      );
+    }
+  }, [isSyncingPending, syncPendingPackages, userId]);
+
   const handleRefresh = useCallback(async () => {
     if (!userId) {
       return;
@@ -137,11 +171,19 @@ export default function PackagesListScreen() {
     setRefreshing(true);
 
     try {
-      await loadPackages(userId);
+      if (pendingCount > 0) {
+        await syncPendingPackages(userId);
+      }
+      loadPackages(userId);
     } finally {
       setRefreshing(false);
     }
-  }, [loadPackages, userId]);
+  }, [
+    loadPackages,
+    pendingCount,
+    syncPendingPackages,
+    userId,
+  ]);
 
   const handleClearFilters = useCallback(() => {
     setSearchTerm("");
@@ -253,6 +295,54 @@ export default function PackagesListScreen() {
           </Text>
         </View>
 
+        {pendingCount > 0 ? (
+          <View
+            testID="packagesListSyncBanner"
+            style={styles.syncBanner}
+          >
+            <View style={styles.syncBannerHeader}>
+              <View style={styles.syncBannerIconContainer}>
+                <CloudUpload
+                  size={moderateScale(22)}
+                  color={Theme.colors.secondary[700]}
+                />
+              </View>
+
+              <View style={styles.syncBannerTextContainer}>
+                <Text
+                  testID="packagesListSyncBannerTitle"
+                  style={styles.syncBannerTitle}
+                >
+                  {t("packages.list.syncBannerTitle", {
+                    count: pendingCount,
+                  })}
+                </Text>
+
+                <Text
+                  testID="packagesListSyncBannerDescription"
+                  style={styles.syncBannerDescription}
+                >
+                  {t("packages.list.syncBannerDescription")}
+                </Text>
+              </View>
+            </View>
+
+            <Button
+              testID="packagesListSyncButton"
+              title={
+                isSyncingPending
+                  ? t("packages.list.syncing")
+                  : t("packages.list.syncButton")
+              }
+              variant="brand"
+              size="sm"
+              loading={isSyncingPending}
+              disabled={isSyncingPending}
+              onPress={handleSyncPending}
+            />
+          </View>
+        ) : null}
+
         <View
           testID="packagesListControls"
           style={styles.controls}
@@ -339,7 +429,10 @@ export default function PackagesListScreen() {
     [
       filteredData.length,
       handleClearFilters,
+      handleSyncPending,
       hasFilters,
+      isSyncingPending,
+      pendingCount,
       renderFilterChip,
       searchTerm,
       setSearchTerm,

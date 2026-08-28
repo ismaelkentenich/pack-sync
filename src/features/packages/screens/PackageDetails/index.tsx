@@ -1,4 +1,5 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import * as Haptics from "expo-haptics";
 import { useLocalSearchParams } from "expo-router";
 import {
   CalendarDays,
@@ -14,6 +15,7 @@ import { Card } from "@components/primitives/Card";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { UpdateStatusModal } from "@features/packages/components/UpdateStatusModal";
+import { DeliveryStatus } from "@features/packages/domain/package.enums";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import {
   translateDeliveryStatus,
@@ -22,6 +24,7 @@ import {
 import Theme from "@theme/theme";
 import { formatDate } from "@utils/date";
 import { styles } from "./styles";
+
 export default function PackageDetailsScreen() {
   const { t, i18n } = useTranslation();
 
@@ -36,6 +39,14 @@ export default function PackageDetailsScreen() {
     state.packages.find((item) => item.code === code),
   );
 
+  const sendPackage = usePackageStore(
+    (state) => state.sendPackage,
+  );
+
+  const syncingPackageIds = usePackageStore(
+    (state) => state.syncingPackageIds,
+  );
+
   const handleOpenStatusModal = useCallback(() => {
     updateStatusModalRef.current?.present();
   }, []);
@@ -43,6 +54,22 @@ export default function PackageDetailsScreen() {
   const handleCloseStatusModal = useCallback(() => {
     updateStatusModalRef.current?.close();
   }, []);
+
+  const isSyncingThis =
+    currentPackage?.id !== undefined &&
+    syncingPackageIds.includes(currentPackage.id);
+
+  const handleSyncPackage = useCallback(async () => {
+    if (!userId || !currentPackage || isSyncingThis) {
+      return;
+    }
+
+    void Haptics.impactAsync(
+      Haptics.ImpactFeedbackStyle.Light,
+    );
+
+    await sendPackage(currentPackage, userId);
+  }, [currentPackage, isSyncingThis, sendPackage, userId]);
 
   if (!currentPackage) {
     return null;
@@ -270,6 +297,23 @@ export default function PackageDetailsScreen() {
           >
             {t("packages.details.actions")}
           </Text>
+
+          {packageData.deliveryStatus ===
+          DeliveryStatus.PENDING ? (
+            <Button
+              testID="packageDetailsSyncButton"
+              title={
+                isSyncingThis
+                  ? t("packages.details.syncing")
+                  : t("packages.details.syncNow")
+              }
+              variant="outline"
+              size="md"
+              loading={isSyncingThis}
+              disabled={isSyncingThis}
+              onPress={handleSyncPackage}
+            />
+          ) : null}
 
           <Button
             testID="packageDetailsChangeStatusButton"

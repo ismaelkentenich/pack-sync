@@ -112,6 +112,8 @@ export const enUS = {
       notAvailable: "Not provided",
       actions: "Actions",
       changeStatus: "Change status",
+      syncNow: "Sync package",
+      syncing: "Syncing...",
     },
 
     list: {
@@ -126,6 +128,14 @@ export const enUS = {
       results: "Packages",
       packageCount_one: "{{count}} package",
       packageCount_other: "{{count}} packages",
+      syncBannerTitle_one:
+        "{{count}} package pending synchronization",
+      syncBannerTitle_other:
+        "{{count}} packages pending synchronization",
+      syncBannerDescription:
+        "Send locally saved changes to the server.",
+      syncButton: "Sync now",
+      syncing: "Syncing...",
       empty: "No packages found",
       emptyTitle: "No packages yet",
       emptyDescription:
