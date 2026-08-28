@@ -212,7 +212,10 @@ export const enUS = {
     permissionTitle: "Camera access required",
     permissionRequired:
       "Allow camera access to scan package QR codes and barcodes.",
+    permissionRequiredPermanently:
+      "Camera access is disabled. Please open device settings to allow camera permissions.",
     grantPermission: "Allow camera access",
+    openSettings: "Open settings",
     instructionTitle: "Point at the code",
     instructionDescription:
       "Position the QR code or barcode inside the highlighted area.",

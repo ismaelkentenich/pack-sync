@@ -214,7 +214,10 @@ export const ptBR = {
     permissionTitle: "Acesso à câmera necessário",
     permissionRequired:
       "Permita o acesso à câmera para escanear QR Codes e códigos de barras dos pacotes.",
+    permissionRequiredPermanently:
+      "O acesso à câmera está desativado. Abra as configurações do dispositivo para permitir o acesso.",
     grantPermission: "Permitir acesso à câmera",
+    openSettings: "Abrir configurações",
     instructionTitle: "Aponte para o código",
     instructionDescription:
       "Posicione o QR Code ou código de barras dentro da área destacada.",
