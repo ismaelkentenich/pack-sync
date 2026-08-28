@@ -44,6 +44,8 @@ import { styles } from "./styles";
 import type { Package } from "@features/packages/domain/package.types";
 import type { ListRenderItemInfo } from "@shopify/flash-list";
 
+const SAME_CODE_SUPPRESSION_MS = 1500;
+
 export default function ScanScreen() {
   const { t } = useTranslation();
 
@@ -52,6 +54,9 @@ export default function ScanScreen() {
   const updateAllModalRef = useRef<BottomSheetModal>(null);
 
   const scannedCodesRef = useRef<Set<string>>(new Set());
+  const inFlightCodesRef = useRef<Set<string>>(new Set());
+  const lastDetectedCodeRef = useRef<string | null>(null);
+  const lastDetectedAtRef = useRef<number>(0);
 
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -131,23 +136,38 @@ export default function ScanScreen() {
   const handleBarCodeScanned = useCallback(
     async (result: BarcodeScanningResult) => {
       if (!userId) {
-        console.warn("[Scanner] ignored: userId missing");
         return;
       }
 
       const data = result.data.trim();
 
       if (!data) {
-        console.warn("[Scanner] ignored: empty barcode");
+        return;
+      }
+
+      const now = Date.now();
+      const isSameCode =
+        lastDetectedCodeRef.current === data;
+      const timeSinceLastDetection =
+        now - lastDetectedAtRef.current;
+
+      if (
+        isSameCode &&
+        timeSinceLastDetection < SAME_CODE_SUPPRESSION_MS
+      ) {
+        lastDetectedAtRef.current = now;
+        return;
+      }
+
+      lastDetectedCodeRef.current = data;
+      lastDetectedAtRef.current = now;
+
+      if (inFlightCodesRef.current.has(data)) {
         return;
       }
 
       if (scannedCodesRef.current.has(data)) {
-        console.warn("[Scanner] ignored: already scanned", {
-          data,
-        });
-
-        Haptics.notificationAsync(
+        void Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Warning,
         );
 
@@ -162,6 +182,7 @@ export default function ScanScreen() {
       }
 
       scannedCodesRef.current.add(data);
+      inFlightCodesRef.current.add(data);
 
       try {
         await scanPackage(data, userId);
@@ -170,6 +191,8 @@ export default function ScanScreen() {
           code: data,
           error,
         });
+      } finally {
+        inFlightCodesRef.current.delete(data);
       }
     },
     [scanPackage, showAlert, t, userId],
@@ -198,11 +221,17 @@ export default function ScanScreen() {
         return;
       }
 
-      Haptics.impactAsync(
+      void Haptics.impactAsync(
         Haptics.ImpactFeedbackStyle.Light,
       );
 
       scannedCodesRef.current.delete(pkg.code);
+      inFlightCodesRef.current.delete(pkg.code);
+
+      if (lastDetectedCodeRef.current === pkg.code) {
+        lastDetectedCodeRef.current = null;
+        lastDetectedAtRef.current = 0;
+      }
 
       removeFromSession(pkg, userId);
     },
@@ -297,6 +326,9 @@ export default function ScanScreen() {
       clearFeedback();
 
       scannedCodesRef.current.clear();
+      inFlightCodesRef.current.clear();
+      lastDetectedCodeRef.current = null;
+      lastDetectedAtRef.current = 0;
     }, [clearFeedback, resetSession]),
   );
 
@@ -423,7 +455,7 @@ export default function ScanScreen() {
               facing="back"
               enableTorch={isTorchOn}
               barcodeScannerSettings={{
-                barcodeTypes: ["qr", "ean13", "code128"],
+                barcodeTypes: ["qr", "code128"],
               }}
               onBarcodeScanned={handleBarCodeScanned}
             />
