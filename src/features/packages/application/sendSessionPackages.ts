@@ -1,7 +1,7 @@
 import {
   createSessionGuard,
   SessionTracker,
-} from "@features/auth/session/sessionTracker";
+} from "@app/session/sessionTracker";
 import {
   packageService as defaultPackageService,
   packageSyncService as defaultPackageSyncService,

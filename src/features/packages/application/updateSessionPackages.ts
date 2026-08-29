@@ -1,7 +1,7 @@
 import {
   createSessionGuard,
   SessionTracker,
-} from "@features/auth/session/sessionTracker";
+} from "@app/session/sessionTracker";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import {
   packageService as defaultPackageService,
