@@ -5,19 +5,33 @@ import { WebhookPackageSyncGateway } from "@infrastructure/webhook/WebhookPackag
 import { PackageService } from "./services/PackageService";
 import { PackageSyncService } from "./services/PackageSyncService";
 
-const packageRepository = new SQLitePackageRepository();
-const authTokenProvider = new FirebaseAuthTokenProvider(
-  auth,
-);
-const packageSyncGateway = new WebhookPackageSyncGateway(
-  authTokenProvider,
-);
+export type PackageDependencies = {
+  packageService: PackageService;
+  packageSyncService: PackageSyncService;
+};
 
-export const packageService = new PackageService(
-  packageRepository,
-);
+export function createPackageDependencies(): PackageDependencies {
+  const packageRepository = new SQLitePackageRepository();
+  const authTokenProvider = new FirebaseAuthTokenProvider(
+    auth,
+  );
+  const packageSyncGateway = new WebhookPackageSyncGateway(
+    authTokenProvider,
+  );
 
-export const packageSyncService = new PackageSyncService(
-  packageRepository,
-  packageSyncGateway,
-);
+  return {
+    packageService: new PackageService(packageRepository),
+    packageSyncService: new PackageSyncService(
+      packageRepository,
+      packageSyncGateway,
+    ),
+  };
+}
+
+const defaultDependencies = createPackageDependencies();
+
+export const packageService =
+  defaultDependencies.packageService;
+
+export const packageSyncService =
+  defaultDependencies.packageSyncService;
