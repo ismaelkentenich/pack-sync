@@ -542,8 +542,7 @@ describe("ScanScreen - Camera Permissions", () => {
       Haptics.ImpactFeedbackStyle.Light,
     );
     expect(mockRemoveFromSession).toHaveBeenCalledWith(
-      sessionPkg,
-      "user-123",
+      "pkg-1",
     );
   });
 });
