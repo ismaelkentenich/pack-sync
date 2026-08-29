@@ -35,6 +35,10 @@ import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { PackageCard } from "@features/packages/components/PackageCard";
 import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
 import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
+import {
+  selectCurrentSessionPackages,
+  selectIsSyncingSession,
+} from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import {
   getPackageErrorFeedback,
@@ -77,11 +81,11 @@ export default function ScanScreen() {
   } = usePackageOperations();
 
   const isSyncingSession = usePackageStore(
-    (state) => state.isSyncingSession,
+    selectIsSyncingSession,
   );
 
   const currentSessionPackages = usePackageStore(
-    (state) => state.currentSessionPackages,
+    selectCurrentSessionPackages,
   );
 
   const [permission, requestPermission] =

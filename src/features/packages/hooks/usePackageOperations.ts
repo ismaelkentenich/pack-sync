@@ -2,15 +2,17 @@ import { useCallback } from "react";
 import * as application from "@features/packages/application";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
+import {
+  selectRemoveFromSession,
+  selectResetSession,
+} from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 
 export function usePackageOperations() {
   const removeFromSession = usePackageStore(
-    (state) => state.removeFromSession,
+    selectRemoveFromSession,
   );
-  const resetSession = usePackageStore(
-    (state) => state.resetSession,
-  );
+  const resetSession = usePackageStore(selectResetSession);
 
   const loadPackages = useCallback((userId: string) => {
     application.loadPackages(userId);

@@ -30,6 +30,11 @@ import { PackageCard } from "@features/packages/components/PackageCard";
 import { UpdateStatusModal } from "@features/packages/components/UpdateStatusModal";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
+import {
+  selectIsSyncingPending,
+  selectPackages,
+  selectPendingCount,
+} from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
 import { usePackagesNavigation } from "@hooks/usePackagesNavigation";
@@ -56,16 +61,12 @@ export default function PackagesListScreen() {
   const { loadPackages, syncPendingPackages } =
     usePackageOperations();
 
-  const packages = usePackageStore(
-    (state) => state.packages,
-  );
+  const packages = usePackageStore(selectPackages);
 
-  const pendingCount = usePackageStore(
-    (state) => state.pendingCount,
-  );
+  const pendingCount = usePackageStore(selectPendingCount);
 
   const isSyncingPending = usePackageStore(
-    (state) => state.isSyncingPending,
+    selectIsSyncingPending,
   );
 
   const [searchTerm, setSearchTerm] = useState("");

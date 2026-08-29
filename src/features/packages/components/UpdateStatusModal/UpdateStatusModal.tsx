@@ -21,6 +21,7 @@ import { Card } from "@components/primitives/Card";
 import { Input } from "@components/primitives/Input";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
+import { selectSyncingPackageIds } from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translateDeliveryStatus } from "@features/packages/utils/packageTranslations";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
@@ -49,7 +50,7 @@ export const UpdateStatusModal = forwardRef<
     usePackageOperations();
 
   const syncingPackageIds = usePackageStore(
-    (state) => state.syncingPackageIds,
+    selectSyncingPackageIds,
   );
 
   const showAlert = useShowAlert((state) => state.show);
