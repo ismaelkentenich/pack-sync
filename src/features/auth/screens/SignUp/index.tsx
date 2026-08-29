@@ -7,7 +7,7 @@ import { Button } from "@components/primitives/Button";
 import { Input } from "@components/primitives/Input";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { Routes } from "@config/routes";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { useAuthOperations } from "@features/auth/hooks/useAuthOperations";
 import { getAuthErrorMessage } from "@features/auth/utils/getAuthErrorMessage";
 import { useAuthNavigation } from "@hooks/useAuthNavigation";
 import { useShowAlert } from "@store/useAlertStore";
@@ -23,7 +23,7 @@ export default function SignupScreen() {
 
   const navigation = useAuthNavigation();
 
-  const signup = useAuthStore((state) => state.signup);
+  const { signup } = useAuthOperations();
 
   const showAlert = useShowAlert((state) => state.show);
 

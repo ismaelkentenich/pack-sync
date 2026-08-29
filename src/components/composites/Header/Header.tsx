@@ -4,7 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { useAuthOperations } from "@features/auth/hooks/useAuthOperations";
 import Theme from "@theme/theme";
 import { useAppTheme } from "@theme/useAppTheme";
 import { styles } from "./styles";
@@ -24,7 +24,7 @@ export function Header({
 
   const router = useRouter();
 
-  const logout = useAuthStore((state) => state.logout);
+  const { logout } = useAuthOperations();
 
   const isNeutral = variant === "neutral";
 
