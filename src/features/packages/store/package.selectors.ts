@@ -1,4 +1,5 @@
 import type { PackageState } from "./usePackageStore";
+import type { Package } from "@features/packages/domain/package.types";
 
 export const selectPackages = (state: PackageState) =>
   state.packages;
@@ -37,3 +38,26 @@ export const selectRemoveFromSession = (
 
 export const selectResetSession = (state: PackageState) =>
   state.resetSession;
+
+export function selectFilteredPackages(
+  packages: Package[],
+  searchTerm: string,
+  statusFilter: string,
+): Package[] {
+  const normalizedSearchTerm = searchTerm
+    .trim()
+    .toLowerCase();
+
+  return packages.filter((pkg) => {
+    const matchesSearch =
+      normalizedSearchTerm.length === 0 ||
+      pkg.code.toLowerCase().includes(normalizedSearchTerm);
+
+    const matchesStatus =
+      statusFilter === "" ||
+      statusFilter === "all" ||
+      pkg.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+}
