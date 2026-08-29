@@ -17,7 +17,6 @@ import { GlobalAlert } from "@components/composites/CustomAlert";
 import { Button } from "@components/primitives/Button";
 import { HeaderHeightProvider } from "@contexts/HeaderHeightContext";
 import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
-import { useSessionLifecycle } from "@features/auth/hooks/useSessionLifecycle";
 import {
   selectIsAuthenticated,
   useAuthStore,
@@ -26,6 +25,7 @@ import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
 import { setupAllDatabases } from "@infrastructure/database/setup";
 import { ThemeProvider } from "@theme/ThemeProvider";
 import { useAppTheme } from "@theme/useAppTheme";
+import { useSessionLifecycle } from "./session/useSessionLifecycle";
 
 export type DatabaseBootstrapStatus =
   "loading" | "ready" | "error";
