@@ -177,14 +177,24 @@ export class PackageService {
         await this.packageSyncGateway.send(packageToSync);
 
       if (!result.success) {
+        let errorCode = PackageErrorCode.SYNC_FAILED;
+        if (
+          result.status === 401 ||
+          result.error === "UNAUTHORIZED"
+        ) {
+          errorCode = PackageErrorCode.UNAUTHORIZED;
+        } else if (
+          result.status === 403 ||
+          result.error === "FORBIDDEN"
+        ) {
+          errorCode = PackageErrorCode.FORBIDDEN;
+        }
+
         return {
           success: false,
-          error: new PackageError(
-            PackageErrorCode.SYNC_FAILED,
-            {
-              code: packageToSync.code,
-            },
-          ),
+          error: new PackageError(errorCode, {
+            code: packageToSync.code,
+          }),
         };
       }
 
