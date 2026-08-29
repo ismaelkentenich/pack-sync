@@ -29,6 +29,7 @@ import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { PackageCard } from "@features/packages/components/PackageCard";
 import { UpdateStatusModal } from "@features/packages/components/UpdateStatusModal";
 import { PackageStatus } from "@features/packages/domain/package.enums";
+import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
 import { usePackagesNavigation } from "@hooks/usePackagesNavigation";
@@ -52,28 +53,11 @@ export default function PackagesListScreen() {
 
   const userId = useAuthStore((state) => state.user?.id);
 
+  const { loadPackages, syncPendingPackages } =
+    usePackageOperations();
+
   const packages = usePackageStore(
     (state) => state.packages,
-  );
-
-  const searchTerm = usePackageStore(
-    (state) => state.searchTerm,
-  );
-
-  const statusFilter = usePackageStore(
-    (state) => state.statusFilter,
-  );
-
-  const setSearchTerm = usePackageStore(
-    (state) => state.setSearchTerm,
-  );
-
-  const setStatusFilter = usePackageStore(
-    (state) => state.setStatusFilter,
-  );
-
-  const loadPackages = usePackageStore(
-    (state) => state.loadPackages,
   );
 
   const pendingCount = usePackageStore(
@@ -84,9 +68,8 @@ export default function PackagesListScreen() {
     (state) => state.isSyncingPending,
   );
 
-  const syncPendingPackages = usePackageStore(
-    (state) => state.syncPendingPackages,
-  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const updateStatusModalRef =
     useRef<BottomSheetModal>(null);
@@ -151,9 +134,7 @@ export default function PackagesListScreen() {
       return;
     }
 
-    void Haptics.impactAsync(
-      Haptics.ImpactFeedbackStyle.Light,
-    );
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     try {
       await syncPendingPackages(userId);

@@ -33,6 +33,16 @@ let mockPackageStoreState = {
 };
 
 jest.mock(
+  "@features/packages/hooks/usePackageOperations",
+  () => ({
+    usePackageOperations: () => ({
+      updateAndSendCurrentSessionPackages:
+        mockUpdateAndSendCurrentSessionPackages,
+    }),
+  }),
+);
+
+jest.mock(
   "@features/packages/store/usePackageStore",
   () => ({
     usePackageStore: (

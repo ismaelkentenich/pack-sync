@@ -2,12 +2,10 @@ import NetInfo from "@react-native-community/netinfo";
 import { useEffect } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
+import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
 
 export function useNetworkSync(userId?: string) {
-  const syncPendingPackages = usePackageStore(
-    (state) => state.syncPendingPackages,
-  );
+  const { syncPendingPackages } = usePackageOperations();
 
   useEffect(() => {
     if (!userId) {
