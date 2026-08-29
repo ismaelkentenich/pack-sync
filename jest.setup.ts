@@ -67,3 +67,22 @@ jest.mock("react-native-safe-area-context", () => {
     }),
   };
 });
+
+jest.mock("expo-sqlite", () => ({
+  openDatabaseSync: jest.fn(() => ({
+    execSync: jest.fn(),
+    runSync: jest.fn(),
+    getFirstSync: jest.fn(),
+    getAllSync: jest.fn(),
+    withTransactionSync: jest.fn((cb: () => void) => cb()),
+  })),
+  openDatabaseAsync: jest.fn(async () => ({
+    execAsync: jest.fn(),
+    runAsync: jest.fn(),
+    getFirstAsync: jest.fn(),
+    getAllAsync: jest.fn(),
+    withTransactionAsync: jest.fn(
+      async (cb: () => Promise<void>) => await cb(),
+    ),
+  })),
+}));
