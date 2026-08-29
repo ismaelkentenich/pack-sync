@@ -1,3 +1,4 @@
+import { SessionTracker } from "@features/auth/session/sessionTracker";
 import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
 import {
@@ -13,6 +14,10 @@ export function loadPackages(
       "getAllPackages" | "getPendingCount"
     >;
     store?: Pick<PackageState, "setPackages">;
+    sessionTracker?: Pick<
+      SessionTracker,
+      "getSessionGeneration"
+    >;
   } = {},
 ): void {
   const service =

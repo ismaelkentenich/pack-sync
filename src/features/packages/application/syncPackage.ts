@@ -1,3 +1,7 @@
+import {
+  createSessionGuard,
+  SessionTracker,
+} from "@features/auth/session/sessionTracker";
 import { Package } from "@features/packages/domain/package.types";
 import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
@@ -22,12 +26,19 @@ export async function syncPackage(
       | "unmarkPackageSyncing"
       | "setPackages"
     >;
+    sessionTracker?: Pick<
+      SessionTracker,
+      "getSessionGeneration"
+    >;
   } = {},
 ) {
   const service =
     dependencies.packageService ?? defaultPackageService;
   const store =
     dependencies.store ?? usePackageStore.getState();
+  const guard = createSessionGuard(
+    dependencies.sessionTracker,
+  );
 
   const packageId = pkg.id;
   if (
@@ -48,9 +59,12 @@ export async function syncPackage(
     if (packageId !== undefined) {
       store.unmarkPackageSyncing(packageId);
     }
-    loadPackages(userId, {
-      packageService: service,
-      store,
-    });
+    if (guard.isValid()) {
+      loadPackages(userId, {
+        packageService: service,
+        store,
+        sessionTracker: dependencies.sessionTracker,
+      });
+    }
   }
 }

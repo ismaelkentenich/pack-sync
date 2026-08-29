@@ -1,3 +1,7 @@
+import {
+  createSessionGuard,
+  SessionTracker,
+} from "@features/auth/session/sessionTracker";
 import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
 import {
@@ -21,12 +25,19 @@ export async function syncPendingPackages(
       | "setSyncingPending"
       | "setPackages"
     >;
+    sessionTracker?: Pick<
+      SessionTracker,
+      "getSessionGeneration"
+    >;
   } = {},
 ): Promise<void> {
   const service =
     dependencies.packageService ?? defaultPackageService;
   const store =
     dependencies.store ?? usePackageStore.getState();
+  const guard = createSessionGuard(
+    dependencies.sessionTracker,
+  );
 
   if (store.isSyncingPending) {
     return;
@@ -45,9 +56,12 @@ export async function syncPendingPackages(
     );
   } finally {
     store.setSyncingPending(false);
-    loadPackages(userId, {
-      packageService: service,
-      store,
-    });
+    if (guard.isValid()) {
+      loadPackages(userId, {
+        packageService: service,
+        store,
+        sessionTracker: dependencies.sessionTracker,
+      });
+    }
   }
 }
