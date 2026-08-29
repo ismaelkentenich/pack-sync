@@ -171,11 +171,12 @@ export default function ScanScreen() {
         return;
       }
 
-      scannedCodesRef.current.add(data);
       inFlightCodesRef.current.add(data);
 
       try {
         await scanPackage(data, userId);
+
+        scannedCodesRef.current.add(data);
 
         Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Success,
