@@ -1,4 +1,4 @@
-import { WEBSOCKET_URL } from "@env";
+import { PACKAGE_SYNC_URL } from "@env";
 import { AuthTokenProvider } from "@features/auth/domain/auth.token-provider";
 import {
   PackageSyncGateway,
@@ -17,7 +17,7 @@ export class WebhookPackageSyncGateway implements PackageSyncGateway {
   constructor(
     authTokenProviderOrTimeout?: AuthTokenProvider | number,
     timeoutMs: number = DEFAULT_SYNC_TIMEOUT_MS,
-    url: string = WEBSOCKET_URL,
+    url: string = PACKAGE_SYNC_URL,
   ) {
     if (typeof authTokenProviderOrTimeout === "number") {
       this.authTokenProvider = undefined;
@@ -25,7 +25,7 @@ export class WebhookPackageSyncGateway implements PackageSyncGateway {
       this.url =
         typeof timeoutMs === "string"
           ? timeoutMs
-          : WEBSOCKET_URL;
+          : PACKAGE_SYNC_URL;
     } else {
       this.authTokenProvider = authTokenProviderOrTimeout;
       this.timeoutMs = timeoutMs;
