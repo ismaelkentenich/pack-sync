@@ -1,4 +1,4 @@
-import { SessionTracker } from "@features/auth/session/sessionTracker";
+import { SessionTracker } from "@app/session/sessionTracker";
 import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
 import {
