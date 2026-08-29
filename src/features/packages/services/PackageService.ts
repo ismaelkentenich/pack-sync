@@ -128,18 +128,6 @@ export class PackageService {
     return trackedOperation;
   }
 
-  private async runPackageSync(
-    pkg: Package,
-    packageId: string,
-    syncKey: string,
-  ): Promise<ServiceResult> {
-    try {
-      return await this.performPackageSync(pkg, packageId);
-    } finally {
-      this.packageSyncInFlight.delete(syncKey);
-    }
-  }
-
   private async performPackageSync(
     pkg: Package,
     packageId: string,
