@@ -1,8 +1,5 @@
 import { create } from "zustand";
-import {
-  DeliveryStatus,
-  PackageStatus,
-} from "@features/packages/domain/package.enums";
+import { PackageStatus } from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
 import { packageService } from "@features/packages/package.dependencies";
 import {
@@ -54,7 +51,12 @@ type PackageState = {
     receiverName?: string,
   ) => MutationResult;
 
-  removeFromSession: (pkg: Package, userId: string) => void;
+  removeFromSession: (packageId: string) => void;
+
+  deletePackage: (
+    packageId: string,
+    userId: string,
+  ) => void;
 
   resetSession: () => void;
 
@@ -502,39 +504,49 @@ export const usePackageStore = create<PackageState>(
       }
     },
 
-    removeFromSession: (pkg, userId) => {
-      if (pkg.id) {
-        try {
-          packageService.deletePackage(pkg.id, userId);
-        } catch (error) {
-          console.error(
-            "[PackageStore] removeFromSession:error",
-            {
-              id: pkg.id,
-              error,
-            },
-          );
-        }
-      }
-
+    removeFromSession: (packageId) => {
       set((state) => ({
         currentSessionPackages:
-          state.currentSessionPackages.filter((p) =>
-            pkg.id ? p.id !== pkg.id : p.code !== pkg.code,
+          state.currentSessionPackages.filter(
+            (pkg) =>
+              pkg.id !== packageId &&
+              pkg.code !== packageId,
           ),
-        packages: state.packages.filter((p) =>
-          pkg.id ? p.id !== pkg.id : p.code !== pkg.code,
-        ),
-        pendingCount: Math.max(
-          0,
-          state.pendingCount -
-            (pkg.deliveryStatus === DeliveryStatus.PENDING
-              ? 1
-              : 0),
-        ),
       }));
+    },
 
-      get().loadPackages(userId);
+    deletePackage: (packageId, userId) => {
+      try {
+        packageService.deletePackage(packageId, userId);
+
+        set((state) => ({
+          packages: state.packages.filter(
+            (pkg) => pkg.id !== packageId,
+          ),
+          currentSessionPackages:
+            state.currentSessionPackages.filter(
+              (pkg) => pkg.id !== packageId,
+            ),
+        }));
+
+        get().loadPackages(userId);
+      } catch (error) {
+        console.error(
+          "[PackageStore] deletePackage:error",
+          {
+            packageId,
+            userId,
+            error,
+          },
+        );
+
+        set({
+          feedback: {
+            loading: false,
+            error: getPackageErrorFeedback(error),
+          },
+        });
+      }
     },
 
     resetSession: () => {

@@ -786,7 +786,70 @@ describe("usePackageStore", () => {
   });
 
   describe("removeFromSession", () => {
-    it("deletes package from service, updates currentSessionPackages, packages and reloads", () => {
+    it("removes package from currentSessionPackages in memory without deleting from SQLite", () => {
+      const first = createPackage({
+        id: "pkg-1",
+        code: "PKG-001",
+      });
+
+      const second = createPackage({
+        id: "pkg-2",
+        code: "PKG-002",
+      });
+
+      usePackageStore.setState({
+        packages: [first, second],
+        currentSessionPackages: [first, second],
+        pendingCount: 2,
+      });
+
+      usePackageStore.getState().removeFromSession("pkg-1");
+
+      const state = usePackageStore.getState();
+
+      // Removed only from currentSessionPackages (in-memory)
+      expect(state.currentSessionPackages).toEqual([
+        second,
+      ]);
+
+      // Persisted packages in store remain untouched
+      expect(state.packages).toEqual([first, second]);
+      expect(state.pendingCount).toBe(2);
+
+      // No SQLite or backend deletion was performed
+      expect(
+        packageServiceMock.deletePackage,
+      ).not.toHaveBeenCalled();
+      expect(
+        packageServiceMock.getAllPackages,
+      ).not.toHaveBeenCalled();
+      expect(
+        packageServiceMock.getPendingCount,
+      ).not.toHaveBeenCalled();
+    });
+
+    it("removes package by code from currentSessionPackages when id is undefined", () => {
+      const unpersisted = createPackage({
+        id: undefined,
+        code: "PKG-TEMP-001",
+      });
+
+      usePackageStore.setState({
+        currentSessionPackages: [unpersisted],
+      });
+
+      usePackageStore
+        .getState()
+        .removeFromSession("PKG-TEMP-001");
+
+      expect(
+        usePackageStore.getState().currentSessionPackages,
+      ).toEqual([]);
+    });
+  });
+
+  describe("deletePackage", () => {
+    it("deletes package from database, updates store lists and reloads user packages", () => {
       const pkg = createPackage({
         id: "pkg-1",
         code: "PKG-001",
@@ -800,7 +863,7 @@ describe("usePackageStore", () => {
 
       usePackageStore
         .getState()
-        .removeFromSession(pkg, "user-1");
+        .deletePackage("pkg-1", "user-1");
 
       expect(
         packageServiceMock.deletePackage,
@@ -813,6 +876,31 @@ describe("usePackageStore", () => {
       expect(
         packageServiceMock.getPendingCount,
       ).toHaveBeenCalledWith("user-1");
+    });
+
+    it("handles deletion errors and sets error feedback", () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      packageServiceMock.deletePackage.mockImplementation(
+        () => {
+          throw new PackageError(PackageErrorCode.UNKNOWN);
+        },
+      );
+
+      usePackageStore
+        .getState()
+        .deletePackage("pkg-1", "user-1");
+
+      expect(usePackageStore.getState().feedback).toEqual({
+        loading: false,
+        error: {
+          key: "packages.errors.unknown",
+        },
+      });
+
+      consoleErrorSpy.mockRestore();
     });
   });
 });

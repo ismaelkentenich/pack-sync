@@ -219,10 +219,6 @@ export default function ScanScreen() {
 
   const handleRemoveFromSession = useCallback(
     (pkg: Package) => {
-      if (!userId) {
-        return;
-      }
-
       void Haptics.impactAsync(
         Haptics.ImpactFeedbackStyle.Light,
       );
@@ -235,9 +231,9 @@ export default function ScanScreen() {
         lastDetectedAtRef.current = 0;
       }
 
-      removeFromSession(pkg, userId);
+      removeFromSession(pkg.id ?? pkg.code);
     },
-    [removeFromSession, userId],
+    [removeFromSession],
   );
 
   const renderItem = useCallback(
