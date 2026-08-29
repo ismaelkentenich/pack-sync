@@ -3,6 +3,7 @@ import { auth } from "@infrastructure/firebase/config";
 import { FirebaseAuthTokenProvider } from "@infrastructure/firebase/FirebaseAuthTokenProvider";
 import { WebhookPackageSyncGateway } from "@infrastructure/webhook/WebhookPackageSyncGateway";
 import { PackageService } from "./services/PackageService";
+import { PackageSyncService } from "./services/PackageSyncService";
 
 const packageRepository = new SQLitePackageRepository();
 const authTokenProvider = new FirebaseAuthTokenProvider(
@@ -13,6 +14,10 @@ const packageSyncGateway = new WebhookPackageSyncGateway(
 );
 
 export const packageService = new PackageService(
+  packageRepository,
+);
+
+export const packageSyncService = new PackageSyncService(
   packageRepository,
   packageSyncGateway,
 );

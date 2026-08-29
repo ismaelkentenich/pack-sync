@@ -1,6 +1,9 @@
 import { renderHook } from "@testing-library/react-native";
 import { PackageStatus } from "@features/packages/domain/package.enums";
-import { packageService } from "@features/packages/package.dependencies";
+import {
+  packageService,
+  packageSyncService,
+} from "@features/packages/package.dependencies";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { createPackage } from "@test";
 import { usePackageOperations } from "../usePackageOperations";
@@ -24,16 +27,21 @@ jest.mock(
       scanPackage: jest.fn(),
       changePackageStatus: jest.fn(),
       deletePackage: jest.fn(),
+      filterPackages: jest.fn(),
+    },
+    packageSyncService: {
       syncPackage: jest.fn(),
       syncPendingPackages: jest.fn(),
       sendMultiplePackages: jest.fn(),
       updateAndSendMultiple: jest.fn(),
-      filterPackages: jest.fn(),
     },
   }),
 );
 
 const packageServiceMock = jest.mocked(packageService);
+const packageSyncServiceMock = jest.mocked(
+  packageSyncService,
+);
 
 describe("usePackageOperations", () => {
   beforeEach(() => {
@@ -188,7 +196,7 @@ describe("usePackageOperations", () => {
   describe("sendPackage", () => {
     it("synchronizes package, manages syncing indicator, and reloads packages", async () => {
       const pkg = createPackage({ id: "pkg-1" });
-      packageServiceMock.syncPackage.mockResolvedValue({
+      packageSyncServiceMock.syncPackage.mockResolvedValue({
         success: true,
       });
 
@@ -201,7 +209,7 @@ describe("usePackageOperations", () => {
       );
 
       expect(
-        packageServiceMock.syncPackage,
+        packageSyncServiceMock.syncPackage,
       ).toHaveBeenCalledWith(pkg);
       expect(
         usePackageStore.getState().syncingPackageIds,
@@ -228,7 +236,7 @@ describe("usePackageOperations", () => {
 
       expect(res).toEqual({ success: false });
       expect(
-        packageServiceMock.syncPackage,
+        packageSyncServiceMock.syncPackage,
       ).not.toHaveBeenCalled();
     });
   });
@@ -241,7 +249,7 @@ describe("usePackageOperations", () => {
       await result.current.syncPendingPackages("user-1");
 
       expect(
-        packageServiceMock.syncPendingPackages,
+        packageSyncServiceMock.syncPendingPackages,
       ).toHaveBeenCalledWith("user-1");
       expect(
         usePackageStore.getState().isSyncingPending,
@@ -259,7 +267,7 @@ describe("usePackageOperations", () => {
         currentSessionPackages: [pkg],
       });
 
-      packageServiceMock.sendMultiplePackages.mockResolvedValue(
+      packageSyncServiceMock.sendMultiplePackages.mockResolvedValue(
         {
           success: true,
           data: { sent: 1, failed: 0, failedPackages: [] },
@@ -289,7 +297,7 @@ describe("usePackageOperations", () => {
         currentSessionPackages: [pkg],
       });
 
-      packageServiceMock.updateAndSendMultiple.mockResolvedValue(
+      packageSyncServiceMock.updateAndSendMultiple.mockResolvedValue(
         {
           success: true,
           data: { sent: 1, failed: 0, failedPackages: [] },
