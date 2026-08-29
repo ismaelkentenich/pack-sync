@@ -54,7 +54,7 @@ describe("usePackageStore", () => {
   });
 
   describe("changeStatus", () => {
-    it("returns success when the status mutation is persisted", () => {
+    it("persists status mutation and reloads packages and pendingCount from SQLite on success", () => {
       packageServiceMock.changePackageStatus.mockReturnValue(
         undefined,
       );
@@ -80,33 +80,25 @@ describe("usePackageStore", () => {
         undefined,
       );
 
-      expect(result).toEqual({
-        success: true,
-      });
-    });
-
-    it("does not reload packages automatically after a successful mutation", () => {
-      packageServiceMock.changePackageStatus.mockReturnValue(
-        undefined,
-      );
-
-      const result = usePackageStore
-        .getState()
-        .changeStatus(
-          "1",
-          "user-1",
-          PackageStatus.IN_DELIVERY,
-        );
-
-      expect(result.success).toBe(true);
+      expect(
+        packageServiceMock.getAllPackages,
+      ).toHaveBeenCalledTimes(1);
 
       expect(
         packageServiceMock.getAllPackages,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalledWith("user-1");
 
       expect(
         packageServiceMock.getPendingCount,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalledTimes(1);
+
+      expect(
+        packageServiceMock.getPendingCount,
+      ).toHaveBeenCalledWith("user-1");
+
+      expect(result).toEqual({
+        success: true,
+      });
     });
 
     it("returns failure when status persistence fails", () => {
@@ -180,6 +172,83 @@ describe("usePackageStore", () => {
       expect(
         packageServiceMock.getPendingCount,
       ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("scanPackage", () => {
+    it("persists scanned package, adds to session and refreshes packages from SQLite", async () => {
+      const scannedPkg = createPackage({
+        id: "pkg-100",
+        code: "PKG-100",
+      });
+
+      packageServiceMock.scanPackage.mockResolvedValue(
+        scannedPkg,
+      );
+
+      packageServiceMock.getAllPackages.mockReturnValue([
+        scannedPkg,
+      ]);
+
+      packageServiceMock.getPendingCount.mockReturnValue(1);
+
+      await usePackageStore
+        .getState()
+        .scanPackage("PKG-100", "user-1");
+
+      expect(
+        packageServiceMock.scanPackage,
+      ).toHaveBeenCalledWith("PKG-100", "user-1");
+
+      // Updates in-memory scanning session
+      expect(
+        usePackageStore.getState().currentSessionPackages,
+      ).toEqual([scannedPkg]);
+
+      // Refreshes authoritatively from SQLite
+      expect(
+        packageServiceMock.getAllPackages,
+      ).toHaveBeenCalledWith("user-1");
+      expect(
+        packageServiceMock.getPendingCount,
+      ).toHaveBeenCalledWith("user-1");
+
+      expect(usePackageStore.getState().packages).toEqual([
+        scannedPkg,
+      ]);
+      expect(usePackageStore.getState().pendingCount).toBe(
+        1,
+      );
+    });
+
+    it("handles scan failure without refreshing packages and sets error feedback", async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      packageServiceMock.scanPackage.mockRejectedValue(
+        new PackageError(PackageErrorCode.ALREADY_SCANNED),
+      );
+
+      await usePackageStore
+        .getState()
+        .scanPackage("PKG-FAIL", "user-1");
+
+      expect(
+        packageServiceMock.getAllPackages,
+      ).not.toHaveBeenCalled();
+      expect(
+        packageServiceMock.getPendingCount,
+      ).not.toHaveBeenCalled();
+
+      expect(usePackageStore.getState().feedback).toEqual({
+        loading: false,
+        error: {
+          key: "packages.feedback.alreadyScanned",
+        },
+      });
+
+      consoleErrorSpy.mockRestore();
     });
   });
 

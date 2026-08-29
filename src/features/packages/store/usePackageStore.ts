@@ -160,14 +160,10 @@ export const usePackageStore = create<PackageState>(
         );
 
         set((state) => ({
-          packages: [newPackage, ...state.packages],
-
           currentSessionPackages: [
             newPackage,
             ...state.currentSessionPackages,
           ],
-
-          pendingCount: state.pendingCount + 1,
         }));
 
         get().loadPackages(userId);
@@ -195,6 +191,8 @@ export const usePackageStore = create<PackageState>(
           status,
           receiverName,
         );
+
+        get().loadPackages(userId);
 
         return {
           success: true,
@@ -520,12 +518,11 @@ export const usePackageStore = create<PackageState>(
         packageService.deletePackage(packageId, userId);
 
         set((state) => ({
-          packages: state.packages.filter(
-            (pkg) => pkg.id !== packageId,
-          ),
           currentSessionPackages:
             state.currentSessionPackages.filter(
-              (pkg) => pkg.id !== packageId,
+              (pkg) =>
+                pkg.id !== packageId &&
+                pkg.code !== packageId,
             ),
         }));
 
