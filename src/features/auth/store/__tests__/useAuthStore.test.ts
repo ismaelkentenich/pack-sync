@@ -1,5 +1,4 @@
 import { authService } from "@features/auth/auth.dependencies";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { useAuthStore } from "../useAuthStore";
 
 jest.mock("@features/auth/auth.dependencies", () => ({
@@ -12,30 +11,11 @@ jest.mock("@features/auth/auth.dependencies", () => ({
   },
 }));
 
-jest.mock(
-  "@features/packages/store/usePackageStore",
-  () => ({
-    usePackageStore: {
-      getState: jest.fn(),
-    },
-  }),
-);
-
 const authServiceMock = jest.mocked(authService);
 
-const packageStoreMock = jest.mocked(usePackageStore);
-
-const mockClearUserState = jest.fn();
-
-describe("useAuthStore identity changes", () => {
+describe("useAuthStore", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-
-    packageStoreMock.getState.mockReturnValue({
-      clearUserState: mockClearUserState,
-    } as unknown as ReturnType<
-      typeof usePackageStore.getState
-    >);
 
     useAuthStore.setState({
       user: null,
@@ -44,98 +24,56 @@ describe("useAuthStore identity changes", () => {
   });
 
   describe("setUser", () => {
-    it("clears package state when the authenticated identity changes", () => {
-      useAuthStore.setState({
-        user: {
-          id: "user-1",
-          email: "user1@example.com",
-          displayName: null,
-        },
-        isAuthenticated: true,
-      });
-
+    it("updates user and isAuthenticated state correctly", () => {
       useAuthStore.getState().setUser({
-        id: "user-2",
-        email: "user2@example.com",
-        displayName: null,
+        id: "user-1",
+        email: "user1@example.com",
+        displayName: "User One",
       });
 
-      expect(mockClearUserState).toHaveBeenCalledTimes(1);
-
-      expect(useAuthStore.getState().user?.id).toBe(
-        "user-2",
-      );
-    });
-
-    it("clears package state when the authenticated user becomes null", () => {
-      useAuthStore.setState({
+      expect(useAuthStore.getState()).toMatchObject({
         user: {
           id: "user-1",
           email: "user1@example.com",
-          displayName: null,
+          displayName: "User One",
         },
         isAuthenticated: true,
       });
 
       useAuthStore.getState().setUser(null);
 
-      expect(mockClearUserState).toHaveBeenCalledTimes(1);
-
       expect(useAuthStore.getState()).toMatchObject({
         user: null,
         isAuthenticated: false,
       });
     });
-
-    it("does not clear package state when the same user is emitted again", () => {
-      useAuthStore.setState({
-        user: {
-          id: "user-1",
-          email: "old@example.com",
-          displayName: null,
-        },
-        isAuthenticated: true,
-      });
-
-      useAuthStore.getState().setUser({
-        id: "user-1",
-        email: "updated@example.com",
-        displayName: null,
-      });
-
-      expect(mockClearUserState).not.toHaveBeenCalled();
-
-      expect(useAuthStore.getState().user?.email).toBe(
-        "updated@example.com",
-      );
-    });
   });
 
   describe("login", () => {
-    it("clears stale package state before adopting a new identity", async () => {
+    it("updates user and isAuthenticated on successful login", async () => {
       authServiceMock.login.mockResolvedValue({
-        id: "user-2",
-        email: "user2@example.com",
+        id: "user-1",
+        email: "user1@example.com",
         displayName: null,
       });
 
       await useAuthStore
         .getState()
-        .login("user2@example.com", "password");
+        .login("user1@example.com", "password123");
 
-      expect(mockClearUserState).toHaveBeenCalledTimes(1);
-
+      expect(authServiceMock.login).toHaveBeenCalledWith(
+        "user1@example.com",
+        "password123",
+      );
       expect(useAuthStore.getState()).toMatchObject({
-        user: {
-          id: "user-2",
-        },
+        user: { id: "user-1" },
         isAuthenticated: true,
       });
     });
   });
 
   describe("signup", () => {
-    it("clears stale package state before adopting the created identity", async () => {
+    it("updates user and isAuthenticated on successful signup", async () => {
       authServiceMock.signup.mockResolvedValue({
         id: "user-2",
         email: "user2@example.com",
@@ -144,21 +82,21 @@ describe("useAuthStore identity changes", () => {
 
       await useAuthStore
         .getState()
-        .signup("user2@example.com", "password");
+        .signup("user2@example.com", "password123");
 
-      expect(mockClearUserState).toHaveBeenCalledTimes(1);
-
+      expect(authServiceMock.signup).toHaveBeenCalledWith(
+        "user2@example.com",
+        "password123",
+      );
       expect(useAuthStore.getState()).toMatchObject({
-        user: {
-          id: "user-2",
-        },
+        user: { id: "user-2" },
         isAuthenticated: true,
       });
     });
   });
 
   describe("logout", () => {
-    it("clears package state after logout succeeds", async () => {
+    it("clears auth state on successful logout", async () => {
       useAuthStore.setState({
         user: {
           id: "user-1",
@@ -175,16 +113,13 @@ describe("useAuthStore identity changes", () => {
       expect(authServiceMock.logout).toHaveBeenCalledTimes(
         1,
       );
-
-      expect(mockClearUserState).toHaveBeenCalledTimes(1);
-
       expect(useAuthStore.getState()).toMatchObject({
         user: null,
         isAuthenticated: false,
       });
     });
 
-    it("preserves auth and package state when logout fails", async () => {
+    it("preserves auth state when logout throws an error", async () => {
       useAuthStore.setState({
         user: {
           id: "user-1",
@@ -195,19 +130,15 @@ describe("useAuthStore identity changes", () => {
       });
 
       authServiceMock.logout.mockRejectedValue(
-        new Error("Logout failed"),
+        new Error("Logout network error"),
       );
 
       await expect(
         useAuthStore.getState().logout(),
-      ).rejects.toThrow("Logout failed");
-
-      expect(mockClearUserState).not.toHaveBeenCalled();
+      ).rejects.toThrow("Logout network error");
 
       expect(useAuthStore.getState()).toMatchObject({
-        user: {
-          id: "user-1",
-        },
+        user: { id: "user-1" },
         isAuthenticated: true,
       });
     });

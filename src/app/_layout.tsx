@@ -17,6 +17,7 @@ import { GlobalAlert } from "@components/composites/CustomAlert";
 import { Button } from "@components/primitives/Button";
 import { HeaderHeightProvider } from "@contexts/HeaderHeightContext";
 import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
+import { useSessionLifecycle } from "@features/auth/hooks/useSessionLifecycle";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
 import { setupAllDatabases } from "@infrastructure/database/setup";
@@ -34,6 +35,7 @@ export function RouterNavigation() {
   const userId = useAuthStore((state) => state.user?.id);
   const { isRestoring } = usePersistedAuth();
 
+  useSessionLifecycle();
   useNetworkSync(isRestoring ? undefined : userId);
 
   if (isRestoring) {
