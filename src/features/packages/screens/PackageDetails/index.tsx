@@ -17,6 +17,10 @@ import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { UpdateStatusModal } from "@features/packages/components/UpdateStatusModal";
 import { DeliveryStatus } from "@features/packages/domain/package.enums";
 import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
+import {
+  selectPackageByCode,
+  selectSyncingPackageIds,
+} from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import {
   translateDeliveryStatus,
@@ -40,12 +44,12 @@ export default function PackageDetailsScreen() {
 
   const { code } = useLocalSearchParams<{ code: string }>();
 
-  const currentPackage = usePackageStore((state) =>
-    state.packages.find((item) => item.code === code),
+  const currentPackage = usePackageStore(
+    selectPackageByCode(code),
   );
 
   const syncingPackageIds = usePackageStore(
-    (state) => state.syncingPackageIds,
+    selectSyncingPackageIds,
   );
 
   const handleOpenStatusModal = useCallback(() => {

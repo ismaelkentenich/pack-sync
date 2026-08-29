@@ -9,6 +9,10 @@ import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { Routes } from "@config/routes";
 import { HomeActionCard } from "@features/home/components/HomeActionCard";
 import { HomeStats } from "@features/home/components/HomeStats";
+import {
+  selectPackagesCount,
+  selectPendingCount,
+} from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
 import { useAppTheme } from "@theme/useAppTheme";
@@ -21,12 +25,10 @@ export default function HomeScreen() {
   const navigation = useMainTabNavigation();
 
   const packagesCount = usePackageStore(
-    (state) => state.packages.length,
+    selectPackagesCount,
   );
 
-  const pendingCount = usePackageStore(
-    (state) => state.pendingCount,
-  );
+  const pendingCount = usePackageStore(selectPendingCount);
 
   const handleOpenScanner = () => {
     navigation.navigate(Routes.Scan);

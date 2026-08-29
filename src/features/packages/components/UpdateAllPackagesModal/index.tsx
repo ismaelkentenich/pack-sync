@@ -13,6 +13,10 @@ import { Button } from "@components/primitives/Button";
 import { Input } from "@components/primitives/Input";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
+import {
+  selectCurrentSessionPackages,
+  selectIsSyncingSession,
+} from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
 import { useShowAlert } from "@store/useAlertStore";
@@ -43,11 +47,11 @@ export default forwardRef(function UpdateAllPackagesModal(
     usePackageOperations();
 
   const isSyncingSession = usePackageStore(
-    (state) => state.isSyncingSession,
+    selectIsSyncingSession,
   );
 
   const currentSessionPackages = usePackageStore(
-    (state) => state.currentSessionPackages,
+    selectCurrentSessionPackages,
   );
 
   const [selectedStatus, setSelectedStatus] =
