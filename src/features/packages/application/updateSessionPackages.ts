@@ -3,8 +3,12 @@ import {
   SessionTracker,
 } from "@features/auth/session/sessionTracker";
 import { PackageStatus } from "@features/packages/domain/package.enums";
-import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
+import {
+  packageService as defaultPackageService,
+  packageSyncService as defaultPackageSyncService,
+} from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
+import { PackageSyncService } from "@features/packages/services/PackageSyncService";
 import {
   PackageState,
   usePackageStore,
@@ -18,9 +22,11 @@ export async function updateSessionPackages(
   dependencies: {
     packageService?: Pick<
       PackageService,
-      | "updateAndSendMultiple"
-      | "getAllPackages"
-      | "getPendingCount"
+      "getAllPackages" | "getPendingCount"
+    >;
+    packageSyncService?: Pick<
+      PackageSyncService,
+      "updateAndSendMultiple"
     >;
     store?: Pick<
       PackageState,
@@ -44,6 +50,9 @@ export async function updateSessionPackages(
 }> {
   const service =
     dependencies.packageService ?? defaultPackageService;
+  const syncService =
+    dependencies.packageSyncService ??
+    defaultPackageSyncService;
   const store =
     dependencies.store ?? usePackageStore.getState();
   const guard = createSessionGuard(
@@ -61,7 +70,7 @@ export async function updateSessionPackages(
 
   store.setSyncingSession(true);
   try {
-    const result = await service.updateAndSendMultiple(
+    const result = await syncService.updateAndSendMultiple(
       currentSessionPackages,
       userId,
       status,

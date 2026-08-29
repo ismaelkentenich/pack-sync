@@ -3,8 +3,12 @@ import {
   SessionTracker,
 } from "@features/auth/session/sessionTracker";
 import { Package } from "@features/packages/domain/package.types";
-import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
+import {
+  packageService as defaultPackageService,
+  packageSyncService as defaultPackageSyncService,
+} from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
+import { PackageSyncService } from "@features/packages/services/PackageSyncService";
 import {
   PackageState,
   usePackageStore,
@@ -17,7 +21,11 @@ export async function syncPackage(
   dependencies: {
     packageService?: Pick<
       PackageService,
-      "syncPackage" | "getAllPackages" | "getPendingCount"
+      "getAllPackages" | "getPendingCount"
+    >;
+    packageSyncService?: Pick<
+      PackageSyncService,
+      "syncPackage"
     >;
     store?: Pick<
       PackageState,
@@ -34,6 +42,9 @@ export async function syncPackage(
 ) {
   const service =
     dependencies.packageService ?? defaultPackageService;
+  const syncService =
+    dependencies.packageSyncService ??
+    defaultPackageSyncService;
   const store =
     dependencies.store ?? usePackageStore.getState();
   const guard = createSessionGuard(
@@ -53,7 +64,7 @@ export async function syncPackage(
   }
 
   try {
-    const result = await service.syncPackage(pkg);
+    const result = await syncService.syncPackage(pkg);
     return result;
   } finally {
     if (packageId !== undefined) {

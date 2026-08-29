@@ -1,5 +1,8 @@
 import { PackageStatus } from "@features/packages/domain/package.enums";
-import { packageService } from "@features/packages/package.dependencies";
+import {
+  packageService,
+  packageSyncService,
+} from "@features/packages/package.dependencies";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { createPackage } from "@test";
 import {
@@ -32,16 +35,21 @@ jest.mock(
       scanPackage: jest.fn(),
       changePackageStatus: jest.fn(),
       deletePackage: jest.fn(),
+      filterPackages: jest.fn(),
+    },
+    packageSyncService: {
       syncPackage: jest.fn(),
       syncPendingPackages: jest.fn(),
       sendMultiplePackages: jest.fn(),
       updateAndSendMultiple: jest.fn(),
-      filterPackages: jest.fn(),
     },
   }),
 );
 
 const packageServiceMock = jest.mocked(packageService);
+const packageSyncServiceMock = jest.mocked(
+  packageSyncService,
+);
 
 describe("Package Application Use Cases (Without React Rendering)", () => {
   beforeEach(() => {
@@ -121,14 +129,14 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
   describe("syncPackage", () => {
     it("synchronizes package, manages syncing indicator, and reloads packages", async () => {
       const pkg = createPackage({ id: "pkg-1" });
-      packageServiceMock.syncPackage.mockResolvedValue({
+      packageSyncServiceMock.syncPackage.mockResolvedValue({
         success: true,
       });
 
       const res = await syncPackage(pkg, "user-1");
 
       expect(
-        packageServiceMock.syncPackage,
+        packageSyncServiceMock.syncPackage,
       ).toHaveBeenCalledWith(pkg);
       expect(
         usePackageStore.getState().syncingPackageIds,
@@ -149,7 +157,7 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
 
       expect(res).toEqual({ success: false });
       expect(
-        packageServiceMock.syncPackage,
+        packageSyncServiceMock.syncPackage,
       ).not.toHaveBeenCalled();
     });
   });
@@ -159,7 +167,7 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
       await syncPendingPackages("user-1");
 
       expect(
-        packageServiceMock.syncPendingPackages,
+        packageSyncServiceMock.syncPendingPackages,
       ).toHaveBeenCalledWith("user-1");
       expect(
         usePackageStore.getState().isSyncingPending,
@@ -175,7 +183,7 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
       await syncPendingPackages("user-1");
 
       expect(
-        packageServiceMock.syncPendingPackages,
+        packageSyncServiceMock.syncPendingPackages,
       ).not.toHaveBeenCalled();
     });
   });
@@ -187,7 +195,7 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
         currentSessionPackages: [pkg],
       });
 
-      packageServiceMock.sendMultiplePackages.mockResolvedValue(
+      packageSyncServiceMock.sendMultiplePackages.mockResolvedValue(
         {
           success: true,
           data: { sent: 1, failed: 0, failedPackages: [] },
@@ -212,7 +220,7 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
       await sendSessionPackages("user-1");
 
       expect(
-        packageServiceMock.sendMultiplePackages,
+        packageSyncServiceMock.sendMultiplePackages,
       ).not.toHaveBeenCalled();
     });
   });
@@ -224,7 +232,7 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
         currentSessionPackages: [pkg],
       });
 
-      packageServiceMock.updateAndSendMultiple.mockResolvedValue(
+      packageSyncServiceMock.updateAndSendMultiple.mockResolvedValue(
         {
           success: true,
           data: { sent: 1, failed: 0, failedPackages: [] },
@@ -262,7 +270,7 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
         failed: 0,
       });
       expect(
-        packageServiceMock.updateAndSendMultiple,
+        packageSyncServiceMock.updateAndSendMultiple,
       ).not.toHaveBeenCalled();
     });
   });
@@ -358,7 +366,6 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
           sessionTracker,
         });
 
-        // Session changes (e.g. User B logs in or logout occurs)
         sessionGen = 2;
 
         resolveScan(scannedPkg);
@@ -383,7 +390,7 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
         let resolveSync: (res: {
           success: boolean;
         }) => void = () => {};
-        packageServiceMock.syncPackage.mockImplementation(
+        packageSyncServiceMock.syncPackage.mockImplementation(
           () =>
             new Promise((resolve) => {
               resolveSync = resolve;
@@ -392,10 +399,10 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
 
         const promise = syncPackage(pkg, "user-A", {
           packageService: packageServiceMock,
+          packageSyncService: packageSyncServiceMock,
           sessionTracker,
         });
 
-        // User A logs out and logs back in (same userId, new session generation)
         sessionGen = 3;
 
         resolveSync({ success: true });
@@ -415,11 +422,11 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
         let resolvePendingSync: (
           res: Awaited<
             ReturnType<
-              typeof packageServiceMock.syncPendingPackages
+              typeof packageSyncServiceMock.syncPendingPackages
             >
           >,
         ) => void = () => {};
-        packageServiceMock.syncPendingPackages.mockImplementation(
+        packageSyncServiceMock.syncPendingPackages.mockImplementation(
           () =>
             new Promise((resolve) => {
               resolvePendingSync = resolve;
@@ -428,10 +435,10 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
 
         const promise = syncPendingPackages("user-A", {
           packageService: packageServiceMock,
+          packageSyncService: packageSyncServiceMock,
           sessionTracker,
         });
 
-        // User B logs in
         sessionGen = 2;
 
         resolvePendingSync({ success: true, data: 0 });
@@ -459,11 +466,11 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
         let resolveSend: (
           res: Awaited<
             ReturnType<
-              typeof packageServiceMock.sendMultiplePackages
+              typeof packageSyncServiceMock.sendMultiplePackages
             >
           >,
         ) => void = () => {};
-        packageServiceMock.sendMultiplePackages.mockImplementation(
+        packageSyncServiceMock.sendMultiplePackages.mockImplementation(
           () =>
             new Promise((resolve) => {
               resolveSend = resolve;
@@ -472,10 +479,10 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
 
         const promise = sendSessionPackages("user-A", {
           packageService: packageServiceMock,
+          packageSyncService: packageSyncServiceMock,
           sessionTracker,
         });
 
-        // Session invalidated
         sessionGen = 2;
 
         resolveSend({
@@ -484,7 +491,6 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
         });
         await promise;
 
-        // Session was not reset because the call was stale for this session
         expect(
           usePackageStore.getState().currentSessionPackages,
         ).toEqual([pkg]);
@@ -504,11 +510,11 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
         let resolveUpdate: (
           res: Awaited<
             ReturnType<
-              typeof packageServiceMock.updateAndSendMultiple
+              typeof packageSyncServiceMock.updateAndSendMultiple
             >
           >,
         ) => void = () => {};
-        packageServiceMock.updateAndSendMultiple.mockImplementation(
+        packageSyncServiceMock.updateAndSendMultiple.mockImplementation(
           () =>
             new Promise((resolve) => {
               resolveUpdate = resolve;
@@ -521,11 +527,11 @@ describe("Package Application Use Cases (Without React Rendering)", () => {
           undefined,
           {
             packageService: packageServiceMock,
+            packageSyncService: packageSyncServiceMock,
             sessionTracker,
           },
         );
 
-        // Session invalidated
         sessionGen = 2;
 
         resolveUpdate({

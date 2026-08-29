@@ -2,8 +2,12 @@ import {
   createSessionGuard,
   SessionTracker,
 } from "@features/auth/session/sessionTracker";
-import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
+import {
+  packageService as defaultPackageService,
+  packageSyncService as defaultPackageSyncService,
+} from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
+import { PackageSyncService } from "@features/packages/services/PackageSyncService";
 import {
   PackageState,
   usePackageStore,
@@ -15,9 +19,11 @@ export async function syncPendingPackages(
   dependencies: {
     packageService?: Pick<
       PackageService,
-      | "syncPendingPackages"
-      | "getAllPackages"
-      | "getPendingCount"
+      "getAllPackages" | "getPendingCount"
+    >;
+    packageSyncService?: Pick<
+      PackageSyncService,
+      "syncPendingPackages"
     >;
     store?: Pick<
       PackageState,
@@ -33,6 +39,9 @@ export async function syncPendingPackages(
 ): Promise<void> {
   const service =
     dependencies.packageService ?? defaultPackageService;
+  const syncService =
+    dependencies.packageSyncService ??
+    defaultPackageSyncService;
   const store =
     dependencies.store ?? usePackageStore.getState();
   const guard = createSessionGuard(
@@ -45,7 +54,7 @@ export async function syncPendingPackages(
 
   store.setSyncingPending(true);
   try {
-    await service.syncPendingPackages(userId);
+    await syncService.syncPendingPackages(userId);
   } catch (error) {
     console.error(
       "[PackageApplication] syncPendingPackages:error",
