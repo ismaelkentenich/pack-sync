@@ -4,6 +4,7 @@ import {
 } from "@features/packages/domain/package.enums";
 import {
   selectCurrentSessionPackages,
+  selectFilteredPackages,
   selectIsSyncingPending,
   selectIsSyncingSession,
   selectPackageByCode,
@@ -36,13 +37,22 @@ describe("package.selectors", () => {
     scanned_at: "2026-01-01T11:00:00Z",
   };
 
+  const mockPackage3: Package = {
+    id: "3",
+    code: "BOX-999",
+    clientCode: "CLIENT-003",
+    status: PackageStatus.IN_DELIVERY,
+    deliveryStatus: DeliveryStatus.PENDING,
+    scanned_at: "2026-01-01T12:00:00Z",
+  };
+
   const mockRemoveFromSession = jest.fn();
   const mockResetSession = jest.fn();
 
   const initialState: PackageState = {
-    packages: [mockPackage1, mockPackage2],
+    packages: [mockPackage1, mockPackage2, mockPackage3],
     currentSessionPackages: [mockPackage1],
-    pendingCount: 1,
+    pendingCount: 2,
     syncingPackageIds: ["1"],
     isSyncingSession: true,
     isSyncingPending: false,
@@ -63,6 +73,7 @@ describe("package.selectors", () => {
     expect(selectPackages(initialState)).toEqual([
       mockPackage1,
       mockPackage2,
+      mockPackage3,
     ]);
   });
 
@@ -73,7 +84,7 @@ describe("package.selectors", () => {
   });
 
   it("selects pending count", () => {
-    expect(selectPendingCount(initialState)).toBe(1);
+    expect(selectPendingCount(initialState)).toBe(2);
   });
 
   it("selects syncing package ids array", () => {
@@ -93,7 +104,7 @@ describe("package.selectors", () => {
   });
 
   it("selects total count of packages", () => {
-    expect(selectPackagesCount(initialState)).toBe(2);
+    expect(selectPackagesCount(initialState)).toBe(3);
   });
 
   it("selects a package by code when code exists", () => {
@@ -120,5 +131,76 @@ describe("package.selectors", () => {
     expect(selectResetSession(initialState)).toBe(
       mockResetSession,
     );
+  });
+
+  describe("selectFilteredPackages", () => {
+    const packages = [
+      mockPackage1,
+      mockPackage2,
+      mockPackage3,
+    ];
+
+    it("returns all packages when search term and status filter are empty", () => {
+      const result = selectFilteredPackages(
+        packages,
+        "",
+        "",
+      );
+      expect(result).toEqual(packages);
+    });
+
+    it("returns all packages when status filter is 'all'", () => {
+      const result = selectFilteredPackages(
+        packages,
+        "",
+        "all",
+      );
+      expect(result).toEqual(packages);
+    });
+
+    it("filters packages by code matching search term case-insensitively", () => {
+      const result = selectFilteredPackages(
+        packages,
+        "pkg",
+        "",
+      );
+      expect(result).toEqual([mockPackage1, mockPackage2]);
+    });
+
+    it("filters packages by status filter", () => {
+      const result = selectFilteredPackages(
+        packages,
+        "",
+        PackageStatus.DELIVERED,
+      );
+      expect(result).toEqual([mockPackage2]);
+    });
+
+    it("filters packages by both search term and status filter", () => {
+      const result = selectFilteredPackages(
+        packages,
+        "001",
+        PackageStatus.COLLECTED,
+      );
+      expect(result).toEqual([mockPackage1]);
+    });
+
+    it("returns empty array when search term does not match any package", () => {
+      const result = selectFilteredPackages(
+        packages,
+        "NOTFOUND",
+        "",
+      );
+      expect(result).toEqual([]);
+    });
+
+    it("trims whitespace from search term", () => {
+      const result = selectFilteredPackages(
+        packages,
+        "  BOX-999  ",
+        "",
+      );
+      expect(result).toEqual([mockPackage3]);
+    });
   });
 });

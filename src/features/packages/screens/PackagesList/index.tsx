@@ -31,6 +31,7 @@ import { UpdateStatusModal } from "@features/packages/components/UpdateStatusMod
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
 import {
+  selectFilteredPackages,
   selectIsSyncingPending,
   selectPackages,
   selectPendingCount,
@@ -80,26 +81,15 @@ export default function PackagesListScreen() {
   const [selectedPackage, setSelectedPackage] =
     useState<Package | null>(null);
 
-  const filteredData = useMemo(() => {
-    const normalizedSearchTerm = searchTerm
-      .trim()
-      .toLowerCase();
-
-    return packages.filter((pkg) => {
-      const matchesSearch =
-        normalizedSearchTerm.length === 0 ||
-        pkg.code
-          .toLowerCase()
-          .includes(normalizedSearchTerm);
-
-      const matchesStatus =
-        statusFilter === "" ||
-        statusFilter === "all" ||
-        pkg.status === statusFilter;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [packages, searchTerm, statusFilter]);
+  const filteredData = useMemo(
+    () =>
+      selectFilteredPackages(
+        packages,
+        searchTerm,
+        statusFilter,
+      ),
+    [packages, searchTerm, statusFilter],
+  );
 
   const isAllStatus =
     statusFilter === "" || statusFilter === "all";
