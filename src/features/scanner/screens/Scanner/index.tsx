@@ -34,8 +34,12 @@ import { Routes } from "@config/routes";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { PackageCard } from "@features/packages/components/PackageCard";
 import UpdateAllPackagesModal from "@features/packages/components/UpdateAllPackagesModal";
+import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
-import { translatePackageFeedback } from "@features/packages/utils/getPackageErrorFeedback";
+import {
+  getPackageErrorFeedback,
+  translatePackageFeedback,
+} from "@features/packages/utils/getPackageErrorFeedback";
 import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
 import { useShowAlert } from "@store/useAlertStore";
 import { moderateScale } from "@theme/responsiveScale";
@@ -64,40 +68,20 @@ export default function ScanScreen() {
 
   const showAlert = useShowAlert((state) => state.show);
 
+  const {
+    scanPackage,
+    loadPackages,
+    removeFromSession,
+    resetSession,
+    sendAllCurrentSessionPackages,
+  } = usePackageOperations();
+
   const isSyncingSession = usePackageStore(
     (state) => state.isSyncingSession,
   );
 
   const currentSessionPackages = usePackageStore(
     (state) => state.currentSessionPackages,
-  );
-
-  const feedback = usePackageStore(
-    (state) => state.feedback,
-  );
-
-  const scanPackage = usePackageStore(
-    (state) => state.scanPackage,
-  );
-
-  const loadPackages = usePackageStore(
-    (state) => state.loadPackages,
-  );
-
-  const resetSession = usePackageStore(
-    (state) => state.resetSession,
-  );
-
-  const removeFromSession = usePackageStore(
-    (state) => state.removeFromSession,
-  );
-
-  const clearFeedback = usePackageStore(
-    (state) => state.clearFeedback,
-  );
-
-  const sendAllCurrentSessionPackages = usePackageStore(
-    (state) => state.sendAllCurrentSessionPackages,
   );
 
   const [permission, requestPermission] =
@@ -120,7 +104,7 @@ export default function ScanScreen() {
   const handleToggleTorch = useCallback(() => {
     setIsTorchOn((prev) => {
       const next = !prev;
-      void Haptics.impactAsync(
+      Haptics.impactAsync(
         Haptics.ImpactFeedbackStyle.Light,
       );
       return next;
@@ -169,7 +153,7 @@ export default function ScanScreen() {
       }
 
       if (scannedCodesRef.current.has(data)) {
-        void Haptics.notificationAsync(
+        Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Warning,
         );
 
@@ -188,11 +172,35 @@ export default function ScanScreen() {
 
       try {
         await scanPackage(data, userId);
+
+        Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Success,
+        );
+
+        showAlert(
+          translatePackageFeedback(t, {
+            key: "packages.feedback.scannedSuccessfully",
+            params: { code: data },
+          }),
+          "success",
+        );
       } catch (error) {
         console.error("[Scanner] scanPackage failed", {
           code: data,
           error,
         });
+
+        Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Error,
+        );
+
+        showAlert(
+          translatePackageFeedback(
+            t,
+            getPackageErrorFeedback(error),
+          ),
+          "error",
+        );
       } finally {
         inFlightCodesRef.current.delete(data);
       }
@@ -200,16 +208,37 @@ export default function ScanScreen() {
     [scanPackage, showAlert, t, userId],
   );
 
-  const handleSyncSession = useCallback(() => {
+  const handleSyncSession = useCallback(async () => {
     if (!userId || isSyncingSession || !hasPackages) {
       return;
     }
 
-    sendAllCurrentSessionPackages(userId);
+    const result =
+      await sendAllCurrentSessionPackages(userId);
+
+    if (result && !result.success) {
+      Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Error,
+      );
+
+      showAlert(
+        translatePackageFeedback(
+          t,
+          result.error
+            ? getPackageErrorFeedback(result.error)
+            : {
+                key: "packages.feedback.sendSomeFailed",
+              },
+        ),
+        "error",
+      );
+    }
   }, [
     hasPackages,
     isSyncingSession,
     sendAllCurrentSessionPackages,
+    showAlert,
+    t,
     userId,
   ]);
 
@@ -219,7 +248,7 @@ export default function ScanScreen() {
 
   const handleRemoveFromSession = useCallback(
     (pkg: Package) => {
-      void Haptics.impactAsync(
+      Haptics.impactAsync(
         Haptics.ImpactFeedbackStyle.Light,
       );
 
@@ -271,42 +300,6 @@ export default function ScanScreen() {
   }, [loadPackages, userId]);
 
   useEffect(() => {
-    if (feedback.success) {
-      Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success,
-      );
-
-      showAlert(
-        translatePackageFeedback(t, feedback.success),
-        "success",
-      );
-
-      clearFeedback();
-
-      return;
-    }
-
-    if (feedback.error) {
-      Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Error,
-      );
-
-      showAlert(
-        translatePackageFeedback(t, feedback.error),
-        "error",
-      );
-
-      clearFeedback();
-    }
-  }, [
-    clearFeedback,
-    feedback.error,
-    feedback.success,
-    showAlert,
-    t,
-  ]);
-
-  useEffect(() => {
     if (
       permission &&
       !permission.granted &&
@@ -321,13 +314,11 @@ export default function ScanScreen() {
     useCallback(() => {
       resetSession();
 
-      clearFeedback();
-
       scannedCodesRef.current.clear();
       inFlightCodesRef.current.clear();
       lastDetectedCodeRef.current = null;
       lastDetectedAtRef.current = 0;
-    }, [clearFeedback, resetSession]),
+    }, [resetSession]),
   );
 
   if (!permission) {

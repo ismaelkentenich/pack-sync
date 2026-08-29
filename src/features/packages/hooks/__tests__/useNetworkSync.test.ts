@@ -14,7 +14,6 @@ import {
   resetNetInfoMock,
 } from "@test/mocks/netInfo.mock";
 import {
-  mockPackageStore,
   mockSyncPendingPackages,
   resetPackageStoreMock,
 } from "@test/mocks/packageStore.mock";
@@ -50,9 +49,11 @@ jest.mock("@features/auth/store/useAuthStore", () => ({
 }));
 
 jest.mock(
-  "@features/packages/store/usePackageStore",
+  "@features/packages/hooks/usePackageOperations",
   () => ({
-    usePackageStore: mockPackageStore,
+    usePackageOperations: () => ({
+      syncPendingPackages: mockSyncPendingPackages,
+    }),
   }),
 );
 

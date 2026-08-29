@@ -13,8 +13,6 @@ import type { Package } from "@features/packages/domain/package.types";
 const mockNavigate = jest.fn();
 const mockLoadPackages = jest.fn();
 const mockSyncPendingPackages = jest.fn();
-const mockSetSearchTerm = jest.fn();
-const mockSetStatusFilter = jest.fn();
 
 const mockUser = {
   id: "user-123",
@@ -117,8 +115,16 @@ jest.mock("@shopify/flash-list", () => {
 let mockPackages: Package[] = [];
 let mockPendingCount = 0;
 let mockIsSyncingPending = false;
-let mockSearchTerm = "";
-let mockStatusFilter = "";
+
+jest.mock(
+  "@features/packages/hooks/usePackageOperations",
+  () => ({
+    usePackageOperations: () => ({
+      loadPackages: mockLoadPackages,
+      syncPendingPackages: mockSyncPendingPackages,
+    }),
+  }),
+);
 
 jest.mock(
   "@features/packages/store/usePackageStore",
@@ -128,24 +134,12 @@ jest.mock(
         packages: Package[];
         pendingCount: number;
         isSyncingPending: boolean;
-        searchTerm: string;
-        statusFilter: string;
-        loadPackages: typeof mockLoadPackages;
-        syncPendingPackages: typeof mockSyncPendingPackages;
-        setSearchTerm: typeof mockSetSearchTerm;
-        setStatusFilter: typeof mockSetStatusFilter;
       }) => unknown,
     ) =>
       selector({
         packages: mockPackages,
         pendingCount: mockPendingCount,
         isSyncingPending: mockIsSyncingPending,
-        searchTerm: mockSearchTerm,
-        statusFilter: mockStatusFilter,
-        loadPackages: mockLoadPackages,
-        syncPendingPackages: mockSyncPendingPackages,
-        setSearchTerm: mockSetSearchTerm,
-        setStatusFilter: mockSetStatusFilter,
       }),
   }),
 );
@@ -156,8 +150,6 @@ describe("PackagesListScreen", () => {
     mockPackages = [];
     mockPendingCount = 0;
     mockIsSyncingPending = false;
-    mockSearchTerm = "";
-    mockStatusFilter = "";
   });
 
   it("renders packages list screen and loads packages on mount", () => {
@@ -238,15 +230,34 @@ describe("PackagesListScreen", () => {
   });
 
   it("filters packages by status filter and search term", () => {
-    const { getByTestId } = render(<PackagesListScreen />);
+    mockPackages = [
+      {
+        id: "1",
+        code: "PKG-COLLECTED",
+        clientCode: "CLI-001",
+        status: PackageStatus.COLLECTED,
+        deliveryStatus: DeliveryStatus.SENT,
+        scanned_at: "2026-08-28T12:00:00Z",
+      },
+      {
+        id: "2",
+        code: "PKG-DELIVERED",
+        clientCode: "CLI-001",
+        status: PackageStatus.DELIVERED,
+        deliveryStatus: DeliveryStatus.SENT,
+        scanned_at: "2026-08-28T12:00:00Z",
+      },
+    ];
+
+    const { getByTestId, queryByText } = render(
+      <PackagesListScreen />,
+    );
 
     const filterCollected = getByTestId(
       `packagesListFilter-${PackageStatus.COLLECTED}`,
     );
     fireEvent.press(filterCollected);
 
-    expect(mockSetStatusFilter).toHaveBeenCalledWith(
-      PackageStatus.COLLECTED,
-    );
+    expect(queryByText(/PKG-COLLECTED/)).toBeTruthy();
   });
 });

@@ -12,6 +12,7 @@ import {
 import { Button } from "@components/primitives/Button";
 import { Input } from "@components/primitives/Input";
 import { PackageStatus } from "@features/packages/domain/package.enums";
+import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
 import { useShowAlert } from "@store/useAlertStore";
@@ -38,6 +39,9 @@ export default forwardRef(function UpdateAllPackagesModal(
 
   const showAlert = useShowAlert((state) => state.show);
 
+  const { updateAndSendCurrentSessionPackages } =
+    usePackageOperations();
+
   const isSyncingSession = usePackageStore(
     (state) => state.isSyncingSession,
   );
@@ -45,11 +49,6 @@ export default forwardRef(function UpdateAllPackagesModal(
   const currentSessionPackages = usePackageStore(
     (state) => state.currentSessionPackages,
   );
-
-  const updateAndSendCurrentSessionPackages =
-    usePackageStore(
-      (state) => state.updateAndSendCurrentSessionPackages,
-    );
 
   const [selectedStatus, setSelectedStatus] =
     useState<PackageStatus>(PackageStatus.COLLECTED);

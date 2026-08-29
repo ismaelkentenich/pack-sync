@@ -53,7 +53,7 @@ export default function MenuScreen() {
         return;
       }
 
-      void Haptics.impactAsync(
+      Haptics.impactAsync(
         Haptics.ImpactFeedbackStyle.Light,
       );
       setPreference(newPref);
@@ -67,7 +67,7 @@ export default function MenuScreen() {
         return;
       }
 
-      void Haptics.impactAsync(
+      Haptics.impactAsync(
         Haptics.ImpactFeedbackStyle.Light,
       );
       void i18n.changeLanguage(lang);

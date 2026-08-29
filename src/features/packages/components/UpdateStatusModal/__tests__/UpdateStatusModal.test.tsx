@@ -160,20 +160,25 @@ jest.mock("@react-native-picker/picker", () => {
 });
 
 jest.mock(
+  "@features/packages/hooks/usePackageOperations",
+  () => ({
+    usePackageOperations: () => ({
+      changeStatus: mockChangeStatus,
+      loadPackages: mockLoadPackages,
+      sendPackage: mockSendPackage,
+    }),
+  }),
+);
+
+jest.mock(
   "@features/packages/store/usePackageStore",
   () => ({
     usePackageStore: (
       selector: (state: {
-        changeStatus: typeof mockChangeStatus;
-        loadPackages: typeof mockLoadPackages;
-        sendPackage: typeof mockSendPackage;
         syncingPackageIds: string[];
       }) => unknown,
     ) =>
       selector({
-        changeStatus: mockChangeStatus,
-        loadPackages: mockLoadPackages,
-        sendPackage: mockSendPackage,
         syncingPackageIds: mockSyncingPackageIds,
       }),
   }),
