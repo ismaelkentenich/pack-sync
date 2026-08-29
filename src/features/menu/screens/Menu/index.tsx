@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { Routes } from "@config/routes";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
+import { useAuthOperations } from "@features/auth/hooks/useAuthOperations";
 import { MenuItem } from "@features/menu/components/MenuItem";
 import { useMainTabNavigation } from "@hooks/useMainTabNavigation";
 import { moderateScale } from "@theme/responsiveScale";
@@ -27,7 +27,7 @@ export default function MenuScreen() {
 
   const navigation = useMainTabNavigation();
 
-  const logout = useAuthStore((state) => state.logout);
+  const { logout } = useAuthOperations();
 
   const { theme, preference, setPreference } =
     useAppTheme();
