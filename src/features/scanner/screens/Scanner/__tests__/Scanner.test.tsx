@@ -443,6 +443,78 @@ describe("ScanScreen - Camera Permissions", () => {
     );
   });
 
+  it("allows retry after scan error and blocks duplicate scans only after successful persistence", async () => {
+    let nowTime = 1000;
+    const dateNowSpy = jest
+      .spyOn(Date, "now")
+      .mockImplementation(() => nowTime);
+
+    (useCameraPermissions as jest.Mock).mockReturnValue([
+      {
+        granted: true,
+        canAskAgain: true,
+        status: "granted",
+      },
+      mockRequestPermission,
+    ]);
+
+    // 1st attempt: persistence fails
+    mockScanPackage.mockRejectedValueOnce(
+      new Error("Database persistence error"),
+    );
+
+    const { getByTestId } = render(<ScanScreen />);
+    const camera = getByTestId("scannerCamera");
+
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-RETRY",
+      type: "qr",
+    });
+
+    expect(mockScanPackage).toHaveBeenCalledTimes(1);
+    expect(mockShowAlert).toHaveBeenCalledWith(
+      "packages.errors.unknown",
+      "error",
+    );
+
+    // Advance time beyond SAME_CODE_SUPPRESSION_MS (2500ms)
+    nowTime += 3000;
+
+    // 2nd attempt: retry after error succeeds
+    mockScanPackage.mockResolvedValueOnce({
+      id: "pkg-retry-1",
+      code: "PKG-RETRY",
+    });
+
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-RETRY",
+      type: "qr",
+    });
+
+    expect(mockScanPackage).toHaveBeenCalledTimes(2);
+    expect(mockShowAlert).toHaveBeenCalledWith(
+      "packages.feedback.scannedSuccessfully",
+      "success",
+    );
+
+    // Advance time again beyond SAME_CODE_SUPPRESSION_MS
+    nowTime += 3000;
+
+    // 3rd attempt: duplicate scan after success is blocked
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-RETRY",
+      type: "qr",
+    });
+
+    expect(mockScanPackage).toHaveBeenCalledTimes(2);
+    expect(mockShowAlert).toHaveBeenCalledWith(
+      "packages.feedback.alreadyScanned",
+      "info",
+    );
+
+    dateNowSpy.mockRestore();
+  });
+
   it("renders torch toggle button and toggles flashlight state with haptic feedback", () => {
     (useCameraPermissions as jest.Mock).mockReturnValue([
       {
