@@ -172,4 +172,57 @@ describe("useAuthStore", () => {
       ).toBe(true);
     });
   });
+
+  describe("sessionGeneration", () => {
+    it("increments sessionGeneration on setUser, login, signup, logout, and invalidateSession", async () => {
+      useAuthStore.setState({
+        user: null,
+        sessionGeneration: 0,
+      });
+
+      useAuthStore.getState().setUser({
+        id: "user-1",
+        email: "user1@example.com",
+        displayName: null,
+      });
+      expect(
+        useAuthStore.getState().sessionGeneration,
+      ).toBe(1);
+
+      useAuthStore.getState().invalidateSession();
+      expect(
+        useAuthStore.getState().sessionGeneration,
+      ).toBe(2);
+
+      authServiceMock.login.mockResolvedValue({
+        id: "user-1",
+        email: "user1@example.com",
+        displayName: null,
+      });
+      await useAuthStore
+        .getState()
+        .login("user1@example.com", "password");
+      expect(
+        useAuthStore.getState().sessionGeneration,
+      ).toBe(3);
+
+      authServiceMock.signup.mockResolvedValue({
+        id: "user-2",
+        email: "user2@example.com",
+        displayName: null,
+      });
+      await useAuthStore
+        .getState()
+        .signup("user2@example.com", "password");
+      expect(
+        useAuthStore.getState().sessionGeneration,
+      ).toBe(4);
+
+      authServiceMock.logout.mockResolvedValue(undefined);
+      await useAuthStore.getState().logout();
+      expect(
+        useAuthStore.getState().sessionGeneration,
+      ).toBe(5);
+    });
+  });
 });

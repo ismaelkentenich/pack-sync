@@ -1,3 +1,7 @@
+import {
+  createSessionGuard,
+  SessionTracker,
+} from "@features/auth/session/sessionTracker";
 import { PackageStatus } from "@features/packages/domain/package.enums";
 import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
@@ -28,6 +32,10 @@ export async function updateSessionPackages(
       | "setSessionPackages"
       | "setPackages"
     >;
+    sessionTracker?: Pick<
+      SessionTracker,
+      "getSessionGeneration"
+    >;
   } = {},
 ): Promise<{
   success: boolean;
@@ -38,6 +46,9 @@ export async function updateSessionPackages(
     dependencies.packageService ?? defaultPackageService;
   const store =
     dependencies.store ?? usePackageStore.getState();
+  const guard = createSessionGuard(
+    dependencies.sessionTracker,
+  );
 
   const currentSessionPackages =
     store.currentSessionPackages;
@@ -56,9 +67,17 @@ export async function updateSessionPackages(
       status,
       receiverName,
     );
+    if (!guard.isValid()) {
+      return {
+        success: result.success,
+        sent: result.data?.sent ?? 0,
+        failed: result.data?.failed ?? 0,
+      };
+    }
     loadPackages(userId, {
       packageService: service,
       store,
+      sessionTracker: dependencies.sessionTracker,
     });
     if (result.success) {
       store.resetSession();

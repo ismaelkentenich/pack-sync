@@ -5,6 +5,16 @@ import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { createPackage } from "@test";
 import { usePackageOperations } from "../usePackageOperations";
 
+jest.mock("@features/auth/auth.dependencies", () => ({
+  authService: {
+    login: jest.fn(),
+    signup: jest.fn(),
+    logout: jest.fn(),
+    getCurrentUser: jest.fn(),
+    observeAuthState: jest.fn(),
+  },
+}));
+
 jest.mock(
   "@features/packages/package.dependencies",
   () => ({

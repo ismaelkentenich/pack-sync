@@ -1,3 +1,7 @@
+import {
+  createSessionGuard,
+  SessionTracker,
+} from "@features/auth/session/sessionTracker";
 import { packageService as defaultPackageService } from "@features/packages/package.dependencies";
 import { PackageService } from "@features/packages/services/PackageService";
 import {
@@ -25,12 +29,19 @@ export async function sendSessionPackages(
       | "setSessionPackages"
       | "setPackages"
     >;
+    sessionTracker?: Pick<
+      SessionTracker,
+      "getSessionGeneration"
+    >;
   } = {},
 ) {
   const service =
     dependencies.packageService ?? defaultPackageService;
   const store =
     dependencies.store ?? usePackageStore.getState();
+  const guard = createSessionGuard(
+    dependencies.sessionTracker,
+  );
 
   const currentSessionPackages =
     store.currentSessionPackages;
@@ -46,9 +57,13 @@ export async function sendSessionPackages(
     const result = await service.sendMultiplePackages(
       currentSessionPackages,
     );
+    if (!guard.isValid()) {
+      return result;
+    }
     loadPackages(userId, {
       packageService: service,
       store,
+      sessionTracker: dependencies.sessionTracker,
     });
     if (result.success) {
       store.resetSession();
