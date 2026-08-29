@@ -2,9 +2,8 @@ import { create } from "zustand";
 import { authService } from "@features/auth/auth.dependencies";
 import { AuthUser } from "@features/auth/domain/auth.types";
 
-type AuthState = {
+export type AuthState = {
   user: AuthUser | null;
-  isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (
     email: string,
@@ -14,41 +13,32 @@ type AuthState = {
   setUser: (user: AuthUser | null) => void;
 };
 
+export const selectIsAuthenticated = (state: {
+  user: AuthUser | null;
+}) => state.user !== null;
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  isAuthenticated: false,
 
   setUser: (user) => {
-    set({
-      user,
-      isAuthenticated: user !== null,
-    });
+    set({ user });
   },
 
   login: async (email, password) => {
     const user = await authService.login(email, password);
 
-    set({
-      user,
-      isAuthenticated: true,
-    });
+    set({ user });
   },
 
   signup: async (email, password) => {
     const user = await authService.signup(email, password);
 
-    set({
-      user,
-      isAuthenticated: true,
-    });
+    set({ user });
   },
 
   logout: async () => {
     await authService.logout();
 
-    set({
-      user: null,
-      isAuthenticated: false,
-    });
+    set({ user: null });
   },
 }));

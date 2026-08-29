@@ -40,7 +40,6 @@ describe("useSessionLifecycle", () => {
 
     useAuthStore.setState({
       user: null,
-      isAuthenticated: false,
     });
   });
 
@@ -51,7 +50,6 @@ describe("useSessionLifecycle", () => {
         email: "user1@example.com",
         displayName: null,
       },
-      isAuthenticated: true,
     });
 
     renderHook(() => useSessionLifecycle());
@@ -72,7 +70,6 @@ describe("useSessionLifecycle", () => {
         email: "user1@example.com",
         displayName: null,
       },
-      isAuthenticated: true,
     });
 
     renderHook(() => useSessionLifecycle());
@@ -95,7 +92,6 @@ describe("useSessionLifecycle", () => {
         email: "old@example.com",
         displayName: null,
       },
-      isAuthenticated: true,
     });
 
     renderHook(() => useSessionLifecycle());
@@ -114,7 +110,6 @@ describe("useSessionLifecycle", () => {
   it("clears package state when transitioning from unauthenticated to authenticated", () => {
     useAuthStore.setState({
       user: null,
-      isAuthenticated: false,
     });
 
     renderHook(() => useSessionLifecycle());

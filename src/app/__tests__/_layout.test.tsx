@@ -19,9 +19,10 @@ jest.mock("@features/auth/hooks/usePersistedAuth", () => ({
 }));
 
 jest.mock("@features/auth/store/useAuthStore", () => ({
+  selectIsAuthenticated: (state: { user: unknown }) =>
+    state.user !== null,
   useAuthStore: jest.fn((selector) =>
     selector({
-      isAuthenticated: false,
       user: null,
     }),
   ),
