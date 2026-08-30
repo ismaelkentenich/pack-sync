@@ -1,0 +1,10 @@
+node_modules
+.expo
+dist
+build
+coverage
+android
+ios
+.rnstorybook/storybook.requires.ts
+expo-env.d.ts
+*.lock
