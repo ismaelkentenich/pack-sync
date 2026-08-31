@@ -4,11 +4,13 @@ import {
 } from "@features/packages/domain/package.enums";
 import { PackageRepository } from "@features/packages/domain/package.repository";
 import { Package } from "@features/packages/domain/package.types";
+import { mapRowToPackage } from "@infrastructure/database/packages/mappers/package.mapper";
+import { PackageRow } from "@infrastructure/database/packages/types/package.row";
 import { packagesDb } from "./index";
 
 export class SQLitePackageRepository implements PackageRepository {
   findById(id: string, userId: string): Package | null {
-    const result = packagesDb.getFirstSync<Package>(
+    const result = packagesDb.getFirstSync<PackageRow>(
       `
       SELECT *
       FROM packages
@@ -18,11 +20,11 @@ export class SQLitePackageRepository implements PackageRepository {
       [id, userId],
     );
 
-    return result ?? null;
+    return result ? mapRowToPackage(result) : null;
   }
 
   findByCode(code: string, userId: string): Package | null {
-    const result = packagesDb.getFirstSync<Package>(
+    const result = packagesDb.getFirstSync<PackageRow>(
       `
           SELECT *
           FROM packages
@@ -32,11 +34,11 @@ export class SQLitePackageRepository implements PackageRepository {
       [code, userId],
     );
 
-    return result ?? null;
+    return result ? mapRowToPackage(result) : null;
   }
 
   findAllByUser(userId: string): Package[] {
-    return packagesDb.getAllSync<Package>(
+    const rows = packagesDb.getAllSync<PackageRow>(
       `
         SELECT *
         FROM packages
@@ -45,13 +47,15 @@ export class SQLitePackageRepository implements PackageRepository {
       `,
       [userId],
     );
+
+    return rows.map(mapRowToPackage);
   }
 
   findByDeliveryStatus(
     userId: string,
     status: DeliveryStatus,
   ): Package[] {
-    return packagesDb.getAllSync<Package>(
+    const rows = packagesDb.getAllSync<PackageRow>(
       `
         SELECT *
         FROM packages
@@ -61,6 +65,8 @@ export class SQLitePackageRepository implements PackageRepository {
       `,
       [userId, status],
     );
+
+    return rows.map(mapRowToPackage);
   }
 
   create(pkg: Package): Package {
