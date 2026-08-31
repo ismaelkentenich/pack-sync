@@ -9,46 +9,27 @@ import { Package } from "@features/packages/domain/package.types";
 
 export const DEFAULT_SYNC_TIMEOUT_MS = 10_000;
 
+export interface WebhookPackageSyncGatewayOptions {
+  timeoutMs?: number;
+  url?: string;
+}
+
 export class WebhookPackageSyncGateway implements PackageSyncGateway {
-  private readonly authTokenProvider?: AuthTokenProvider;
+  private readonly authTokenProvider: AuthTokenProvider;
   private readonly timeoutMs: number;
   private readonly url: string;
 
   constructor(
-    authTokenProviderOrTimeout?: AuthTokenProvider | number,
-    timeoutMs: number = DEFAULT_SYNC_TIMEOUT_MS,
-    url: string = ENV.PACKAGE_SYNC_URL,
+    authTokenProvider: AuthTokenProvider,
+    options: WebhookPackageSyncGatewayOptions = {},
   ) {
-    if (typeof authTokenProviderOrTimeout === "number") {
-      this.authTokenProvider = undefined;
-      this.timeoutMs = authTokenProviderOrTimeout;
-      this.url =
-        typeof timeoutMs === "string"
-          ? timeoutMs
-          : ENV.PACKAGE_SYNC_URL;
-    } else {
-      this.authTokenProvider = authTokenProviderOrTimeout;
-      this.timeoutMs = timeoutMs;
-      this.url = url;
-    }
+    this.authTokenProvider = authTokenProvider;
+    this.timeoutMs =
+      options.timeoutMs ?? DEFAULT_SYNC_TIMEOUT_MS;
+    this.url = options.url ?? ENV.PACKAGE_SYNC_URL;
   }
 
   async send(pkg: Package): Promise<PackageSyncResult> {
-    if (!this.authTokenProvider) {
-      console.error(
-        "[PackageSync][Webhook] request:auth-token-missing",
-        {
-          packageId: pkg.id,
-          packageCode: pkg.code,
-        },
-      );
-      return {
-        success: false,
-        status: 401,
-        error: "UNAUTHORIZED",
-      };
-    }
-
     let token = await this.authTokenProvider.getIdToken();
 
     if (!token) {
