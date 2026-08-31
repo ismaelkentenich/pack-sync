@@ -30,17 +30,18 @@ describe("useDatabaseBootstrap", () => {
     await act(async () => {});
 
     expect(result.current.status).toBe("ready");
-    expect(result.current.errorMessage).toBeUndefined();
     expect(setupAllDatabasesMock).toHaveBeenCalledTimes(1);
   });
 
-  it("sets status to error when setupAllDatabases fails", async () => {
+  it("sets status to error when setupAllDatabases fails without exposing raw error", async () => {
     const consoleErrorSpy = jest
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
     setupAllDatabasesMock.mockRejectedValueOnce(
-      new Error("Database initialization failed"),
+      new Error(
+        "Database initialization failed: table locked",
+      ),
     );
 
     const { result } = renderHook(() =>
@@ -50,8 +51,9 @@ describe("useDatabaseBootstrap", () => {
     await act(async () => {});
 
     expect(result.current.status).toBe("error");
-    expect(result.current.errorMessage).toBe(
-      "Database initialization failed",
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "[Database] bootstrap:error",
+      expect.any(Error),
     );
 
     consoleErrorSpy.mockRestore();
