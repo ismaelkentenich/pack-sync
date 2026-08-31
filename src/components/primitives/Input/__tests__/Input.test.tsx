@@ -421,6 +421,62 @@ describe("Input", () => {
     });
   });
 
+  describe("accessibility", () => {
+    it("uses label as accessibilityLabel on TextInput by default", () => {
+      const { getByTestId } = render(
+        <Input label="Email Address" />,
+      );
+
+      expect(getByTestId("inputField")).toHaveProp(
+        "accessibilityLabel",
+        "Email Address",
+      );
+    });
+
+    it("allows custom accessibilityLabel to override label", () => {
+      const { getByTestId } = render(
+        <Input
+          label="Email"
+          accessibilityLabel="Custom Email Label"
+        />,
+      );
+
+      expect(getByTestId("inputField")).toHaveProp(
+        "accessibilityLabel",
+        "Custom Email Label",
+      );
+    });
+
+    it("uses helperText as accessibilityHint on TextInput", () => {
+      const { getByTestId } = render(
+        <Input
+          label="Password"
+          helperText="Must be at least 8 characters"
+        />,
+      );
+
+      expect(getByTestId("inputField")).toHaveProp(
+        "accessibilityHint",
+        "Must be at least 8 characters",
+      );
+    });
+
+    it("allows custom accessibilityHint to override helperText", () => {
+      const { getByTestId } = render(
+        <Input
+          label="Password"
+          helperText="Helper text"
+          accessibilityHint="Custom Hint"
+        />,
+      );
+
+      expect(getByTestId("inputField")).toHaveProp(
+        "accessibilityHint",
+        "Custom Hint",
+      );
+    });
+  });
+
   describe("animation", () => {
     beforeEach(() => {
       jest.useFakeTimers();
