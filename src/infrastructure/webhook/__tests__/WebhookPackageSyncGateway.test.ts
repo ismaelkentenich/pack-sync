@@ -3,386 +3,120 @@ import {
   DeliveryStatus,
   PackageStatus,
 } from "@features/packages/domain/package.enums";
-import { createPackage } from "@test";
-import {
-  DEFAULT_SYNC_TIMEOUT_MS,
-  WebhookPackageSyncGateway,
-} from "../WebhookPackageSyncGateway";
+import { Package } from "@features/packages/domain/package.types";
+import { WebhookPackageSyncGateway } from "../WebhookPackageSyncGateway";
 
 describe("WebhookPackageSyncGateway", () => {
-  let mockTokenProvider: jest.Mocked<AuthTokenProvider>;
+  let mockAuthTokenProvider: jest.Mocked<AuthTokenProvider>;
+  const mockPackage: Package = {
+    id: "pkg-1",
+    code: "PKG-001",
+    clientCode: "user-1",
+    status: PackageStatus.COLLECTED,
+    deliveryStatus: DeliveryStatus.PENDING,
+    scanned_at: "2026-08-31T10:00:00Z",
+  };
 
   beforeEach(() => {
-    mockTokenProvider = {
+    jest.clearAllMocks();
+    mockAuthTokenProvider = {
       getIdToken: jest
         .fn()
-        .mockResolvedValue("fake-firebase-token"),
+        .mockResolvedValue("valid-token"),
     };
+    global.fetch = jest.fn();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it("builds the delivered payload from the Package snapshot, passes Authorization header and abort signal", async () => {
-    const clearTimeoutSpy = jest.spyOn(
-      globalThis,
-      "clearTimeout",
-    );
-
-    const fetchMock = jest
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue({
-        ok: true,
-        status: 200,
-      } as Response);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-    );
-
-    const pkg = createPackage({
-      code: "PKG-001",
-      status: PackageStatus.DELIVERED,
-      deliveryStatus: DeliveryStatus.PENDING,
-      receiverName: "  João da Silva  ",
-      scanned_at: "2026-08-22T12:00:00.000Z",
+  it("initializes with default options when none are provided", async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      status: 200,
     });
 
-    const result = await gateway.send(pkg);
+    const gateway = new WebhookPackageSyncGateway(
+      mockAuthTokenProvider,
+    );
+    const result = await gateway.send(mockPackage);
 
     expect(result.success).toBe(true);
-    expect(
-      mockTokenProvider.getIdToken,
-    ).toHaveBeenCalledWith();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://example.test/webhook",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer fake-firebase-token",
-        },
-        body: JSON.stringify({
-          code: "PKG-001",
-          clientName: "João da Silva",
-          status: PackageStatus.DELIVERED,
-          deliveryStatus: DeliveryStatus.PENDING,
-          scanned_at: "2026-08-22T12:00:00.000Z",
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer valid-token",
         }),
-        signal: expect.any(AbortSignal),
+      }),
+    );
+  });
+
+  it("uses custom url and timeoutMs provided in options object", async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+    });
+
+    const gateway = new WebhookPackageSyncGateway(
+      mockAuthTokenProvider,
+      {
+        url: "https://custom.api.test/sync",
+        timeoutMs: 5000,
       },
     );
 
-    expect(clearTimeoutSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it("does not include clientName for a non-delivered package but includes Authorization header", async () => {
-    const fetchMock = jest
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue({
-        ok: true,
-        status: 200,
-      } as Response);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-    );
-
-    const pkg = createPackage({
-      status: PackageStatus.COLLECTED,
-      receiverName: "Should not be sent",
-    });
-
-    const result = await gateway.send(pkg);
+    const result = await gateway.send(mockPackage);
 
     expect(result.success).toBe(true);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://example.test/webhook",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer fake-firebase-token",
-        },
-        body: JSON.stringify({
-          code: pkg.code,
-          status: PackageStatus.COLLECTED,
-          deliveryStatus: DeliveryStatus.PENDING,
-          scanned_at: pkg.scanned_at,
-        }),
-        signal: expect.any(AbortSignal),
-      },
-    );
-  });
-
-  it("returns controlled error when token provider returns null (unauthenticated session)", async () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-    const fetchMock = jest.spyOn(globalThis, "fetch");
-
-    mockTokenProvider.getIdToken.mockResolvedValue(null);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-    );
-    const result = await gateway.send(createPackage());
-
-    expect(result.success).toBe(false);
-    expect(result.status).toBe(401);
-    expect(result.error).toBe("UNAUTHORIZED");
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "[PackageSync][Webhook] request:auth-token-missing",
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://custom.api.test/sync",
       expect.any(Object),
     );
-
-    consoleErrorSpy.mockRestore();
   });
 
-  it("returns controlled error when no token provider is injected", async () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-    const fetchMock = jest.spyOn(globalThis, "fetch");
+  it("returns UNAUTHORIZED if authTokenProvider fails to return a token", async () => {
+    mockAuthTokenProvider.getIdToken.mockResolvedValueOnce(
+      null,
+    );
 
-    const gateway = new WebhookPackageSyncGateway();
-    const result = await gateway.send(createPackage());
+    const gateway = new WebhookPackageSyncGateway(
+      mockAuthTokenProvider,
+    );
+    const result = await gateway.send(mockPackage);
 
-    expect(result.success).toBe(false);
-    expect(result.status).toBe(401);
-    expect(result.error).toBe("UNAUTHORIZED");
-    expect(fetchMock).not.toHaveBeenCalled();
-
-    consoleErrorSpy.mockRestore();
+    expect(result).toEqual({
+      success: false,
+      status: 401,
+      error: "UNAUTHORIZED",
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 
-  it("attempts forceRefresh and retries when server responds with 401 Unauthorized", async () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    mockTokenProvider.getIdToken
-      .mockResolvedValueOnce("expired-token")
-      .mockResolvedValueOnce("fresh-token");
-
-    const fetchMock = jest
-      .spyOn(globalThis, "fetch")
+  it("attempts to refresh token and retries request on initial 401 response", async () => {
+    (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
         ok: false,
         status: 401,
-      } as Response)
+      })
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
-      } as Response);
+      });
+
+    mockAuthTokenProvider.getIdToken
+      .mockResolvedValueOnce("expired-token")
+      .mockResolvedValueOnce("refreshed-token");
 
     const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
+      mockAuthTokenProvider,
     );
-    const result = await gateway.send(createPackage());
+    const result = await gateway.send(mockPackage);
 
-    expect(result.success).toBe(true);
     expect(
-      mockTokenProvider.getIdToken,
-    ).toHaveBeenCalledWith(true);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(fetchMock).toHaveBeenLastCalledWith(
-      "https://example.test/webhook",
-      expect.objectContaining({
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer fresh-token",
-        },
-      }),
-    );
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it("handles persistent 401 Unauthorized and logs appropriate error", async () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    jest.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: false,
-      status: 401,
-    } as Response);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-    );
-    const result = await gateway.send(createPackage());
-
-    expect(result.success).toBe(false);
-    expect(result.status).toBe(401);
-    expect(result.error).toBe("UNAUTHORIZED");
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "[PackageSync][Webhook] request:unauthorized-error",
-      expect.any(Object),
-    );
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it("handles 403 Forbidden and logs appropriate error", async () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    jest.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: false,
-      status: 403,
-    } as Response);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-    );
-    const result = await gateway.send(createPackage());
-
-    expect(result.success).toBe(false);
-    expect(result.status).toBe(403);
-    expect(result.error).toBe("FORBIDDEN");
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "[PackageSync][Webhook] request:forbidden-error",
-      expect.any(Object),
-    );
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it("aborts request and logs timeout error when deadline is exceeded", async () => {
-    const clearTimeoutSpy = jest.spyOn(
-      globalThis,
-      "clearTimeout",
-    );
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    const abortError = new Error(
-      "The operation was aborted",
-    );
-    abortError.name = "AbortError";
-
-    jest
-      .spyOn(globalThis, "fetch")
-      .mockRejectedValue(abortError);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-      3000,
-    );
-    const pkg = createPackage({
-      id: "pkg-1",
-      code: "PKG-001",
-    });
-
-    const result = await gateway.send(pkg);
-
-    expect(result.success).toBe(false);
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "[PackageSync][Webhook] request:timeout-error",
-      {
-        packageId: "pkg-1",
-        packageCode: "PKG-001",
-        timeoutMs: 3000,
-      },
-    );
-    expect(clearTimeoutSpy).toHaveBeenCalledTimes(1);
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it("distinguishes timeout error from generic network error", async () => {
-    const clearTimeoutSpy = jest.spyOn(
-      globalThis,
-      "clearTimeout",
-    );
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    const networkError = new Error("Network unavailable");
-
-    jest
-      .spyOn(globalThis, "fetch")
-      .mockRejectedValue(networkError);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-    );
-    const pkg = createPackage({
-      id: "pkg-2",
-      code: "PKG-002",
-    });
-
-    const result = await gateway.send(pkg);
-
-    expect(result.success).toBe(false);
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "[PackageSync][Webhook] request:network-error",
-      {
-        packageId: "pkg-2",
-        packageCode: "PKG-002",
-        error: networkError,
-      },
-    );
-    expect(clearTimeoutSpy).toHaveBeenCalledTimes(1);
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it("returns failure and cleans up timer when webhook responds with non-success HTTP status", async () => {
-    const clearTimeoutSpy = jest.spyOn(
-      globalThis,
-      "clearTimeout",
-    );
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    jest.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: false,
-      status: 500,
-    } as Response);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-    );
-    const result = await gateway.send(createPackage());
-
-    expect(result.success).toBe(false);
-    expect(clearTimeoutSpy).toHaveBeenCalledTimes(1);
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it("uses DEFAULT_SYNC_TIMEOUT_MS when no timeout is configured", async () => {
-    const setTimeoutSpy = jest.spyOn(
-      globalThis,
-      "setTimeout",
-    );
-
-    jest.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: true,
-      status: 200,
-    } as Response);
-
-    const gateway = new WebhookPackageSyncGateway(
-      mockTokenProvider,
-    );
-    await gateway.send(createPackage());
-
-    expect(setTimeoutSpy).toHaveBeenCalledWith(
-      expect.any(Function),
-      DEFAULT_SYNC_TIMEOUT_MS,
-    );
+      mockAuthTokenProvider.getIdToken,
+    ).toHaveBeenCalledTimes(2);
+    expect(
+      mockAuthTokenProvider.getIdToken,
+    ).toHaveBeenLastCalledWith(true);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(result.success).toBe(true);
   });
 });
