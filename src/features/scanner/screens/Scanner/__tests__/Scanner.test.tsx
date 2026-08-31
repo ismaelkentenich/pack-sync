@@ -5,6 +5,10 @@ import {
 import { useCameraPermissions } from "expo-camera";
 import * as Haptics from "expo-haptics";
 import { Linking } from "react-native";
+import {
+  PackageError,
+  PackageErrorCode,
+} from "@features/packages/domain/package.errors";
 import ScanScreen from "../index";
 
 const mockNavigate = jest.fn();
@@ -12,14 +16,16 @@ const mockShowAlert = jest.fn();
 const mockScanPackage = jest.fn();
 const mockLoadPackages = jest.fn();
 const mockResetSession = jest.fn();
-const mockClearFeedback = jest.fn();
 const mockSendAllCurrentSessionPackages = jest.fn();
 const mockRequestPermission = jest.fn();
+const mockRemoveFromSession = jest.fn();
 
 const mockUser = {
   id: "user-123",
   email: "user@example.com",
 };
+
+let mockCurrentSessionPackages: unknown[] = [];
 
 jest.mock("expo-haptics", () => ({
   notificationAsync: jest.fn().mockResolvedValue(undefined),
@@ -77,23 +83,19 @@ jest.mock("@store/useAlertStore", () => ({
     }),
 }));
 
-const mockRemoveFromSession = jest.fn();
-
-let mockCurrentSessionPackages: unknown[] = [];
-
-let mockFeedback: {
-  success: {
-    key: string;
-    params?: Record<string, unknown>;
-  } | null;
-  error: {
-    key: string;
-    params?: Record<string, unknown>;
-  } | null;
-} = {
-  success: null,
-  error: null,
-};
+jest.mock(
+  "@features/packages/hooks/usePackageOperations",
+  () => ({
+    usePackageOperations: () => ({
+      scanPackage: mockScanPackage,
+      loadPackages: mockLoadPackages,
+      resetSession: mockResetSession,
+      removeFromSession: mockRemoveFromSession,
+      sendAllCurrentSessionPackages:
+        mockSendAllCurrentSessionPackages,
+    }),
+  }),
+);
 
 jest.mock(
   "@features/packages/store/usePackageStore",
@@ -102,26 +104,11 @@ jest.mock(
       selector: (state: {
         isSyncingSession: boolean;
         currentSessionPackages: typeof mockCurrentSessionPackages;
-        feedback: typeof mockFeedback;
-        scanPackage: typeof mockScanPackage;
-        loadPackages: typeof mockLoadPackages;
-        resetSession: typeof mockResetSession;
-        clearFeedback: typeof mockClearFeedback;
-        removeFromSession: typeof mockRemoveFromSession;
-        sendAllCurrentSessionPackages: typeof mockSendAllCurrentSessionPackages;
       }) => unknown,
     ) =>
       selector({
         isSyncingSession: false,
         currentSessionPackages: mockCurrentSessionPackages,
-        feedback: mockFeedback,
-        scanPackage: mockScanPackage,
-        loadPackages: mockLoadPackages,
-        resetSession: mockResetSession,
-        clearFeedback: mockClearFeedback,
-        removeFromSession: mockRemoveFromSession,
-        sendAllCurrentSessionPackages:
-          mockSendAllCurrentSessionPackages,
       }),
   }),
 );
@@ -202,7 +189,6 @@ describe("ScanScreen - Camera Permissions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrentSessionPackages = [];
-    mockFeedback = { success: null, error: null };
     jest
       .spyOn(Linking, "openSettings")
       .mockResolvedValue(undefined as never);
@@ -353,6 +339,7 @@ describe("ScanScreen - Camera Permissions", () => {
 
     // Second scan with same code immediately (continuous presence) -> silently suppressed!
     (Haptics.notificationAsync as jest.Mock).mockClear();
+    mockShowAlert.mockClear();
 
     await fireEvent(camera, "barcodeScanned", {
       data: "PKG-123",
@@ -393,7 +380,7 @@ describe("ScanScreen - Camera Permissions", () => {
     );
   });
 
-  it("triggers success haptics and alert when feedback has success", () => {
+  it("triggers success haptics and alert when scanning succeeds", async () => {
     (useCameraPermissions as jest.Mock).mockReturnValue([
       {
         granted: true,
@@ -403,15 +390,18 @@ describe("ScanScreen - Camera Permissions", () => {
       mockRequestPermission,
     ]);
 
-    mockFeedback = {
-      success: {
-        key: "packages.feedback.scannedSuccessfully",
-        params: { code: "PKG-123" },
-      },
-      error: null,
-    };
+    mockScanPackage.mockResolvedValueOnce({
+      id: "pkg-1",
+      code: "PKG-123",
+    });
 
-    render(<ScanScreen />);
+    const { getByTestId } = render(<ScanScreen />);
+    const camera = getByTestId("scannerCamera");
+
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-123",
+      type: "qr",
+    });
 
     expect(Haptics.notificationAsync).toHaveBeenCalledWith(
       Haptics.NotificationFeedbackType.Success,
@@ -420,10 +410,9 @@ describe("ScanScreen - Camera Permissions", () => {
       "packages.feedback.scannedSuccessfully",
       "success",
     );
-    expect(mockClearFeedback).toHaveBeenCalled();
   });
 
-  it("triggers error haptics and alert when feedback has error", () => {
+  it("triggers error haptics and alert when scanning throws an error", async () => {
     (useCameraPermissions as jest.Mock).mockReturnValue([
       {
         granted: true,
@@ -433,14 +422,17 @@ describe("ScanScreen - Camera Permissions", () => {
       mockRequestPermission,
     ]);
 
-    mockFeedback = {
-      success: null,
-      error: {
-        key: "packages.errors.invalidForSync",
-      },
-    };
+    mockScanPackage.mockRejectedValueOnce(
+      new PackageError(PackageErrorCode.INVALID_FOR_SYNC),
+    );
 
-    render(<ScanScreen />);
+    const { getByTestId } = render(<ScanScreen />);
+    const camera = getByTestId("scannerCamera");
+
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-ERR",
+      type: "qr",
+    });
 
     expect(Haptics.notificationAsync).toHaveBeenCalledWith(
       Haptics.NotificationFeedbackType.Error,
@@ -449,7 +441,78 @@ describe("ScanScreen - Camera Permissions", () => {
       "packages.errors.invalidForSync",
       "error",
     );
-    expect(mockClearFeedback).toHaveBeenCalled();
+  });
+
+  it("allows retry after scan error and blocks duplicate scans only after successful persistence", async () => {
+    let nowTime = 1000;
+    const dateNowSpy = jest
+      .spyOn(Date, "now")
+      .mockImplementation(() => nowTime);
+
+    (useCameraPermissions as jest.Mock).mockReturnValue([
+      {
+        granted: true,
+        canAskAgain: true,
+        status: "granted",
+      },
+      mockRequestPermission,
+    ]);
+
+    // 1st attempt: persistence fails
+    mockScanPackage.mockRejectedValueOnce(
+      new Error("Database persistence error"),
+    );
+
+    const { getByTestId } = render(<ScanScreen />);
+    const camera = getByTestId("scannerCamera");
+
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-RETRY",
+      type: "qr",
+    });
+
+    expect(mockScanPackage).toHaveBeenCalledTimes(1);
+    expect(mockShowAlert).toHaveBeenCalledWith(
+      "packages.errors.unknown",
+      "error",
+    );
+
+    // Advance time beyond SAME_CODE_SUPPRESSION_MS (2500ms)
+    nowTime += 3000;
+
+    // 2nd attempt: retry after error succeeds
+    mockScanPackage.mockResolvedValueOnce({
+      id: "pkg-retry-1",
+      code: "PKG-RETRY",
+    });
+
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-RETRY",
+      type: "qr",
+    });
+
+    expect(mockScanPackage).toHaveBeenCalledTimes(2);
+    expect(mockShowAlert).toHaveBeenCalledWith(
+      "packages.feedback.scannedSuccessfully",
+      "success",
+    );
+
+    // Advance time again beyond SAME_CODE_SUPPRESSION_MS
+    nowTime += 3000;
+
+    // 3rd attempt: duplicate scan after success is blocked
+    await fireEvent(camera, "barcodeScanned", {
+      data: "PKG-RETRY",
+      type: "qr",
+    });
+
+    expect(mockScanPackage).toHaveBeenCalledTimes(2);
+    expect(mockShowAlert).toHaveBeenCalledWith(
+      "packages.feedback.alreadyScanned",
+      "info",
+    );
+
+    dateNowSpy.mockRestore();
   });
 
   it("renders torch toggle button and toggles flashlight state with haptic feedback", () => {
@@ -542,8 +605,7 @@ describe("ScanScreen - Camera Permissions", () => {
       Haptics.ImpactFeedbackStyle.Light,
     );
     expect(mockRemoveFromSession).toHaveBeenCalledWith(
-      sessionPkg,
-      "user-123",
+      "pkg-1",
     );
   });
 });

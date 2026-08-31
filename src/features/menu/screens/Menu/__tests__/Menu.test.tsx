@@ -42,15 +42,10 @@ jest.mock("@theme/useAppTheme", () => {
   };
 });
 
-jest.mock("@features/auth/store/useAuthStore", () => ({
-  useAuthStore: (
-    selector: (state: {
-      logout: typeof mockLogout;
-    }) => unknown,
-  ) =>
-    selector({
-      logout: mockLogout,
-    }),
+jest.mock("@features/auth/hooks/useAuthOperations", () => ({
+  useAuthOperations: () => ({
+    logout: mockLogout,
+  }),
 }));
 
 jest.mock("react-i18next", () => ({

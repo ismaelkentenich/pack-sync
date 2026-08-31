@@ -1,4 +1,5 @@
-export const WEBSOCKET_URL = "https://example.test/webhook";
+export const PACKAGE_SYNC_URL =
+  "https://example.test/webhook";
 
 export const FIREBASE_API_KEY = "test-firebase-api-key";
 

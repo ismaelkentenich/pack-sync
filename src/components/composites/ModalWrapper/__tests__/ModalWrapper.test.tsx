@@ -19,7 +19,10 @@ const mockClose = jest.fn();
 const mockPresent = jest.fn();
 
 jest.mock("@hooks/useIsKeyboardOpened", () => ({
-  useIsKeyboardOpened: () => mockIsKeyboardOpened,
+  useIsKeyboardOpened: () => ({
+    isKeyboardOpened: mockIsKeyboardOpened,
+    keyboardHeight: mockIsKeyboardOpened ? 300 : 0,
+  }),
 }));
 
 jest.mock("react-i18next", () => ({

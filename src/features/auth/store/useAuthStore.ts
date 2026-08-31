@@ -1,99 +1,31 @@
 import { create } from "zustand";
-import { authService } from "@features/auth/auth.dependencies";
 import { AuthUser } from "@features/auth/domain/auth.types";
-import { usePackageStore } from "@features/packages/store/usePackageStore";
 
-type AuthState = {
+export type AuthState = {
   user: AuthUser | null;
-
-  isAuthenticated: boolean;
-
-  login: (email: string, password: string) => Promise<void>;
-
-  signup: (
-    email: string,
-    password: string,
-  ) => Promise<void>;
-
-  logout: () => Promise<void>;
-
+  sessionGeneration: number;
   setUser: (user: AuthUser | null) => void;
+  invalidateSession: () => void;
 };
 
-function clearPackageStateWhenIdentityChanges(
-  previousUserId: string | undefined,
-  nextUserId: string | undefined,
-): void {
-  if (previousUserId === nextUserId) {
-    return;
-  }
+export const selectIsAuthenticated = (state: {
+  user: AuthUser | null;
+}) => state.user !== null;
 
-  usePackageStore.getState().clearUserState();
-}
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  sessionGeneration: 0,
 
-export const useAuthStore = create<AuthState>(
-  (set, get) => ({
-    user: null,
-    isAuthenticated: false,
+  setUser: (user) => {
+    set((state) => ({
+      user,
+      sessionGeneration: state.sessionGeneration + 1,
+    }));
+  },
 
-    setUser: (user) => {
-      const previousUserId = get().user?.id;
-      const nextUserId = user?.id;
-
-      clearPackageStateWhenIdentityChanges(
-        previousUserId,
-        nextUserId,
-      );
-
-      set({
-        user,
-        isAuthenticated: user !== null,
-      });
-    },
-
-    login: async (email, password) => {
-      const user = await authService.login(email, password);
-
-      clearPackageStateWhenIdentityChanges(
-        get().user?.id,
-        user.id,
-      );
-
-      set({
-        user,
-        isAuthenticated: true,
-      });
-    },
-
-    signup: async (email, password) => {
-      const user = await authService.signup(
-        email,
-        password,
-      );
-
-      clearPackageStateWhenIdentityChanges(
-        get().user?.id,
-        user.id,
-      );
-
-      set({
-        user,
-        isAuthenticated: true,
-      });
-    },
-
-    logout: async () => {
-      await authService.logout();
-
-      clearPackageStateWhenIdentityChanges(
-        get().user?.id,
-        undefined,
-      );
-
-      set({
-        user: null,
-        isAuthenticated: false,
-      });
-    },
-  }),
-);
+  invalidateSession: () => {
+    set((state) => ({
+      sessionGeneration: state.sessionGeneration + 1,
+    }));
+  },
+}));

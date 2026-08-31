@@ -29,6 +29,13 @@ import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { PackageCard } from "@features/packages/components/PackageCard";
 import { UpdateStatusModal } from "@features/packages/components/UpdateStatusModal";
 import { PackageStatus } from "@features/packages/domain/package.enums";
+import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
+import {
+  selectFilteredPackages,
+  selectIsSyncingPending,
+  selectPackages,
+  selectPendingCount,
+} from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import { translatePackageStatus } from "@features/packages/utils/packageTranslations";
 import { usePackagesNavigation } from "@hooks/usePackagesNavigation";
@@ -52,41 +59,19 @@ export default function PackagesListScreen() {
 
   const userId = useAuthStore((state) => state.user?.id);
 
-  const packages = usePackageStore(
-    (state) => state.packages,
-  );
+  const { loadPackages, syncPendingPackages } =
+    usePackageOperations();
 
-  const searchTerm = usePackageStore(
-    (state) => state.searchTerm,
-  );
+  const packages = usePackageStore(selectPackages);
 
-  const statusFilter = usePackageStore(
-    (state) => state.statusFilter,
-  );
-
-  const setSearchTerm = usePackageStore(
-    (state) => state.setSearchTerm,
-  );
-
-  const setStatusFilter = usePackageStore(
-    (state) => state.setStatusFilter,
-  );
-
-  const loadPackages = usePackageStore(
-    (state) => state.loadPackages,
-  );
-
-  const pendingCount = usePackageStore(
-    (state) => state.pendingCount,
-  );
+  const pendingCount = usePackageStore(selectPendingCount);
 
   const isSyncingPending = usePackageStore(
-    (state) => state.isSyncingPending,
+    selectIsSyncingPending,
   );
 
-  const syncPendingPackages = usePackageStore(
-    (state) => state.syncPendingPackages,
-  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const updateStatusModalRef =
     useRef<BottomSheetModal>(null);
@@ -96,26 +81,15 @@ export default function PackagesListScreen() {
   const [selectedPackage, setSelectedPackage] =
     useState<Package | null>(null);
 
-  const filteredData = useMemo(() => {
-    const normalizedSearchTerm = searchTerm
-      .trim()
-      .toLowerCase();
-
-    return packages.filter((pkg) => {
-      const matchesSearch =
-        normalizedSearchTerm.length === 0 ||
-        pkg.code
-          .toLowerCase()
-          .includes(normalizedSearchTerm);
-
-      const matchesStatus =
-        statusFilter === "" ||
-        statusFilter === "all" ||
-        pkg.status === statusFilter;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [packages, searchTerm, statusFilter]);
+  const filteredData = useMemo(
+    () =>
+      selectFilteredPackages(
+        packages,
+        searchTerm,
+        statusFilter,
+      ),
+    [packages, searchTerm, statusFilter],
+  );
 
   const isAllStatus =
     statusFilter === "" || statusFilter === "all";
@@ -151,9 +125,7 @@ export default function PackagesListScreen() {
       return;
     }
 
-    void Haptics.impactAsync(
-      Haptics.ImpactFeedbackStyle.Light,
-    );
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     try {
       await syncPendingPackages(userId);

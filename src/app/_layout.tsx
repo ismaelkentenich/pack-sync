@@ -1,31 +1,31 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";
-import { useEffect } from "react";
+import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GlobalAlert } from "@components/composites/CustomAlert";
 import { HeaderHeightProvider } from "@contexts/HeaderHeightContext";
-import { usePersistedAuth } from "@features/auth/hooks/usePersistedAuth";
-import { useAuthStore } from "@features/auth/store/useAuthStore";
-import { useNetworkSync } from "@features/packages/hooks/useNetworkSync";
-import { setupAllDatabases } from "@infrastructure/database/setup";
+import {
+  selectIsAuthenticated,
+  useAuthStore,
+} from "@features/auth/store/useAuthStore";
 import { ThemeProvider } from "@theme/ThemeProvider";
 import { useAppTheme } from "@theme/useAppTheme";
+import { AppBootstrap } from "./bootstrap/AppBootstrap";
+import { useAppLifecycle } from "../hooks/useAppLifecycle";
 
-function RouterNavigation() {
+export function RouterNavigation() {
   const { theme } = useAppTheme();
   const isAuthenticated = useAuthStore(
-    (state) => state.isAuthenticated,
+    selectIsAuthenticated,
   );
-  const userId = useAuthStore((state) => state.user?.id);
-  const { isRestoring } = usePersistedAuth();
-
-  useNetworkSync(isRestoring ? undefined : userId);
+  const { isRestoring } = useAppLifecycle();
 
   if (isRestoring) {
     return (
       <View
+        testID="authRestoringIndicator"
         style={{
           flex: 1,
           alignItems: "center",
@@ -53,26 +53,22 @@ function RouterNavigation() {
   );
 }
 
+export function AppContent() {
+  return (
+    <AppBootstrap>
+      <RouterNavigation />
+    </AppBootstrap>
+  );
+}
+
 export default function RootLayout() {
-  useEffect(() => {
-    async function prepareDatabases() {
-      try {
-        await setupAllDatabases();
-      } catch (error) {
-        console.error("Erro ao inicializar bancos:", error);
-      }
-    }
-
-    prepareDatabases();
-  }, []);
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <HeaderHeightProvider>
           <BottomSheetModalProvider>
             <ThemeProvider>
-              <RouterNavigation />
+              <AppContent />
               <GlobalAlert />
             </ThemeProvider>
           </BottomSheetModalProvider>

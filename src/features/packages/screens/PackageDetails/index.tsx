@@ -16,6 +16,11 @@ import { ScreenContainer } from "@components/primitives/ScreenContainer";
 import { useAuthStore } from "@features/auth/store/useAuthStore";
 import { UpdateStatusModal } from "@features/packages/components/UpdateStatusModal";
 import { DeliveryStatus } from "@features/packages/domain/package.enums";
+import { usePackageOperations } from "@features/packages/hooks/usePackageOperations";
+import {
+  selectPackageByCode,
+  selectSyncingPackageIds,
+} from "@features/packages/store/package.selectors";
 import { usePackageStore } from "@features/packages/store/usePackageStore";
 import {
   translateDeliveryStatus,
@@ -32,21 +37,19 @@ export default function PackageDetailsScreen() {
 
   const userId = useAuthStore((state) => state.user?.id);
 
+  const { sendPackage } = usePackageOperations();
+
   const updateStatusModalRef =
     useRef<BottomSheetModal>(null);
 
   const { code } = useLocalSearchParams<{ code: string }>();
 
-  const currentPackage = usePackageStore((state) =>
-    state.packages.find((item) => item.code === code),
-  );
-
-  const sendPackage = usePackageStore(
-    (state) => state.sendPackage,
+  const currentPackage = usePackageStore(
+    selectPackageByCode(code),
   );
 
   const syncingPackageIds = usePackageStore(
-    (state) => state.syncingPackageIds,
+    selectSyncingPackageIds,
   );
 
   const handleOpenStatusModal = useCallback(() => {
@@ -66,9 +69,7 @@ export default function PackageDetailsScreen() {
       return;
     }
 
-    void Haptics.impactAsync(
-      Haptics.ImpactFeedbackStyle.Light,
-    );
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     await sendPackage(currentPackage, userId);
   }, [currentPackage, isSyncingThis, sendPackage, userId]);

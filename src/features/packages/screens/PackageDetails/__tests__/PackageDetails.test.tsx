@@ -88,19 +88,26 @@ let mockPackages: Package[] = [
 let mockSyncingPackageIds: string[] = [];
 
 jest.mock(
+  "@features/packages/hooks/usePackageOperations",
+  () => ({
+    usePackageOperations: () => ({
+      sendPackage: mockSendPackage,
+    }),
+  }),
+);
+
+jest.mock(
   "@features/packages/store/usePackageStore",
   () => ({
     usePackageStore: (
       selector: (state: {
         packages: Package[];
         syncingPackageIds: string[];
-        sendPackage: typeof mockSendPackage;
       }) => unknown,
     ) =>
       selector({
         packages: mockPackages,
         syncingPackageIds: mockSyncingPackageIds,
-        sendPackage: mockSendPackage,
       }),
   }),
 );

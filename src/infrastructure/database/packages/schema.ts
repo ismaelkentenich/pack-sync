@@ -1,6 +1,6 @@
 import { packagesDb } from "./index";
 
-export const PACKAGES_SCHEMA_VERSION = 1;
+export const PACKAGES_SCHEMA_VERSION = 2;
 
 export function createPackagesTable(): void {
   packagesDb.execSync(`
@@ -13,6 +13,7 @@ export function createPackagesTable(): void {
       scanned_at TEXT NOT NULL,
       sent_at TEXT,
       receiverName TEXT,
+      syncVersion INTEGER NOT NULL DEFAULT 1,
       UNIQUE(code, clientCode)
     );
   `);

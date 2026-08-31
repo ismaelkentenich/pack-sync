@@ -1,32 +1,7 @@
 import { create } from "zustand";
-import {
-  DeliveryStatus,
-  PackageStatus,
-} from "@features/packages/domain/package.enums";
 import { Package } from "@features/packages/domain/package.types";
-import { packageService } from "@features/packages/package.dependencies";
-import {
-  getPackageErrorFeedback,
-  PackageFeedbackMessage,
-} from "@features/packages/utils/getPackageErrorFeedback";
 
-type Feedback = {
-  loading: boolean;
-  success?: PackageFeedbackMessage;
-  error?: PackageFeedbackMessage;
-};
-
-type BatchUpdateResult = {
-  success: boolean;
-  sent: number;
-  failed: number;
-};
-
-type MutationResult = {
-  success: boolean;
-};
-
-type PackageState = {
+export type PackageState = {
   packages: Package[];
   currentSessionPackages: Package[];
   pendingCount: number;
@@ -35,65 +10,28 @@ type PackageState = {
   isSyncingSession: boolean;
   isSyncingPending: boolean;
 
-  searchTerm: string;
-  statusFilter: string;
+  setPackages: (
+    packages: Package[],
+    pendingCount?: number,
+  ) => void;
+  setPendingCount: (count: number) => void;
 
-  feedback: Feedback;
-
-  loadPackages: (userId: string) => void;
-
-  scanPackage: (
-    code: string,
-    userId: string,
-  ) => Promise<void>;
-
-  changeStatus: (
-    id: string,
-    userId: string,
-    status: PackageStatus,
-    receiverName?: string,
-  ) => MutationResult;
-
-  removeFromSession: (pkg: Package, userId: string) => void;
-
+  addToSession: (pkg: Package) => void;
+  removeFromSession: (packageId: string) => void;
+  setSessionPackages: (packages: Package[]) => void;
   resetSession: () => void;
 
-  sendPackage: (
-    pkg: Package,
-    userId: string,
-  ) => Promise<MutationResult>;
+  markPackageSyncing: (packageId: string) => void;
+  unmarkPackageSyncing: (packageId: string) => void;
 
-  syncPendingPackages: (userId: string) => Promise<void>;
-
-  sendAllCurrentSessionPackages: (
-    userId: string,
-  ) => Promise<void>;
-
-  updateAndSendCurrentSessionPackages: (
-    userId: string,
-    status: PackageStatus,
-    receiverName?: string,
-  ) => Promise<BatchUpdateResult>;
-
-  setSearchTerm: (term: string) => void;
-
-  setStatusFilter: (status: string) => void;
-
-  filteredPackages: () => Package[];
-
-  setFeedback: (feedback: Feedback) => void;
-
-  clearFeedback: () => void;
+  setSyncingSession: (isSyncing: boolean) => void;
+  setSyncingPending: (isSyncing: boolean) => void;
 
   clearUserState: () => void;
 };
 
-const initialFeedback: Feedback = {
-  loading: false,
-};
-
 export const usePackageStore = create<PackageState>(
-  (set, get) => ({
+  (set) => ({
     packages: [],
     currentSessionPackages: [],
     pendingCount: 0,
@@ -102,445 +40,72 @@ export const usePackageStore = create<PackageState>(
     isSyncingSession: false,
     isSyncingPending: false,
 
-    searchTerm: "",
-    statusFilter: "",
-
-    feedback: initialFeedback,
-
-    setFeedback: (feedback) => {
-      set({
-        feedback,
-      });
-    },
-
-    clearFeedback: () => {
-      set({
-        feedback: initialFeedback,
-      });
-    },
-
-    setSearchTerm: (term) => {
-      set({
-        searchTerm: term,
-      });
-    },
-
-    setStatusFilter: (status) => {
-      set({
-        statusFilter: status,
-      });
-    },
-
-    loadPackages: (userId) => {
-      const packages =
-        packageService.getAllPackages(userId);
-
-      const pendingCount =
-        packageService.getPendingCount(userId);
-
-      set({
+    setPackages: (packages, pendingCount) => {
+      set((state) => ({
         packages,
-        pendingCount,
-      });
+        pendingCount:
+          pendingCount !== undefined
+            ? pendingCount
+            : state.pendingCount,
+      }));
     },
 
-    scanPackage: async (code, userId) => {
-      set({
-        feedback: {
-          loading: true,
-        },
-      });
-
-      try {
-        const newPackage = await packageService.scanPackage(
-          code,
-          userId,
-        );
-
-        set((state) => ({
-          packages: [newPackage, ...state.packages],
-
-          currentSessionPackages: [
-            newPackage,
-            ...state.currentSessionPackages,
-          ],
-
-          pendingCount: state.pendingCount + 1,
-        }));
-
-        get().loadPackages(userId);
-      } catch (error) {
-        console.error("[PackageStore] scanPackage:error", {
-          code,
-          userId,
-          error,
-        });
-
-        set({
-          feedback: {
-            loading: false,
-            error: getPackageErrorFeedback(error),
-          },
-        });
-      }
+    setPendingCount: (pendingCount) => {
+      set({ pendingCount });
     },
 
-    changeStatus: (id, userId, status, receiverName) => {
-      try {
-        packageService.changePackageStatus(
-          id,
-          userId,
-          status,
-          receiverName,
-        );
-
-        return {
-          success: true,
-        };
-      } catch (error) {
-        set({
-          feedback: {
-            loading: false,
-            error: getPackageErrorFeedback(error),
-          },
-        });
-
-        return {
-          success: false,
-        };
-      }
+    addToSession: (pkg) => {
+      set((state) => ({
+        currentSessionPackages: [
+          pkg,
+          ...state.currentSessionPackages,
+        ],
+      }));
     },
 
-    sendPackage: async (pkg, userId) => {
-      const packageId = pkg.id;
-
-      if (
-        packageId !== undefined &&
-        get().syncingPackageIds.includes(packageId)
-      ) {
-        return {
-          success: false,
-        };
-      }
-
-      if (packageId !== undefined) {
-        set((state) => ({
-          syncingPackageIds: [
-            ...state.syncingPackageIds,
-            packageId,
-          ],
-        }));
-      }
-
-      try {
-        const result =
-          await packageService.syncPackage(pkg);
-
-        if (!result.success) {
-          if (result.error) {
-            set({
-              feedback: {
-                loading: false,
-                error: getPackageErrorFeedback(
-                  result.error,
-                ),
-              },
-            });
-          }
-
-          return {
-            success: false,
-          };
-        }
-
-        return {
-          success: true,
-        };
-      } finally {
-        if (packageId !== undefined) {
-          set((state) => ({
-            syncingPackageIds:
-              state.syncingPackageIds.filter(
-                (id) => id !== packageId,
-              ),
-          }));
-        }
-
-        get().loadPackages(userId);
-      }
-    },
-
-    sendAllCurrentSessionPackages: async (userId) => {
-      const { currentSessionPackages, isSyncingSession } =
-        get();
-
-      if (
-        currentSessionPackages.length === 0 ||
-        isSyncingSession
-      ) {
-        console.warn(
-          "[PackageSync][Store] sendAllCurrentSessionPackages:ignored",
-          {
-            reason:
-              currentSessionPackages.length === 0
-                ? "empty-session"
-                : "already-syncing",
-          },
-        );
-
-        return;
-      }
-
-      set({
-        isSyncingSession: true,
-        feedback: {
-          loading: true,
-        },
-      });
-
-      try {
-        const result =
-          await packageService.sendMultiplePackages(
-            currentSessionPackages,
-          );
-
-        get().loadPackages(userId);
-
-        if (result.success) {
-          get().resetSession();
-
-          set({
-            feedback: {
-              loading: false,
-              success: {
-                key: "packages.feedback.allSentSuccessfully",
-              },
-            },
-          });
-
-          return;
-        }
-
-        const failedPackages =
-          result.data?.failedPackages ?? [];
-
-        const failedPackageIds = new Set(
-          failedPackages.flatMap((pkg) =>
-            pkg.id !== undefined ? [pkg.id] : [],
-          ),
-        );
-
-        const persistedFailedPackages =
-          get().packages.filter(
-            (pkg) =>
-              pkg.id !== undefined &&
-              failedPackageIds.has(pkg.id),
-          );
-
-        set({
-          currentSessionPackages:
-            persistedFailedPackages.length > 0
-              ? persistedFailedPackages
-              : failedPackages,
-
-          feedback: {
-            loading: false,
-            error: result.error
-              ? getPackageErrorFeedback(result.error)
-              : {
-                  key: "packages.feedback.sendSomeFailed",
-                },
-          },
-        });
-      } catch (error) {
-        console.error(
-          "[PackageSync][Store] sendAllCurrentSessionPackages:error",
-          {
-            userId,
-            error,
-          },
-        );
-
-        set({
-          feedback: {
-            loading: false,
-            error: {
-              key: "packages.feedback.sendSomeFailed",
-            },
-          },
-        });
-      } finally {
-        set({
-          isSyncingSession: false,
-        });
-      }
-    },
-
-    updateAndSendCurrentSessionPackages: async (
-      userId,
-      status,
-      receiverName,
-    ) => {
-      const { currentSessionPackages, isSyncingSession } =
-        get();
-
-      if (
-        currentSessionPackages.length === 0 ||
-        isSyncingSession
-      ) {
-        return {
-          success: false,
-          sent: 0,
-          failed: 0,
-        };
-      }
-
-      set({
-        isSyncingSession: true,
-        feedback: {
-          loading: true,
-        },
-      });
-
-      try {
-        const result =
-          await packageService.updateAndSendMultiple(
-            currentSessionPackages,
-            userId,
-            status,
-            receiverName,
-          );
-
-        get().loadPackages(userId);
-
-        if (result.success) {
-          get().resetSession();
-        } else if (result.data) {
-          const failedPackageIds = new Set(
-            result.data.failedPackages.flatMap((pkg) =>
-              pkg.id !== undefined ? [pkg.id] : [],
-            ),
-          );
-
-          const persistedFailedPackages =
-            get().packages.filter(
-              (pkg) =>
-                pkg.id !== undefined &&
-                failedPackageIds.has(pkg.id),
-            );
-
-          set({
-            currentSessionPackages:
-              persistedFailedPackages.length > 0
-                ? persistedFailedPackages
-                : result.data.failedPackages,
-          });
-        }
-
-        set({
-          feedback: {
-            loading: false,
-          },
-        });
-
-        return {
-          success: result.success,
-          sent: result.data?.sent ?? 0,
-          failed: result.data?.failed ?? 0,
-        };
-      } catch {
-        set({
-          feedback: {
-            loading: false,
-          },
-        });
-
-        return {
-          success: false,
-          sent: 0,
-          failed: currentSessionPackages.length,
-        };
-      } finally {
-        set({
-          isSyncingSession: false,
-        });
-      }
-    },
-
-    syncPendingPackages: async (userId) => {
-      if (get().isSyncingPending) {
-        console.warn(
-          "[PackageSync][Store] syncPendingPackages:ignored-already-syncing",
-          {
-            userId,
-          },
-        );
-
-        return;
-      }
-
-      set({
-        isSyncingPending: true,
-      });
-
-      try {
-        await packageService.syncPendingPackages(userId);
-      } catch (error) {
-        console.error(
-          "[PackageSync][Store] syncPendingPackages:error",
-          {
-            userId,
-            error,
-          },
-        );
-      } finally {
-        set({
-          isSyncingPending: false,
-        });
-
-        get().loadPackages(userId);
-      }
-    },
-
-    removeFromSession: (pkg, userId) => {
-      if (pkg.id) {
-        try {
-          packageService.deletePackage(pkg.id, userId);
-        } catch (error) {
-          console.error(
-            "[PackageStore] removeFromSession:error",
-            {
-              id: pkg.id,
-              error,
-            },
-          );
-        }
-      }
-
+    removeFromSession: (packageId) => {
       set((state) => ({
         currentSessionPackages:
-          state.currentSessionPackages.filter((p) =>
-            pkg.id ? p.id !== pkg.id : p.code !== pkg.code,
+          state.currentSessionPackages.filter(
+            (pkg) =>
+              pkg.id !== packageId &&
+              pkg.code !== packageId,
           ),
-        packages: state.packages.filter((p) =>
-          pkg.id ? p.id !== pkg.id : p.code !== pkg.code,
-        ),
-        pendingCount: Math.max(
-          0,
-          state.pendingCount -
-            (pkg.deliveryStatus === DeliveryStatus.PENDING
-              ? 1
-              : 0),
-        ),
       }));
+    },
 
-      get().loadPackages(userId);
+    setSessionPackages: (currentSessionPackages) => {
+      set({ currentSessionPackages });
     },
 
     resetSession: () => {
-      set({
-        currentSessionPackages: [],
-      });
+      set({ currentSessionPackages: [] });
+    },
+
+    markPackageSyncing: (packageId) => {
+      set((state) => ({
+        syncingPackageIds: state.syncingPackageIds.includes(
+          packageId,
+        )
+          ? state.syncingPackageIds
+          : [...state.syncingPackageIds, packageId],
+      }));
+    },
+
+    unmarkPackageSyncing: (packageId) => {
+      set((state) => ({
+        syncingPackageIds: state.syncingPackageIds.filter(
+          (id) => id !== packageId,
+        ),
+      }));
+    },
+
+    setSyncingSession: (isSyncingSession) => {
+      set({ isSyncingSession });
+    },
+
+    setSyncingPending: (isSyncingPending) => {
+      set({ isSyncingPending });
     },
 
     clearUserState: () => {
@@ -548,23 +113,10 @@ export const usePackageStore = create<PackageState>(
         packages: [],
         currentSessionPackages: [],
         pendingCount: 0,
-
         syncingPackageIds: [],
         isSyncingSession: false,
         isSyncingPending: false,
-
-        searchTerm: "",
-        statusFilter: "",
-
-        feedback: initialFeedback,
       });
     },
-
-    filteredPackages: () =>
-      packageService.filterPackages(
-        get().packages,
-        get().searchTerm,
-        get().statusFilter,
-      ),
   }),
 );

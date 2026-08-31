@@ -650,44 +650,27 @@ src/infrastructure/webhook/WebhookPackageSyncGateway.ts
 The gateway performs:
 
 ```http
-POST <WEBSOCKET_URL>
+POST <PACKAGE_SYNC_URL>
 Content-Type: application/json
 ```
 
-### Important: `WEBSOCKET_URL` is currently an HTTP endpoint
+### Synchronization Endpoint: `PACKAGE_SYNC_URL`
 
-Despite the environment variable name:
-
-```env
-WEBSOCKET_URL=
-```
-
-PackSync does **not currently establish a persistent WebSocket connection**.
-
-The current implementation sends an HTTP `POST` using `fetch`.
-
-Therefore, configure an HTTP or HTTPS webhook endpoint:
-
-```env
-WEBSOCKET_URL=https://api.example.com/package-sync
-```
-
-Do not configure:
-
-```text
-ws://...
-wss://...
-```
-
-with the current implementation.
-
-The existing name is preserved because it is the environment variable currently consumed by the application.
-
-A future refactor could rename it to something more explicit, such as:
+The synchronization configuration variable is named:
 
 ```env
 PACKAGE_SYNC_URL=
 ```
+
+PackSync sends an HTTP `POST` using `fetch` to push package synchronization updates.
+
+Configure an HTTP or HTTPS webhook endpoint:
+
+```env
+PACKAGE_SYNC_URL=https://api.example.com/package-sync
+```
+
+Do not configure `ws://` or `wss://` protocols.
 
 ---
 
@@ -706,7 +689,7 @@ DevToolLab can generate a temporary webhook URL that you can configure in PackSy
 After generating an endpoint, configure it in your `.env` file:
 
 ```env
-WEBSOCKET_URL=https://backend.devtoollab.com/webhook/<generated-id>
+PACKAGE_SYNC_URL=https://backend.devtoollab.com/webhook/<generated-id>
 ```
 
 > `<generated-id>` is only a placeholder. Always use the URL generated for your own webhook session.
@@ -719,7 +702,7 @@ WEBSOCKET_URL=https://backend.devtoollab.com/webhook/<generated-id>
 4. Add the URL to the PackSync `.env` file:
 
 ```env
-WEBSOCKET_URL=https://backend.devtoollab.com/webhook/<generated-id>
+PACKAGE_SYNC_URL=https://backend.devtoollab.com/webhook/<generated-id>
 ```
 
 5. Restart Expo so the environment configuration is reloaded:
@@ -1273,7 +1256,7 @@ yarn install
 Create a `.env` file in the project root:
 
 ```env
-WEBSOCKET_URL=https://your-webhook-endpoint.example/webhook/<id>
+PACKAGE_SYNC_URL=https://your-webhook-endpoint.example/webhook/<id>
 
 FIREBASE_API_KEY=your-firebase-api-key
 FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
@@ -1348,7 +1331,7 @@ It generates a temporary endpoint that can be used to inspect requests sent by P
 Example:
 
 ```env
-WEBSOCKET_URL=https://backend.devtoollab.com/webhook/<generated-id>
+PACKAGE_SYNC_URL=https://backend.devtoollab.com/webhook/<generated-id>
 ```
 
 > Use your own generated endpoint. Do not commit temporary webhook IDs to the repository.
@@ -1454,7 +1437,7 @@ For native development builds, rebuilding the application may also be required.
 Check that:
 
 - The device has network connectivity
-- `WEBSOCKET_URL` exists in `.env`
+- `PACKAGE_SYNC_URL` exists in `.env`
 - The endpoint accepts HTTP `POST` requests
 - The endpoint is reachable from the device
 - The authenticated session is valid
