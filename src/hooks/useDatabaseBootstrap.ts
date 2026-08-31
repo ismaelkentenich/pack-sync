@@ -7,28 +7,19 @@ export type DatabaseBootstrapStatus =
 export function useDatabaseBootstrap() {
   const [status, setStatus] =
     useState<DatabaseBootstrapStatus>("loading");
-  const [errorMessage, setErrorMessage] = useState<
-    string | undefined
-  >();
 
   const executeBootstrap = useCallback(async () => {
     try {
       await setupAllDatabases();
       setStatus("ready");
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Erro desconhecido ao inicializar o banco de dados.";
       console.error("[Database] bootstrap:error", error);
-      setErrorMessage(message);
       setStatus("error");
     }
   }, []);
 
   const handleRetry = useCallback(() => {
     setStatus("loading");
-    setErrorMessage(undefined);
     executeBootstrap();
   }, [executeBootstrap]);
 
@@ -43,15 +34,10 @@ export function useDatabaseBootstrap() {
         }
       } catch (error) {
         if (isMounted) {
-          const message =
-            error instanceof Error
-              ? error.message
-              : "Erro desconhecido ao inicializar o banco de dados.";
           console.error(
             "[Database] bootstrap:error",
             error,
           );
-          setErrorMessage(message);
           setStatus("error");
         }
       }
@@ -66,7 +52,6 @@ export function useDatabaseBootstrap() {
 
   return {
     status,
-    errorMessage,
     handleRetry,
   };
 }

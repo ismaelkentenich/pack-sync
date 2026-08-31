@@ -102,20 +102,16 @@ describe("AppContent / Database Bootstrap", () => {
       <AppContent />,
     );
 
-    // Verifies startup loading indicator is rendered
     expect(
       getByTestId("databaseStartupLoading"),
     ).toBeTruthy();
 
-    // Verifies router navigation is not rendered before database is ready
     expect(queryByTestId("mockRouterStack")).toBeNull();
 
-    // Resolve database bootstrap
     await act(async () => {
       deferred.resolve();
     });
 
-    // Verifies router navigation is mounted after ready
     await waitFor(() => {
       expect(getByTestId("mockRouterStack")).toBeTruthy();
     });
@@ -128,16 +124,18 @@ describe("AppContent / Database Bootstrap", () => {
     ).toBeNull();
   });
 
-  it("displays recovery error screen when database setup / migration fails", async () => {
+  it("displays recovery error screen when database setup fails without exposing raw internal error", async () => {
     const consoleErrorSpy = jest
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
     setupAllDatabasesMock.mockRejectedValue(
-      new Error("Migration error: column already exists"),
+      new Error(
+        "Migration error: column already exists at /data/user/0/...",
+      ),
     );
 
-    const { getByTestId, queryByTestId, getByText } =
+    const { getByTestId, queryByTestId, queryByText } =
       render(<AppContent />);
 
     await waitFor(() => {
@@ -147,11 +145,12 @@ describe("AppContent / Database Bootstrap", () => {
     });
 
     expect(
-      getByText("Migration error: column already exists"),
-    ).toBeTruthy();
+      queryByText(
+        "Migration error: column already exists at /data/user/0/...",
+      ),
+    ).toBeNull();
     expect(getByTestId("databaseRetryButton")).toBeTruthy();
 
-    // Verifies the app navigation is blocked and does not open normally
     expect(queryByTestId("mockRouterStack")).toBeNull();
     expect(
       queryByTestId("databaseStartupLoading"),

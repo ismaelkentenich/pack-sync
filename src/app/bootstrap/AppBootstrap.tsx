@@ -12,11 +12,9 @@ import { useDatabaseBootstrap } from "../../hooks/useDatabaseBootstrap";
 
 export function DatabaseBootstrapState({
   status,
-  errorMessage,
   onRetry,
 }: {
   status: "loading" | "error";
-  errorMessage?: string;
   onRetry: () => void;
 }) {
   const { t } = useTranslation();
@@ -68,8 +66,7 @@ export function DatabaseBootstrapState({
           { color: theme.colors.text.secondary },
         ]}
       >
-        {errorMessage ||
-          t("bootstrap.database.defaultError")}
+        {t("bootstrap.database.defaultError")}
       </Text>
 
       <Button
@@ -89,14 +86,12 @@ export function AppBootstrap({
 }: {
   children: React.ReactNode;
 }) {
-  const { status, errorMessage, handleRetry } =
-    useDatabaseBootstrap();
+  const { status, handleRetry } = useDatabaseBootstrap();
 
   if (status !== "ready") {
     return (
       <DatabaseBootstrapState
         status={status}
-        errorMessage={errorMessage}
         onRetry={handleRetry}
       />
     );
