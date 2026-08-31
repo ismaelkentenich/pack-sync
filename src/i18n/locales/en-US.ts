@@ -308,4 +308,13 @@ export const enUS = {
       },
     },
   },
+
+  bootstrap: {
+    database: {
+      title: "Failed to initialize database",
+      defaultError:
+        "Could not prepare local storage. Please try again.",
+      retry: "Try again",
+    },
+  },
 } as const;

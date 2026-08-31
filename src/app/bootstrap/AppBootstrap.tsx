@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Text,
@@ -18,6 +19,7 @@ export function DatabaseBootstrapState({
   errorMessage?: string;
   onRetry: () => void;
 }) {
+  const { t } = useTranslation();
   const { theme } = useAppTheme();
 
   if (status === "loading") {
@@ -57,7 +59,7 @@ export function DatabaseBootstrapState({
           { color: theme.colors.text.primary },
         ]}
       >
-        Falha ao inicializar o banco de dados
+        {t("bootstrap.database.title")}
       </Text>
 
       <Text
@@ -67,11 +69,11 @@ export function DatabaseBootstrapState({
         ]}
       >
         {errorMessage ||
-          "Não foi possível preparar o armazenamento local. Tente novamente."}
+          t("bootstrap.database.defaultError")}
       </Text>
 
       <Button
-        title="Tentar novamente"
+        title={t("bootstrap.database.retry")}
         variant="primary"
         size="lg"
         onPress={onRetry}

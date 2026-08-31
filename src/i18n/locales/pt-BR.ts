@@ -312,4 +312,13 @@ export const ptBR = {
       },
     },
   },
+
+  bootstrap: {
+    database: {
+      title: "Falha ao inicializar o banco de dados",
+      defaultError:
+        "Não foi possível preparar o armazenamento local. Tente novamente.",
+      retry: "Tentar novamente",
+    },
+  },
 } as const;
