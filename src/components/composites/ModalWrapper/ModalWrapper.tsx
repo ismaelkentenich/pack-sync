@@ -43,7 +43,7 @@ export const ModalWrapper = forwardRef<
   },
   ref,
 ) {
-  const isKeyboardOpened = useIsKeyboardOpened();
+  const { isKeyboardOpened } = useIsKeyboardOpened();
 
   const insets = useSafeAreaInsets();
 

@@ -5,7 +5,12 @@ import {
   Platform,
 } from "react-native";
 
-export function useIsKeyboardOpened() {
+export type KeyboardState = {
+  isKeyboardOpened: boolean;
+  keyboardHeight: number;
+};
+
+export function useIsKeyboardOpened(): KeyboardState {
   const [isKeyboardOpened, setIsKeyboardOpened] =
     useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
