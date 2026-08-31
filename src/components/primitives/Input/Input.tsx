@@ -167,8 +167,15 @@ export function Input({
 
               inputStyle,
             ]}
+            accessibilityLabel={
+              rest.accessibilityLabel ?? label
+            }
+            accessibilityHint={
+              rest.accessibilityHint ?? helperText
+            }
             accessibilityState={{
               disabled: !editable,
+              ...rest.accessibilityState,
             }}
             onChangeText={handleChangeText}
             onFocus={(event) => {
